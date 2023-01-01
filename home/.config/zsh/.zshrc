@@ -78,7 +78,7 @@ ENABLE_CORRECTION="true"
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
+HIST_STAMPS="yyyy/mm/dd"
 
 # Would you like to use another custom folder than $ZSH/custom?
 ZSH_CUSTOM=$ZSH/custom
@@ -139,7 +139,7 @@ if [[ ! -d $ZSH_CACHE_DIR ]]; then
 fi
 function command_not_found_handler {
 	local purple='\e[1;35m' bright='\e[0;1m' green='\e[1;32m' reset='\e[0m'
-	printf 'zsh: 命令不存在: %s\n' "$1"
+	printf 'zsh: %s 命令不存在\n' "$1"
 	local entries=(${(f)"$(paru -F --machinereadable -- "$1" 2>/dev/null)"})
 	if (( ${#entries[@]} )); then
 		printf "${bright}$1${reset} 可以在下列软件包中找到：\n"
