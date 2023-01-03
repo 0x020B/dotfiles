@@ -158,7 +158,6 @@ function command_not_found_handler {
 	return 127
 }
 source $ZSH/oh-my-zsh.sh
-alias find="fd"
 alias ls="ls --color"
 alias la="ls -a"
 alias cp="rsync --archive -hh --partial --info=stats1,progress2 --modify-window=1"
