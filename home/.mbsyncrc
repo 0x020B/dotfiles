@@ -1,0 +1,19 @@
+IMAPAccount n0tr00t
+Host imap.yandex.com
+User 秘密@n0tr00t.eu.org
+PassCmd "pass show 秘密@n0tr00t.eu.org | /usr/bin/tail -n1"
+SSLType IMAPS
+
+IMAPStore n0tr00t-remote
+ACCOUNT n0tr00t
+
+MaildirStore n0tr00t-local
+SubFolders Verbatim
+Path ~/mail/
+Inbox ~/mail/index
+
+Channel n0tr00t
+Far :n0tr00t-remote:
+Near :n0tr00t-local:
+Patterns *
+SyncState *
