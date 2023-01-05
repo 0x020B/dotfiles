@@ -1,0 +1,7 @@
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = mirrorlist.arch4edu
+[Action]
+When = PostTransaction
+Exec = /etc/pacman.d/hooks/rankmirrors mirrorlist.arch4edu arch4edu
