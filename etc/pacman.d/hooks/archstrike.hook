@@ -4,4 +4,4 @@ Type = Package
 Target = archstrike-mirrorlist
 [Action]
 When = PostTransaction
-Exec = /etc/pacman.d/hooks/rankmirrors archstrike-mirrorlist archstrike-mirrorlist
+Exec = /etc/pacman.d/hooks/rankmirrors archstrike-mirrorlist archstrike
