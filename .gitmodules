@@ -1,0 +1,3 @@
+[submodule "alhp-keyring"]
+	path = alhp-keyring
+	url = https://aur.archlinux.org/alhp-keyring.git
