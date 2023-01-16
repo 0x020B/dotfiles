@@ -14,7 +14,7 @@ btrfs -v subvolume create /mnt/@var
 umount /mnt
 mount -vo noatime,nodiratime,compress=lzo,subvol=@	"$disk"2 /mnt
 mkdir -v /mnt/{boot,etc,home,var}
-mount -v "$disk"1 /mnt/boot
+mount -vo noatime,nodiratime				"$disk"1 /mnt/boot
 mount -vo noatime,nodiratime,compress=lzo,subvol=@etc	"$disk"2 /mnt/etc
 mount -vo noatime,nodiratime,compress=lzo,subvol=@home	"$disk"2 /mnt/home
 mount -vo noatime,nodiratime,compress=lzo,subvol=@var	"$disk"2 /mnt/var
@@ -50,7 +50,20 @@ arch-chroot /mnt mkinitcpio -P
 arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
 arch-chroot /mnt passwd n0tr00t
 efibootmgr --create --disk "$disk" --part 1 \
-	--label 'Linux' \
+	--label 'Boot with standard options' \
 	--loader /vmlinuz-linux-zen \
-	--unicode "root=$(findmnt -no UUID /mnt)"' rootflag=subvol=@ rw initrd=\amd-ucode.img initrd=\initramfs-linux-zen.img'
+	--unicode "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
+	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor'\
+	'initrd=\amd-ucode.img initrd=\initramfs-linux-zen.img'
+efibootmgr --create --disk "$disk" --part 1 \
+	--label 'Boot with fallback options' \
+	--loader /vmlinuz-linux-zen \
+	--unicode "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
+	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor'\
+	'initrd=\amd-ucode.img initrd=\initramfs-linux-zen-fallback.img'
+efibootmgr --create --disk "$disk" --part 1 \
+	--label 'Boot with minimal options' \
+	--loader /vmlinuz-linux-zen \
+	--unicode "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
+	'initrd=\initramfs-linux-zen.img'
 umount -Rv /mnt
