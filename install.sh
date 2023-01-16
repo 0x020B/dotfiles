@@ -10,7 +10,7 @@ btrfs -v subvolume create /mnt/@home
 btrfs -v subvolume create /mnt/@swap
 umount /mnt
 mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/sda2 /mnt
-mkdir -v /mnt{boot,etc,home}
+mkdir -v /mnt/{boot,etc,home}
 mount -v /dev/sda1 /mnt/boot
 mount -vo noatime,nodiratime,compress=lzo,subvol=@etc /dev/sda2 /mnt/etc
 mount -vo noatime,nodiratime,compress=lzo,subvol=@home /dev/sda2 /mnt/home
