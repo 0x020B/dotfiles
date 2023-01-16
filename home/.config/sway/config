@@ -194,8 +194,11 @@ mode "resize" {
     bindsym Escape mode "default"
 }
 bindsym $mod+r mode "resize"
-bindsym --locked XF86MonBrightnessDown exec brightnessctl set 1%-
 bindsym --locked XF86MonBrightnessUp exec brightnessctl set 1%+
+bindsym --locked XF86MonBrightnessDown exec brightnessctl set 1%-
+bindsym --locked XF86AudioRaiseVolume exec amixer set Master 1%+
+bindsym --locked XF86AudioLowerVolume exec amixer set Master 1%-
+bindsym --locked XF86AudioMute exec amixer set Master toggle
 bindcode 107 exec grim -c -l 0 -g "$(slurp)" /tmp/screenshot.png
 #
 # Status Bar:
