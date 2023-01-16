@@ -30,7 +30,9 @@ pacstrap -K /mnt	base-devel-selinux	amd-ucode	\
 			vim			neovim		\
 			man-db			man-pages	\
 			sway			xorg-xwayland	\
-			yakuake			firejail
+			yakuake			firejail	\
+			bat			rsync		\
+			colordiff	
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc --adjfile /mnt/etc/adjtime
@@ -39,7 +41,7 @@ arch-chroot /mnt mkinitcpio -P
 arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
 arch-chroot /mnt passwd n0tr00t
 efibootmgr --create --disk /dev/sda --part 1 \
-	--label 'GNU/Linux' \
-	--loader /vmlinuz-zen-linux \
-	--unicode "root=$(findmnt -no UUID /mnt)"' rw initrd=boot\amd-ucode.img initrd=boot\initramfs-linux-zen.img'
+	--label 'Linux' \
+	--loader /vmlinuz-linux-zen \
+	--unicode "root=$(findmnt -no UUID /mnt)"' rw initrd=\amd-ucode.img initrd=\initramfs-linux-zen.img'
 umount -Rv /mnt
