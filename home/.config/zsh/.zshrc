@@ -29,9 +29,9 @@ ZSH_THEME_RANDOM_CANDIDATES=(
 	"muse"			"nanotech"	"nebirhos"	"nicoulaj"
 	"norm"			"peepcode"	"refined"	"robbyrussell"
 	"sammy"			"simple"	"skaro"		"sonicradish"
-	"sorin"			"sunaku"	"sunrise"
-	"superjarin"		"terminalparty"	"theunraveler"	"wedisagree"
-	"wezm"			"zhann"
+	"sorin"			"sunaku"	"sunrise"	"superjarin"
+	"terminalparty"		"theunraveler"	"wedisagree"	"wezm"
+	"zhann"
 )
 
 # Uncomment the following line to use case-sensitive completion.

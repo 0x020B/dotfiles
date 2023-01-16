@@ -1,0 +1,5 @@
+Server = https://alhp.harting.dev/$repo/os/$arch/
+Server = https://alhp.krautflare.de/$repo/os/$arch/
+Server = https://alhp.panibrez.com/$repo/os/$arch/
+Server = https://mirror.sunred.org/alhp/$repo/os/$arch/
+Server = https://mirrors.shanghaitech.edu.cn/alhp/$repo/os/$arch/

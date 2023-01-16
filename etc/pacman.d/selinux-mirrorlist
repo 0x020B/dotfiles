@@ -1,0 +1,3 @@
+Server = https://github.com/archlinuxhardened/selinux/releases/download/ArchLinux-SELinux
+Server = https://ghproxy.com/https://github.com/archlinuxhardened/selinux/releases/download/ArchLinux-SELinux
+Server = https://hub.fastgit.xyz/archlinuxhardened/selinux/releases/download/ArchLinux-SELinux
