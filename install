@@ -2,6 +2,17 @@
 disk='/dev/sda'
 swapfile='/mnt/swap'
 self="$(dirname $0)"
+sha512sum -c "$self"/sha512sum --status || {
+	git -v 1>/dev/null || pacman -Sy git --noconfirm
+	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
+	echo '185.199.109.133 raw.githubusercontent.com' >> /etc/host
+	wget 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
+	echo "ssh -i $(pwd)/id_ed25519"' $@' > "$(pwd)/sgit"
+	chmod +x "$(pwd)/sgit"
+	export GIT_SSH="$(pwd)/sgit"
+	git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
+	exit 1
+}
 sfdisk --delete "$disk"
 parted "$disk" mklabel gpt mkpart ESP fat32 1M 513M
 parted "$disk" mkpart primary btrfs 513M 100%
