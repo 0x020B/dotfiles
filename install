@@ -6,7 +6,10 @@ sha512sum -c "$self"/sha512sum --status || {
 	git -v 1>/dev/null || pacman -Sy git --noconfirm
 	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
 	echo '185.199.109.133 raw.githubusercontent.com' >> /etc/host
-	[ -f "$(pwd)/id_ed25519" ] || curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
+	if [ ! -f "$(pwd)/id_ed25519" ];then
+		curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
+		chmod -v 0600 "$(pwd)/id_ed25519"
+	fi
 	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
 	exit 1
 }
