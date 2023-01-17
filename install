@@ -40,10 +40,13 @@ swapon "$swapfile"
 cp -fv $self/etc/pacman.conf /etc
 cp -rvf $self/etc/pacman.d/* /etc/pacman.d/
 git submodule update -f --recursive
+useradd user
+sed -iE 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow
+echo 'user ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/user
 for keyring in "alhp-keyring" "arch4edu-keyring"
 do
 	cd $self/$keyring
-	makepkg -i
+	su user -c 'makepkg -i'
 	cd ..
 done
 pacman -Sy
