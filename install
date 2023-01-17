@@ -28,9 +28,9 @@ swapon "$swapfile"
 cp -fv $self/etc/pacman.conf /etc
 cp -fv $self/etc/pacman.d/* /etc/pacman.d/
 git submodule update --checkout
-for key in "alhp-keyring"
+for keyring in "alhp-keyring" "arch4edu-keyring"
 do
-	cd $self/$key
+	cd $self/$keyring
 	makepkg -i
 	cd ..
 done
@@ -63,4 +63,5 @@ efibootmgr --create --disk "$disk" --part 1 \
 	--loader /vmlinuz-linux-zen \
 	--unicode "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
 	'initrd=\initramfs-linux-zen.img'
+efibootmgr --create --disk "$disk" --part 1 --label "UEFI Shell" --loader Shell_x64.efi --unicode
 umount -Rv /mnt

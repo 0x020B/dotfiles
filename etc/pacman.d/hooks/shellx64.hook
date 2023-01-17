@@ -1,4 +1,5 @@
 [Trigger]
+Operation = Install
 Operation = Upgrade
 Type = Package
 Target = edk2-shell
@@ -7,4 +8,4 @@ Target = edk2-shell
 Description = Copying shellx64.efi to ESP
 Depends = edk2-shell
 When = PostTransaction
-Exec = /usr/bin/cp -fv /usr/share/edk2-shell/x64/Shell_Full.efi /boot/EFI/tools/shellx64.efi
+Exec = /usr/bin/cp -fv /usr/share/edk2-shell/x64/Shell_Full.efi /boot/Shell_x64.efi
