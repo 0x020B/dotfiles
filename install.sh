@@ -18,6 +18,7 @@ mount -vo noatime,nodiratime				"$disk"1 /mnt/boot
 mount -vo noatime,nodiratime,compress=lzo,subvol=@etc	"$disk"2 /mnt/etc
 mount -vo noatime,nodiratime,compress=lzo,subvol=@home	"$disk"2 /mnt/home
 mount -vo noatime,nodiratime,compress=lzo,subvol=@var	"$disk"2 /mnt/var
+chattr +C /mnt/var
 truncate -s 0 "$swapfile"
 chattr +C "$swapfile"
 fallocate -l 8G "$swapfile"
@@ -35,11 +36,7 @@ do
 done
 pacman -Sy
 sed -i 's#/mirrorlist#/*#g' /bin/pacstrap
-pacstrap -K /mnt	base-devel-selinux	amd-ucode	linux-zen		linux-firmware		btrfs-progs		duperemove	\
-			dhcpcd			wpa_supplicant	zsh			oh-my-zsh-git		vim			neovim		\
-			man-db			man-pages	xf86-video-amdgpu	vulkan-radeon		libva-mesa-driver	mesa-vdpau	\
-			obs-studio		xorg-xwayland	sway			yakuake			firejail		bat		\
-			rsync			colordiff	aria2			neomutt			isync			goimapnotify
+pacstrap -K /mnt "$(cat requirements.txt)"
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc --adjfile /mnt/etc/adjtime
