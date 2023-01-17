@@ -16,7 +16,7 @@ sha512sum -c "$self"/sha512sum --status || {
 }
 sfdisk --delete "$disk"
 parted -s "$disk" mklabel gpt mkpart ESP fat32 1M 513M mkpart primary btrfs 513M 100%
-mkfs.btrfs -n 32k "$disk"2
+mkfs.btrfs -fn 32k "$disk"2
 mount -vo compress=lzo "$disk"2 /mnt
 btrfs -v subvolume create /mnt/@
 btrfs -v subvolume create /mnt/@etc
