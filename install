@@ -27,7 +27,7 @@ mkswap "$swapfile"
 swapon "$swapfile"
 cp -fv $self/etc/pacman.conf /etc
 cp -fv $self/etc/pacman.d/* /etc/pacman.d/
-git submodule update --checkout
+git submodule update -f --recursive
 for keyring in "alhp-keyring" "arch4edu-keyring"
 do
 	cd $self/$keyring
