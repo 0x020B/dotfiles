@@ -78,4 +78,5 @@ efibootmgr --create --disk "$disk" --part 1 \
 	--unicode "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
 	'initrd=\initramfs-linux-zen.img'
 efibootmgr --create --disk "$disk" --part 1 --label "UEFI Shell" --loader Shell_x64.efi --unicode
+swapoff -v $swapfile
 umount -Rv /mnt
