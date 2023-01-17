@@ -35,7 +35,7 @@ do
 	cd ..
 done
 pacman -Sy
-sed -i 's#/mirrorlist#/*#g' /bin/pacstrap
+sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 pacstrap -K /mnt "$(cat requirements.txt)"
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
