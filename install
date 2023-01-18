@@ -51,29 +51,47 @@ done
 cd "$self"
 pacman -Sy
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
-pacstrap -K /mnt $(cat requirements.txt)
+pacstrap -K /mnt $(<requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc --adjfile /mnt/etc/adjtime
-cp -rvf "$self"/etc/* /mnt/etc/
+cp -rvf etc/* /mnt/etc/
 #semanage fcontext -a -t swapfile_t "$swapfile"
 #restorecon "$swapfile"
 arch-chroot /mnt mkinitcpio -P
 arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
 echo -n $RANDOM > "$self"/PASSWORD
-sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in \"$self\"/PASSWORD)\2#" /mnt/etc/shadow
+sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in PASSWORD)\2#" /mnt/etc/shadow
+
+#uuidgen --random > GUID.txt
+#for key in "PK" "KEK" "db"
+#do
+#	openssl req -newkey rsa:4096 -nodes -keyout $key.key -new -x509 -sha512 -days 3650 -subj '/CN=12339/' -out $key.crt
+#	openssl x509 -outform DER -in $key.crt -out $key.cer
+#	cert-to-efi-sig-list -g "$(< GUID.txt)" $key.crt $key.esl
+#done
+#sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt PK PK.esl PK.auth
+#sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt KEK KEK.esl KEK.auth
+#sign-efi-sig-list -g "$(< GUID.txt)" -k KEK.key -c KEK.crt db db.esl db.auth
+
+#sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
+#sbsign --key db.key --cert db.crt --output /boot/Shell_x64.efi{,}
+
 efibootmgr -c -d "$disk" -L 'Boot with standard options' -l /vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\amd-ucode.img initrd=\initramfs-linux-zen.img'
+
 efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l /vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\amd-ucode.img initrd=\initramfs-linux-zen-fallback.img'
+
 efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l /vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'initrd=\initramfs-linux-zen.img'
+
 efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l '/Shell_x64.efi' -u
 swapoff -v $swapfile
 umount -Rv /mnt
-printf "PASSWORD: %s\n" "$(cat \"$self\"/PASSWORD)"
+printf "PASSWORD: %s\n" "$(<\"$self\"/PASSWORD)"
