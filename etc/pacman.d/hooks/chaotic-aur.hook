@@ -4,4 +4,4 @@ Type = Package
 Target = chaotic-mirrorlist
 [Action]
 When = PostTransaction
-Exec = /etc/pacman.d/hooks/rankmirrors chaotic-mirrorlist chaotic
+Exec = /etc/pacman.d/hooks/rankmirrors chaotic-mirrorlist chaotic-aur
