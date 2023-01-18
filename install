@@ -44,7 +44,7 @@ sed -i -E 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow	
 echo 'user ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/user
 for keyring in "alhp-keyring" "arch4edu-keyring"
 do
-	cd $self/$keyring
+	cd "$self/$keyring"
 	su user -c 'makepkg -i'
 	cd ..
 done
@@ -81,4 +81,4 @@ efibootmgr --create --disk "$disk" --part 1 \
 efibootmgr --create --disk "$disk" --part 1 --label "UEFI Shell" --loader Shell_x64.efi --unicode
 swapoff -v $swapfile
 umount -Rv /mnt
-printf "PASSWORD: %s\n" "$(cat \"$self/fPASSWORD\")"
+printf "PASSWORD: %s\n" "$(cat \"$self/PASSWORD\")"
