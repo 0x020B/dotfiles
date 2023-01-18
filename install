@@ -42,7 +42,7 @@ cp -rvf "$self"/etc/pacman.d/* /etc/pacman.d/
 git submodule update -f --recursive
 useradd user
 sed -i -E 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow	# PASSWORD: 1919810
-echo 'user ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/user
+echo 'user ALL = NOPASSWD: ALL' > /etc/sudoers.d/user
 for keyring in "alhp-keyring" "arch4edu-keyring"
 do
 	cd "$self/$keyring"
