@@ -40,7 +40,7 @@ cp -fv $self/etc/pacman.conf /etc
 cp -rvf $self/etc/pacman.d/* /etc/pacman.d/
 git submodule update -f --recursive
 useradd user
-sed -iE 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow	# PASSWORD: 1919810
+sed -i -E 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow	# PASSWORD: 1919810
 echo 'user ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/user
 for keyring in "alhp-keyring" "arch4edu-keyring"
 do
@@ -50,7 +50,7 @@ do
 done
 pacman -Sy
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
-pacstrap -K /mnt "$(cat requirements.txt)"
+pacstrap -K /mnt $(cat requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc --adjfile /mnt/etc/adjtime
@@ -59,7 +59,8 @@ cp -rv $self/etc/* /mnt/etc/
 #restorecon "$swapfile"
 arch-chroot /mnt mkinitcpio -P
 arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
-arch-chroot /mnt passwd n0tr00t
+echo -n $RANDOM > "$self/PASSWORD"
+sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in \"$self/PASSWORD\")\2#" /mnt/etc/shadow
 efibootmgr --create --disk "$disk" --part 1 \
 	--label 'Boot with standard options' \
 	--loader /vmlinuz-linux-zen \
@@ -80,3 +81,4 @@ efibootmgr --create --disk "$disk" --part 1 \
 efibootmgr --create --disk "$disk" --part 1 --label "UEFI Shell" --loader Shell_x64.efi --unicode
 swapoff -v $swapfile
 umount -Rv /mnt
+printf "PASSWORD: %s\n" "$(cat \"$self/fPASSWORD\")"
