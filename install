@@ -1,7 +1,7 @@
 #!/bin/sh
 disk='/dev/sda'
 swapfile='/mnt/swap'
-self="$(dirname $0)"
+self=$(dirname "$(readlink -f $0)")
 echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > ~/.ssh/known_hosts
 export GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519"
 sha512sum -c "$self"/sha512sum --status || {
