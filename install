@@ -47,8 +47,8 @@ for keyring in "alhp-keyring" "arch4edu-keyring"
 do
 	cd "$self/$keyring"
 	su user -c 'makepkg -i'
-	cd ..
 done
+cd "$self"
 pacman -Sy
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 pacstrap -K /mnt $(cat requirements.txt)
