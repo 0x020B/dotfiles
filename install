@@ -37,8 +37,8 @@ fallocate -l 8G "$swapfile"
 chmod 0600 "$swapfile"
 mkswap "$swapfile"
 swapon "$swapfile"
-cp -v "$self"/etc/pacman.conf /etc
-cp -vr "$self"/etc/pacman.d/* /etc/pacman.d/
+cp -vf "$self"/etc/pacman.conf /etc
+cp -rvf "$self"/etc/pacman.d/* /etc/pacman.d/
 git submodule update -f --recursive
 useradd user
 sed -i -E 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow	# PASSWORD: 1919810
@@ -55,7 +55,7 @@ pacstrap -K /mnt $(cat requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc --adjfile /mnt/etc/adjtime
-cp -vr "$self"/etc/* /mnt/etc/
+cp -rvf "$self"/etc/* /mnt/etc/
 #semanage fcontext -a -t swapfile_t "$swapfile"
 #restorecon "$swapfile"
 arch-chroot /mnt mkinitcpio -P
