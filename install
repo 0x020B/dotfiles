@@ -62,24 +62,18 @@ arch-chroot /mnt mkinitcpio -P
 arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
 echo -n $RANDOM > "$self"/PASSWORD
 sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in \"$self\"/PASSWORD)\2#" /mnt/etc/shadow
-efibootmgr --create --disk "$disk" --part 1 \
-	--label 'Boot with standard options' \
-	--loader /vmlinuz-linux-zen \
-	--unicode "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
+efibootmgr -c -d "$disk" -L 'Boot with standard options' -l \vmlinuz-linux-zen \
+	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor'\
 	'initrd=\amd-ucode.img initrd=\initramfs-linux-zen.img'
-efibootmgr --create --disk "$disk" --part 1 \
-	--label 'Boot with fallback options' \
-	--loader /vmlinuz-linux-zen \
-	--unicode "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
+efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l \vmlinuz-linux-zen \
+	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor'\
 	'initrd=\amd-ucode.img initrd=\initramfs-linux-zen-fallback.img'
-efibootmgr --create --disk "$disk" --part 1 \
-	--label 'Boot with minimal options' \
-	--loader /vmlinuz-linux-zen \
-	--unicode "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
+efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l \vmlinuz-linux-zen \
+	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw"\
 	'initrd=\initramfs-linux-zen.img'
-efibootmgr --create --disk "$disk" --part 1 --label "UEFI Shell" --loader Shell_x64.efi --unicode
+efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l \Shell_x64.efi -u
 swapoff -v $swapfile
 umount -Rv /mnt
 printf "PASSWORD: %s\n" "$(cat \"$self\"/PASSWORD)"
