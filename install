@@ -37,8 +37,8 @@ fallocate -l 8G "$swapfile"
 chmod 0600 "$swapfile"
 mkswap "$swapfile"
 swapon "$swapfile"
-cp -fv $self/etc/pacman.conf /etc
-cp -rvf $self/etc/pacman.d/* /etc/pacman.d/
+cp -v "$self"/etc/pacman.conf /etc
+cp -vr "$self"/etc/pacman.d/* /etc/pacman.d/
 git submodule update -f --recursive
 useradd user
 sed -i -E 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow	# PASSWORD: 1919810
@@ -55,13 +55,13 @@ pacstrap -K /mnt $(cat requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc --adjfile /mnt/etc/adjtime
-cp -rv $self/etc/* /mnt/etc/
+cp -vr "$self"/etc/* /mnt/etc/
 #semanage fcontext -a -t swapfile_t "$swapfile"
 #restorecon "$swapfile"
 arch-chroot /mnt mkinitcpio -P
 arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
-echo -n $RANDOM > "$self/PASSWORD"
-sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in \"$self/PASSWORD\")\2#" /mnt/etc/shadow
+echo -n $RANDOM > "$self"/PASSWORD
+sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in \"$self\"/PASSWORD)\2#" /mnt/etc/shadow
 efibootmgr --create --disk "$disk" --part 1 \
 	--label 'Boot with standard options' \
 	--loader /vmlinuz-linux-zen \
@@ -82,4 +82,4 @@ efibootmgr --create --disk "$disk" --part 1 \
 efibootmgr --create --disk "$disk" --part 1 --label "UEFI Shell" --loader Shell_x64.efi --unicode
 swapoff -v $swapfile
 umount -Rv /mnt
-printf "PASSWORD: %s\n" "$(cat \"$self/PASSWORD\")"
+printf "PASSWORD: %s\n" "$(cat \"$self\"/PASSWORD)"
