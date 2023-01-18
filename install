@@ -64,11 +64,11 @@ echo -n $RANDOM > "$self"/PASSWORD
 sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in \"$self\"/PASSWORD)\2#" /mnt/etc/shadow
 efibootmgr -c -d "$disk" -L 'Boot with standard options' -l \vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
-	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor'\
+	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\amd-ucode.img initrd=\initramfs-linux-zen.img'
 efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l \vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
-	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor'\
+	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\amd-ucode.img initrd=\initramfs-linux-zen-fallback.img'
 efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l \vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
