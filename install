@@ -47,7 +47,7 @@ swapon "$swapfile"
 cp -rvf etc/pacman.d/* /etc/pacman.d/
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 
-curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar xvf -C /
+curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar xvf - -C /
 pacman-key --keyserver keyserver.ubuntu.com -r 7931B6D628C8D3BA FBA220DFC880C036
 pacman-key -l 7931B6D628C8D3BA FBA220DFC880C036
 pacman-key --populate
