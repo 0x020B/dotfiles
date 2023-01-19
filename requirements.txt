@@ -9,7 +9,7 @@ dhcpcd
 duperemove
 edk2-shell
 firejail
-goimapnotif
+goimapnotify
 isync
 libva-mesa-driver
 linux-firmware
