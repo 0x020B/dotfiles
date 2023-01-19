@@ -4,7 +4,6 @@ swapfile='/mnt/swap'
 self=$(dirname "$(readlink -f $0)")
 alias pacman '/usr/bin/pacman --needed --noconfirm'
 
-echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > ~/.ssh/known_hosts
 sha512sum -c "$self"/sha512sum --status || {
 	git -v 1>/dev/null || pacman -Sy git
 	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
@@ -13,6 +12,7 @@ sha512sum -c "$self"/sha512sum --status || {
 		curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
 		chmod -v 0600 id_ed25519
 	fi
+	echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >  ~/.ssh/known_hosts
 	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
 	exit 1
 }
@@ -100,7 +100,6 @@ for bootnum in $(efibootmgr | grep -Po '(?<Boot)....(?=\*? ((Boot with ((standar
 do
 	efibootmgr -Bb $bootnum
 done
-
 
 efibootmgr -v -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
 	"root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
