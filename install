@@ -61,7 +61,7 @@ cp -rvf etc/* /mnt/etc/
 #restorecon "$swapfile"
 arch-chroot /mnt mkinitcpio -P
 arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
-echo -n $RANDOM > "$self"/PASSWORD
+echo -n $RANDOM > PASSWORD
 sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in PASSWORD)\2#" /mnt/etc/shadow
 
 #uuidgen --random > GUID.txt
@@ -95,4 +95,4 @@ efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l /vmlinuz-linux-zen \
 efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l '/Shell_x64.efi' -u
 swapoff -v $swapfile
 umount -Rv /mnt
-printf "PASSWORD: %s\n" "$(<\"$self\"/PASSWORD)"
+printf "PASSWORD: %s\n" "$(<PASSWORD)"
