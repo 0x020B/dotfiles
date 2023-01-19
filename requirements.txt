@@ -1,4 +1,5 @@
 amd-ucode
+archlinuxcn-keyring
 aria2
 base-devel-selinux
 bat
