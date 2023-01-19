@@ -18,8 +18,6 @@ sha512sum -c "$self"/sha512sum --status || {
 cd "$self"
 sfdisk --delete "$disk"
 parted -sa opt "$disk" mklabel gpt mkpart esp fat32 1M 513iM mkpart primary btrfs 513M 100%
-dd if=/dev/zero of="$disk"1
-mkfs.fat -vF 32 "$disk"1
 mkfs.btrfs -fn 32k "$disk"2
 mount -vo compress=lzo "$disk"2 /mnt
 btrfs -v subvolume create /mnt/@
@@ -60,6 +58,7 @@ hwclock --systohc --adjfile /mnt/etc/adjtime
 cp -v /mnt/etc/pacman.conf{,.bak}
 cp -vfr etc/* /mnt/etc/
 mv -vf /mnt/etc/pacman.conf{.bak,}
+rm -vf /mnt/etc/pacman_v3.conf
 #semanage fcontext -a -t swapfile_t "$swapfile"
 #restorecon "$swapfile"
 arch-chroot /mnt mkinitcpio -P
@@ -81,21 +80,21 @@ sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in PASSWORD)\2#" /mnt/et
 #sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
 #sbsign --key db.key --cert db.crt --output /boot/Shell_x64.efi{,}
 
-efibootmgr -c -d "$disk" -L 'Boot with standard options' -l /vmlinuz-linux-zen \
+efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\\amd-ucode.img initrd=\initramfs-linux-zen.img'
 
-efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l /vmlinuz-linux-zen \
+efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\\amd-ucode.img initrd=\initramfs-linux-zen-fallback.img'
 
-efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l /vmlinuz-linux-zen \
+efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen \
 	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'initrd=\initramfs-linux-zen.img'
 
-efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l '/Shell_x64.efi' -u
+efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l 'Shell_x64.efi' -u
 swapoff -v $swapfile
 umount -Rv /mnt
 printf "PASSWORD: %s\n" "$(<PASSWORD)"
