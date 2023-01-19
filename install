@@ -39,16 +39,17 @@ fallocate -l 8G "$swapfile"
 chmod 0600 "$swapfile"
 mkswap "$swapfile"
 swapon "$swapfile"
+cp -rvf etc/pacman.d/* /etc/pacman.d/
+sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 if /lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported";then
 	cp -fv etc/pacman_v3.conf /etc
+	pacman -Sy $(<keyrings_v3.txt)
+	pacstrap -K /mnt $(<requirements_v3.txt)
 else
 	cp -fv etc/pacman.conf /etc
+	pacman -Sy $(<keyrings.txt)
+	pacstrap -K /mnt $(<requirements.txt)
 fi
-cp -rvf etc/pacman.d/* /etc/pacman.d/
-pacman -Sy archlinuxcn-keyring blackarch-keyring arch4edu-keyring alhp-keyring chaotic-keyringi --noconfirm
-# pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz --noconfirm
-sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
-pacstrap -K /mnt $(<requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc --adjfile /mnt/etc/adjtime
