@@ -43,8 +43,8 @@ swapon "$swapfile"
 cp -rvf etc/pacman.d/* /etc/pacman.d/
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 pacman-key --keyserver keyserver.ubuntu.com -r 7931B6D628C8D3BA FBA220DFC880C036
-pacman-key -l 7931B6D628C8D3BA FBA220DFC880C036
-pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz --noconfirm
+pacman-key -add - <<< $(curl -o - https://raw.githubusercontent.com/BlackArch/blackarch-keyring/master/blackarch.gpg)
+pacman-key -l 4345771566D76038 7931B6D628C8D3BA 8F9A9793CB859114 A0917C4147A37007 CBA3C7D479891270 FBA220DFC880C036
 pacman-key --populate
 if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported";then
 	cp -fv etc/pacman_v3.conf /etc
