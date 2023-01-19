@@ -96,26 +96,25 @@ sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in PASSWORD)\2#" /mnt/et
 #sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
 #sbsign --key db.key --cert db.crt --output /boot/Shell_x64.efi{,}
 
-for bootnum in $(efibootmgr | grep -Po '(?<Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))')
-do
-	efibootmgr -Bb $bootnum
-done
+efibootmgr |
+grep -Po '(?<Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' |
+xargs -i efibootmgr -Bb {}
 
-efibootmgr -v -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
+efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
 	"root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\\amd-ucode.img initrd=\initramfs-linux-zen.img'
 
-efibootmgr -v -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen \
+efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen \
 	"root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\\amd-ucode.img initrd=\initramfs-linux-zen-fallback.img'
 
-efibootmgr -v -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen \
+efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen \
 	"root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'initrd=\initramfs-linux-zen.img'
 
-efibootmgr -v -c -d "$disk" -p 1 -L "UEFI Shell" -l 'Shell_x64.efi' -u
+efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l 'Shell_x64.efi' -u
 swapoff -v $swapfile
 umount -Rv /mnt
 printf "PASSWORD: %s\n" "$(<PASSWORD)"
