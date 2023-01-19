@@ -43,11 +43,11 @@ cp -rvf etc/pacman.d/* /etc/pacman.d/
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 if /lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported";then
 	cp -fv etc/pacman_v3.conf /etc
-	pacman -Sy $(<keyrings_v3.txt)
+	pacman -Sy $(<keyrings_v3.txt) --noconfirm
 	pacstrap -K /mnt $(<requirements_v3.txt)
 else
 	cp -fv etc/pacman.conf /etc
-	pacman -Sy $(<keyrings.txt)
+	pacman -Sy $(<keyrings.txt) --noconfirm
 	pacstrap -K /mnt $(<requirements.txt)
 fi
 genfstab -U /mnt >> /mnt/etc/fstab
