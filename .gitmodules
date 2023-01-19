@@ -1,6 +1,0 @@
-[submodule "alhp-keyring"]
-	path = alhp-keyring
-	url = https://aur.archlinux.org/alhp-keyring.git
-[submodule "arch4edu-keyring"]
-	path = arch4edu-keyring
-	url = https://aur.archlinux.org/arch4edu-keyring.git
