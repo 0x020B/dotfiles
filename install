@@ -51,6 +51,7 @@ pacman-key --keyserver keyserver.ubuntu.com -r 7931B6D628C8D3BA FBA220DFC880C036
 pacman-key -l 7931B6D628C8D3BA FBA220DFC880C036
 pacman -Udd https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz
 pacman-key --populate
+pacman-key --update --keyserver keyserver.ubuntu.com
 
 if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported";then
 	cp -fv etc/pacman_v3.conf /etc
