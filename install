@@ -55,6 +55,8 @@ cd "$self"
 pacman -Sy
 pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz --noconfirm
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
+/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported" &&
+sed -i -E 's/#(Architecture).*/\1 = x86_64 x86_64_v3/' /etc/pacman.conf
 pacstrap -K /mnt $(<requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
