@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -v
 disk='/dev/sda'
 swapfile='/mnt/swap'
 self=$(dirname "$(readlink -f $0)")
@@ -49,6 +49,17 @@ do
 	su user -c 'makepkg -i'
 done
 cd "$self"
+curl -O 'https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz'
+curl -O 'https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz.sig'
+for keyserver in 'keyserver.ubuntu.com' 'hkps://keyserver.ubuntu.com:443' 'hkp://pgp.mit.edu:80'
+do
+	if gpg --keyserver $keyserver --recv-keys 4345771566D76038C7FEB43863EC0ADBEA87E4E3;then
+        	break
+	fi
+done
+gpg --keyserver-options no-auto-key-retrieve --with-fingerprint blackarch-keyring.pkg.tar.xz.sig &&
+pacman --config /dev/null --noconfirm -U blackarch-keyring.pkg.tar.xz
+pacman-key --populate
 pacman -Sy
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 pacstrap -K /mnt $(<requirements.txt)
