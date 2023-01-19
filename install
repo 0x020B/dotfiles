@@ -86,16 +86,16 @@ then
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
 		'root='"$disk"'2 rootflag=subvol=@ rw '\
 		'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
-		'initrd=\\amd-ucode.img initrd=\initramfs-linux-zen.img'
+		'initrd=/amd-ucode.img initrd=/initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen \
 		'root='"$disk"'2 rootflag=subvol=@ rw '\
 		'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
-		'initrd=\\amd-ucode.img initrd=\initramfs-linux-zen-fallback.img'
+		'initrd=/amd-ucode.img initrd=/initramfs-linux-zen-fallback.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen \
 		'root='"$disk"'2 rootflag=subvol=@ rw '\
-		'initrd=\initramfs-linux-zen.img'
+		'initrd=/initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l 'Shell_x64.efi' -u
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
