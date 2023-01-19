@@ -43,7 +43,7 @@ cp -rvf etc/pacman.d/* /etc/pacman.d/
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 pacman-key --keyserver keyserver.ubuntu.com -r 7931B6D628C8D3BA FBA220DFC880C036
 pacman-key -l 7931B6D628C8D3BA FBA220DFC880C036
-pacman -U 'https://mirrors.tuna.tsinghua.edu.cn/arch4edu/any/arch4edu-keyring-20200805-1-any.pkg.tar.zst' \\
+pacman -U 'https://mirrors.tuna.tsinghua.edu.cn/arch4edu/any/arch4edu-keyring-20200805-1-any.pkg.tar.zst' \
 	'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
 if /lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported";then
 	cp -fv etc/pacman_v3.conf /etc
