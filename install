@@ -90,17 +90,17 @@ done
 
 
 efibootmgr -v -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
-	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
+	"root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\\amd-ucode.img initrd=\initramfs-linux-zen.img'
 
 efibootmgr -v -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen \
-	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
+	"root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 	'initrd=\\amd-ucode.img initrd=\initramfs-linux-zen-fallback.img'
 
 efibootmgr -v -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen \
-	-u "root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
+	"root=$(findmnt -no UUID /mnt) rootflag=subvol=@ rw "\
 	'initrd=\initramfs-linux-zen.img'
 
 efibootmgr -v -c -d "$disk" -p 1 -L "UEFI Shell" -l 'Shell_x64.efi' -u
