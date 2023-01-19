@@ -46,7 +46,7 @@ sed -i -E 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow	
 echo 'user ALL = NOPASSWD: ALL' > /etc/sudoers.d/user
 for keyring in "alhp-keyring" "arch4edu-keyring"
 do
-	cp "$self/$keyring" ~user/$keyring
+	cp -rv "$self/$keyring" ~user/$keyring
 	chown -Rv user:user ~user/$keyring
 	cd ~user/$keyring	
 	su user -c 'makepkg -i'
