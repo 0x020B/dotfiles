@@ -17,7 +17,8 @@ sha512sum -c "$self"/sha512sum --status || {
 }
 cd "$self"
 sfdisk --delete "$disk"
-parted -sa opt "$disk" mklabel gpt mkpart ESP fat32 1M 513M mkpart primary btrfs 513M 100%
+parted -sa opt "$disk" mklabel gpt mkpart esp fat32 1M 513iM mkpart primary btrfs 513M 100%
+dd if=/dev/zero of="$disk"1
 mkfs.fat -vF 32 "$disk"1
 mkfs.btrfs -fn 32k "$disk"2
 mount -vo compress=lzo "$disk"2 /mnt
@@ -43,8 +44,6 @@ cp -rvf etc/pacman.d/* /etc/pacman.d/
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 pacman-key --keyserver keyserver.ubuntu.com -r 7931B6D628C8D3BA FBA220DFC880C036
 pacman-key -l 7931B6D628C8D3BA FBA220DFC880C036
-#pacman --noconfirm -U 'https://mirrors.tuna.tsinghua.edu.cn/arch4edu/any/arch4edu-keyring-20200805-1-any.pkg.tar.zst' \
-#			'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
 pacman-key --populate
 if /lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported";then
 	cp -fv etc/pacman_v3.conf /etc
