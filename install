@@ -51,7 +51,7 @@ do
 done
 cd "$self"
 pacman -Sy
-pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz
+pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz --noconfirm
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 pacstrap -K /mnt $(<requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
