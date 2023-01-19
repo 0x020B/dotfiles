@@ -50,8 +50,8 @@ do
 	su user -c 'makepkg -i'
 done
 cd "$self"
-pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz
 pacman -Sy
+pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 pacstrap -K /mnt $(<requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
