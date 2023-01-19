@@ -2,7 +2,7 @@
 disk='/dev/sda'
 swapfile='/mnt/swap'
 self=$(dirname "$(readlink -f $0)")
-alias pacman '/usr/bin/pacman --needed --noconfirm'
+alias pacman='/usr/bin/pacman --needed --noconfirm'
 
 sha512sum -c "$self"/sha512sum --status || {
 	git -v 1>/dev/null || pacman -Sy git
