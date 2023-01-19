@@ -15,6 +15,7 @@ sha512sum -c "$self"/sha512sum --status || {
 	git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
 	exit 1
 }
+cd "$self"
 sfdisk --delete "$disk"
 parted -sa opt "$disk" mklabel gpt mkpart ESP fat32 1M 513M mkpart primary btrfs 513M 100%
 mkfs.fat -vF 32 "$disk"1
@@ -39,12 +40,11 @@ chmod 0600 "$swapfile"
 mkswap "$swapfile"
 swapon "$swapfile"
 if /lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported";then
-	cp -fv "$self"/etc/pacman_v3.conf /etc
+	cp -fv etc/pacman_v3.conf /etc
 else
-	cp -fv "$self"/etc/pacman.conf /etc
+	cp -fv etc/pacman.conf /etc
 fi
-cp -rvf "$self"/etc/pacman.d/* /etc/pacman.d/
-cd "$self"
+cp -rvf etc/pacman.d/* /etc/pacman.d/
 pacman -Sy archlinuxcn-keyring blackarch-keyring arch4edu-keyring alhp-keyring chaotic-keyringi --noconfirm
 # pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz --noconfirm
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
