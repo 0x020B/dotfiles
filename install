@@ -36,8 +36,8 @@ then
 	cp -rvf etc/pacman.d/* /etc/pacman.d/
 	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 
-	pacman-key --keyserver keyserver.ubuntu.com -r 7931B6D628C8D3BA FBA220DFC880C036
-	pacman-key -l 7931B6D628C8D3BA FBA220DFC880C036
+	pacman-key --keyserver keyserver.ubuntu.com -r 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
+	pacman-key -l 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
 	pacman --config /dev/null -U 'https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz' \
 		'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
 		'https://mirrors.tuna.tsinghua.edu.cn/arch4edu/any/arch4edu-keyring-20200805-1-any.pkg.tar.zst'
