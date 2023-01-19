@@ -58,7 +58,9 @@ fi
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc --adjfile /mnt/etc/adjtime
-cp -rvf etc/* /mnt/etc/
+cp -v /mnt/etc/pacman.conf{,.bak}
+cp -vfr etc/* /mnt/etc/
+mv -vf /mnt/etc/pacman.conf{.bak,}
 #semanage fcontext -a -t swapfile_t "$swapfile"
 #restorecon "$swapfile"
 arch-chroot /mnt mkinitcpio -P
