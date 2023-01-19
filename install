@@ -11,19 +11,13 @@ then
 	parted -sa opt "$disk" mklabel gpt mkpart esp fat32 1M 513iM mkpart primary btrfs 513M 100%
 	mkfs.btrfs -fn 32k "$disk"2
 	mount -vo compress=lzo "$disk"2 /mnt
-	btrfs -v subvolume create /mnt/@
-	btrfs -v subvolume create /mnt/@etc
-	btrfs -v subvolume create /mnt/@home
-	btrfs -v subvolume create /mnt/@usr
-	btrfs -v subvolume create /mnt/@var
+	echo ,etc,home,usr,var | xargs -i -d, btrfs -v subvolume create /mnt/@{}
 	umount /mnt
 	mount -vo noatime,nodiratime,compress=lzo,subvol=@	"$disk"2 /mnt
 	mkdir -v /mnt/{boot,etc,home,usr,var}
 	mount -vo noatime,nodiratime				"$disk"1 /mnt/boot
-	mount -vo noatime,nodiratime,compress=lzo,subvol=@etc	"$disk"2 /mnt/etc
-	mount -vo noatime,nodiratime,compress=lzo,subvol=@home	"$disk"2 /mnt/home
-	mount -vo noatime,nodiratime,compress=lzo,subvol=@usr	"$disk"2 /mnt/usr
-	mount -vo noatime,nodiratime,compress=lzo,subvol=@var	"$disk"2 /mnt/var
+	echo ,etc,home,usr,var |
+		xargs -i -d, btrfs -v mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
 	chattr +C /mnt/var
 
 	truncate -s 0 "$swapfile"
