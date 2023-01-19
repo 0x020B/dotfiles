@@ -29,3 +29,9 @@ xf86-video-amdgpu
 xorg-xwayland
 yakuake
 zsh
+archlinuxcn-keyring
+blackarch-keyring
+arch4edu-keyring
+alhp-keyring
+chaotic-keyring
+

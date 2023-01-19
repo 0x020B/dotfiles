@@ -38,25 +38,16 @@ fallocate -l 8G "$swapfile"
 chmod 0600 "$swapfile"
 mkswap "$swapfile"
 swapon "$swapfile"
-cp -vf "$self"/etc/pacman.conf /etc
+if /lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported";then
+	cp -fv "$self"/etc/pacman_v3.conf /etc
+else
+	cp -fv "$self"/etc/pacman.conf /etc
+fi
 cp -rvf "$self"/etc/pacman.d/* /etc/pacman.d/
-git submodule update -f --recursive
-useradd -m user
-sed -i -E 's#(user:)[^:]*(.*)#\1$1$14514$GDb28bq4U4PXUWCCmrvzg/\2#' /etc/shadow	# PASSWORD: 1919810
-echo 'user ALL = NOPASSWD: ALL' > /etc/sudoers.d/user
-for keyring in "alhp-keyring" "arch4edu-keyring"
-do
-	cp -rv "$self/$keyring" ~user/$keyring
-	chown -Rv user:user ~user/$keyring
-	cd ~user/$keyring	
-	su user -c 'makepkg -i'
-done
 cd "$self"
-pacman -Sy
-pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz --noconfirm
+pacman -Sy archlinuxcn-keyring blackarch-keyring arch4edu-keyring alhp-keyring chaotic-keyringi --noconfirm
+# pacman -U https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz --noconfirm
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
-/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported" &&
-sed -i -E 's/#(Architecture).*/\1 = x86_64 x86_64_v3/' /etc/pacman.conf
 pacstrap -K /mnt $(<requirements.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
