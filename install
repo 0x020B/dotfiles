@@ -111,10 +111,11 @@ else
 
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen 'root='"$disk"'2 rootflag=subvol=@ rw initrd=/initramfs-linux-zen.img'
 
-	efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l 'Shell_x64.efi' -u
+	efibootmgr | grep 'Shell' | grep -v 'UEFI Shell' || efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l 'Shell_x64.efi' -u
+
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 	
-	[ -f "$swapfile" ] && swapoff -v "$swapfile"
-	umount -Rv /mnt
+	#[ -f "$swapfile" ] && swapoff -v "$swapfile"
+	#umount -Rv /mnt
 	printf "PASSWORD: %s\n" "$(<PASSWORD)"
 fi 
