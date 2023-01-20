@@ -31,7 +31,7 @@ else
 	chattr +C /mnt/var
 
 	mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}')/1048576))
-	if [[ $mem < 8 ]]; then
+	if [[ $mem < 16 ]]; then
 		swap=$(($mem*2))
 		[[ $swap > 8 ]] && swap=8
 		if [[ $swap < $((${$(df -BG --output=size "$disk"2 | awk 'NR==2 {print $0}')%*G*}/8)) ]]; then
