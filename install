@@ -34,7 +34,8 @@ else
 	if [[ $mem < 16 ]]; then
 		swap=$(($mem*2))
 		[[ $swap > 8 ]] && swap=8
-		if [[ $(($swap*8)) < ${$(df -BG --output=avail "$disk"2 | tail -n1)%G*} ]]; then
+		avail=$(df -BG --output=avail "$disk"2 | tail -n1)
+		if [[ $((swap*8)) < ${avail%G*} ]]; then
 			truncate -s 0 "$swapfile"
 			chattr +C "$swapfile"
 			fallocate -l "$swap"G "$swapfile"
