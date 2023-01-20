@@ -31,7 +31,7 @@ else
 	chattr +C /mnt/var
 
 	mem=$(($(grep 'MemTotal' /proc/meminfo | awk {'print $2'})/1048576))
-	if [[ $mem < 8 ]];then
+	if [[ $mem < 8 ]]; then
 		swap=$(($mem*2))
 		[[ swap > 8 ]] && swap=8
 		truncate -s 0 "$swapfile"
@@ -53,7 +53,7 @@ else
 	pacman-key --populate
 	pacman-key --update --keyserver keyserver.ubuntu.com
 
-	if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported";then
+	if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported"; then
 		cp -fv etc/pacman_v3.conf /etc
 		pacman -Sy $(<keyrings_v3.txt)
 		pacstrap -K /mnt $(<requirements_v3.txt)
@@ -94,23 +94,18 @@ else
 	#sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
 	#sbsign --key db.key --cert db.crt --output /boot/Shell_x64.efi{,}
 
-	efibootmgr |
-		grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' |
-		xargs -i efibootmgr -Bb {}
+	efibootmgr \
+		| grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' \
+		| xargs -i efibootmgr -Bb {}
 
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
-		'root='"$disk"'2 rootflag=subvol=@ rw '\
-		'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
-		'initrd=/amd-ucode.img initrd=/initramfs-linux-zen.img'
+		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor initrd=/amd-ucode.img initrd=/initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen \
-		'root='"$disk"'2 rootflag=subvol=@ rw '\
-		'lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
+		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor '\
 		'initrd=/amd-ucode.img initrd=/initramfs-linux-zen-fallback.img'
 
-	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen \
-		'root='"$disk"'2 rootflag=subvol=@ rw '\
-		'initrd=/initramfs-linux-zen.img'
+	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen 'root='"$disk"'2 rootflag=subvol=@ rw initrd=/initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -p 1 -L "UEFI Shell" -l 'Shell_x64.efi' -u
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
