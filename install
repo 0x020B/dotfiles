@@ -33,9 +33,7 @@ else
 	mem=$(($(grep 'MemTotal' /proc/meminfo | awk {'print $2'})/1048576))
 	if [[ $mem < 8 ]];then
 		swap=$(($mem*2))
-		if [[ $swap > 8 ]];then
-			swap=8
-		fi
+		[[ swap > 8 ]] && swap=8
 		truncate -s 0 "$swapfile"
 		chattr +C "$swapfile"
 		fallocate -l "$swap"G "$swapfile"
