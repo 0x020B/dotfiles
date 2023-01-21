@@ -56,7 +56,7 @@ else
 		fi
 	fi
 
-	# 修改pacstrap脚本, 支持复制第三方镜像列表和强行覆盖文件
+	# 修改pacstrap脚本, 支持复制第三方源镜像列表和强行覆盖文件
 	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 	sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
 
