@@ -85,8 +85,8 @@ else
 	arch-chroot /mnt mkinitcpio -P
 	arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
 	echo -n $RANDOM > PASSWORD
-	sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in PASSWORD)\2#" /mnt/etc/shadow
-
+	sed -i -E "s#(root:).*#\1$(openssl passwd -6 -in /dev/urandom | head -n1):0:0:99999:7:::#"	/mnt/etc/shadow
+	sed -i -E "s#(n0tr00t:)[^:]*(.*)#\1$(openssl passwd -6 -in PASSWORD)\2#"			/mnt/etc/shadow
 	#uuidgen --random > GUID.txt
 	#for key in "PK" "KEK" "db"
 	#do
