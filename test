@@ -49,6 +49,8 @@ else
 	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 
 	pacman-key --init
+	curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'	
+	pacman-key --populate
 	if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported"; then
 		cp -fv etc/pacman_v3.conf /etc
 		pacman-key --populate
