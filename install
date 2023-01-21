@@ -47,24 +47,16 @@ else
 
 	cp -rvf etc/pacman.d/* /etc/pacman.d/
 	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
-	curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'
-	pacman-key --init
-	pacman-key --keyserver keyserver.ubuntu.com -r 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
-	pacman-key -f 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
-	pacman-key -l 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
-	pacman --config /dev/null -U 'https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz' \
-		'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-		'https://mirrors.tuna.tsinghua.edu.cn/arch4edu/any/arch4edu-keyring-20200805-1-any.pkg.tar.zst'
-	pacman-key --populate
-	pacman-key --update --keyserver keyserver.ubuntu.com
 
 	if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported"; then
 		cp -fv etc/pacman_v3.conf /etc
 		pacman -Sy $(<keyrings_v3.txt)
+		sed -i -E 's/(^SigLevel = Optional TrustAll$)/#\1/g' /etc/pacman.conf		
 		pacstrap -G /mnt $(<requirements_v3.txt)
 	else
 		cp -fv etc/pacman.conf /etc
 		pacman -Sy $(<keyrings.txt)
+		sed -i -E 's/(^SigLevel = Optional TrustAll$)/#\1/g' /etc/pacman.conf		
 		pacstrap -G /mnt $(<requirements.txt)
 	fi
 
