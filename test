@@ -56,14 +56,14 @@ else
 	if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported"; then
 		cp -fv etc/pacman_v3.conf /etc
 		pacman-key --populate
-		pacman -Sy --overwrite 1 $(<keyrings_v3.txt)
+		pacman -Sy --overwrite "*" $(<keyrings_v3.txt)
 		pacman-key --populate
 		sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
 		pacstrap -G /mnt $(<requirements_v3.txt)
 	else
 		cp -fv etc/pacman.conf /etc
 		pacman-key --populate
-		pacman -Sy --overwrite 1 $(<keyrings.txt)
+		pacman -Sy --overwrite "*" $(<keyrings.txt)
 		pacman-key --populate
 		sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
 		pacstrap -G /mnt $(<requirements.txt)
