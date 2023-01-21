@@ -52,12 +52,14 @@ else
 	if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported"; then
 		cp -fv etc/pacman_v3.conf /etc
 		pacman -Sy $(<keyrings_v3.txt)
-		sed -i -E 's/(^SigLevel = Optional TrustAll$)/#\1/g' /etc/pacman.conf		
+		pacman-key --populate
+		sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
 		pacstrap -G /mnt $(<requirements_v3.txt)
 	else
 		cp -fv etc/pacman.conf /etc
 		pacman -Sy $(<keyrings.txt)
-		sed -i -E 's/(^SigLevel = Optional TrustAll$)/#\1/g' /etc/pacman.conf		
+		pacman-key --populate
+		sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
 		pacstrap -G /mnt $(<requirements.txt)
 	fi
 fi 
