@@ -24,6 +24,7 @@ mesa-vdpau
 neomutt
 neovim
 oh-my-zsh-git
+paru
 rsync
 sway
 vim
