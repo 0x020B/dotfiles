@@ -1,7 +1,7 @@
 #!/usr/bin/zsh
 # 安装系统所用的分区
 disk='/dev/sda'
-# 交换文件
+# 交换文件路径(SELINUX策略包refpolicy-arch和refpolicy-git的交换文件路径默认用/var/swap)
 swapfile='/mnt/var/swap'
 # 脚本本身所在路径
 self=$(dirname "$(readlink -f $0)")
@@ -68,7 +68,7 @@ else
 	[ -f /usr/share/pacman/keyrings/blackarch.gpg ] || curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'
 	pacman-key --populate
 
-	# 根据是否为v3架构进行安装
+	# 根据是否支持v3架构进行安装
 	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && v3='_v3'
 	cp -fv etc/pacman$v3.conf /etc
 	pacman-key --populate
