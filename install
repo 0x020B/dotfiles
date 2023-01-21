@@ -98,9 +98,7 @@ else
 	#sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
 	#sbsign --key db.key --cert db.crt --output /boot/Shell_x64.efi{,}
 
-	efibootmgr \
-		| grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' \
-		| xargs -i efibootmgr -Bb {}
+	efibootmgr | grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' | xargs -i efibootmgr -Bb {}
 
 	efibootmgr -c -d "$disk" -p 1 -L 'Boot with standard options' -l vmlinuz-linux-zen \
 		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,bpf initrd=/amd-ucode.img initrd=/initramfs-linux-zen.img'
