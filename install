@@ -103,10 +103,10 @@ else
 		| xargs -i efibootmgr -Bb {}
 
 	efibootmgr -c -d "$disk" -p 1 -L 'Boot with standard options' -l vmlinuz-linux-zen \
-		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor initrd=/amd-ucode.img initrd=/initramfs-linux-zen.img'
+		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,bpf initrd=/amd-ucode.img initrd=/initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -p 1 -L 'Boot with fallback options' -l vmlinuz-linux-zen \
-		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,apparmor,bpf selinux=1 security=apparmor initrd=/amd-ucode.img initrd=/initramfs-linux-zen-fallback.img'
+		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,bpf initrd=/amd-ucode.img initrd=/initramfs-linux-zen-fallback.img'
 
 	efibootmgr -c -d "$disk" -p 1 -L 'Boot with minimal options' -l vmlinuz-linux-zen 'root='"$disk"'2 rootflag=subvol=@ rw initrd=/initramfs-linux-zen.img'
 
