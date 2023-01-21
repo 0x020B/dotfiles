@@ -1,35 +1,47 @@
 #!/usr/bin/zsh
+# 安装系统所用的分区
 disk='/dev/sda'
-swapfile='/mnt/swap'
+# 交换文件
+swapfile='/mnt/var/swap'
+# 脚本本身所在路径
 self=$(dirname "$(readlink -f $0)")
+# 用于非交互
 alias pacman='/usr/bin/pacman --needed --noconfirm'
 
 if ! sha512sum -c "$self"/sha512sum --status;then
 	git -v 1>/dev/null || pacman -Sy git
+	# 写死IP地址，对抗DNS污染
 	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
 		echo '185.199.109.133 raw.githubusercontent.com' >> /etc/hosts
 	if [ ! -f id_ed25519 ];then
 		curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
 		chmod -v 0600 id_ed25519
 	fi
-	echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >  ~/.ssh/known_hosts
+	# 使用SSH协议更容易通过墙
 	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
+	# 写死GitHub的指纹，用于初次免验证，且更安全
+	echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >  ~/.ssh/known_hosts
 	cd dotfiles
 	sh install
 else
 	cd "$self"
 	sfdisk --delete "$disk"
-	parted -sa opt "$disk" mklabel gpt mkpart esp fat32 1M 513iM mkpart primary btrfs 513M 100%
+	parted -sa opt "$disk" mklabel gpt mkpart esp fat32 1M 513M mkpart primary btrfs 513M 100%
+
+	# Btrfs 配置
 	mkfs.btrfs -fn 32k "$disk"2
 	mount -vo compress=lzo "$disk"2 /mnt
 	echo -n ,etc,home,usr,var | xargs -i -d, btrfs -v subvolume create /mnt/@{}
 	umount /mnt
+
+	# 挂载分区及子卷
 	mount -vo noatime,nodiratime,compress=lzo,subvol=@	"$disk"2 /mnt
 	mkdir -v /mnt/{boot,etc,home,usr,var}
 	mount -vo noatime,nodiratime				"$disk"1 /mnt/boot
 	echo -n etc,home,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
 	chattr +C /mnt/var
 
+	# 自动计算交换文件所需要的大小
 	mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}')>>20))
 	if [[ $mem < 16 ]]; then
 		swap=$(($mem*2))
@@ -37,7 +49,6 @@ else
 		avail=$(df -BG --output=avail "$disk"2 | tail -n1)
 		if [[ $((swap*8)) < ${avail%G*} ]]; then
 			truncate -s 0 "$swapfile"
-			chattr +C "$swapfile"
 			fallocate -l "$swap"G "$swapfile"
 			chmod 0600 "$swapfile"
 			mkswap "$swapfile"
@@ -45,16 +56,19 @@ else
 		fi
 	fi
 
-	cp -rvf etc/pacman.d/* /etc/pacman.d/
+	# 修改pacstrap脚本, 支持复制第三方镜像列表和强行覆盖文件
 	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 	sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
 
+	# 密钥环初始化
 	pacman-key --init
+	cp -rvf etc/pacman.d/* /etc/pacman.d/
 	pacman-key --keyserver keyserver.ubuntu.com -r 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
 	pacman-key -l 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
 	[ -f /usr/share/pacman/keyrings/blackarch.gpg ] || curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'
 	pacman-key --populate
-	
+
+	# 根据是否为v3架构进行安装
 	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && v3='_v3'
 	cp -fv etc/pacman$v3.conf /etc
 	pacman-key --populate
@@ -63,22 +77,28 @@ else
 	sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
 	pacstrap -G /mnt $(<requirements$v3.txt)
 
+	# 分区表
 	genfstab -U /mnt >> /mnt/etc/fstab
+
+	# 时间
 	arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 	hwclock --systohc --adjfile /mnt/etc/adjtime
 
+	# 还原dotfiles
 	cp -v /mnt/etc/pacman.conf{,.bak}
 	cp -vfr etc/* /mnt/etc/
 	mv -vf /mnt/etc/pacman.conf{.bak,}
 	rm -vf /mnt/etc/pacman_v3.conf
 
-	#semanage fcontext -a -t swapfile_t "$swapfile"
-	#restorecon "$swapfile"
 
 	arch-chroot /mnt mkinitcpio -P
 	arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
+	
+	# 自动设置密码
 	echo -n $RANDOM > PASSWORD
 	printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(<PASSWORD)" | chpasswd -c YESCRYPT -R /mnt
+	
+	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
 	#for key in "PK" "KEK" "db"
 	#do
@@ -89,10 +109,10 @@ else
 	#sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt PK PK.esl PK.auth
 	#sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt KEK KEK.esl KEK.auth
 	#sign-efi-sig-list -g "$(< GUID.txt)" -k KEK.key -c KEK.crt db db.esl db.auth
-
 	#sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
 	#sbsign --key db.key --cert db.crt --output /boot/Shell_x64.efi{,}
 
+	# 配置引导
 	efibootmgr | grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' | xargs -i efibootmgr -Bb {}
 
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
