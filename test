@@ -1,0 +1,70 @@
+#!/usr/bin/zsh
+disk='/dev/sda'
+swapfile='/mnt/swap'
+self=$(dirname "$(readlink -f $0)")
+alias pacman='/usr/bin/pacman --needed --noconfirm'
+
+if ! sha512sum -c "$self"/sha512sum --status;then
+	git -v 1>/dev/null || pacman -Sy git
+	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
+		echo '185.199.109.133 raw.githubusercontent.com' >> /etc/hosts
+	if [ ! -f id_ed25519 ];then
+		curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
+		chmod -v 0600 id_ed25519
+	fi
+	echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >  ~/.ssh/known_hosts
+	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
+	cd dotfiles
+	sh install
+else
+	cd "$self"
+	sfdisk --delete "$disk"
+	parted -sa opt "$disk" mklabel gpt mkpart esp fat32 1M 513iM mkpart primary btrfs 513M 100%
+	mkfs.btrfs -fn 32k "$disk"2
+	mount -vo compress=lzo "$disk"2 /mnt
+	echo -n ,etc,home,usr,var | xargs -i -d, btrfs -v subvolume create /mnt/@{}
+	umount /mnt
+	mount -vo noatime,nodiratime,compress=lzo,subvol=@	"$disk"2 /mnt
+	mkdir -v /mnt/{boot,etc,home,usr,var}
+	mount -vo noatime,nodiratime				"$disk"1 /mnt/boot
+	echo -n etc,home,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
+	chattr +C /mnt/var
+
+	mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}')>>20))
+	if [[ $mem < 16 ]]; then
+		swap=$(($mem*2))
+		[[ $swap > 8 ]] && swap=8
+		avail=$(df -BG --output=avail "$disk"2 | tail -n1)
+		if [[ $((swap*8)) < ${avail%G*} ]]; then
+			truncate -s 0 "$swapfile"
+			chattr +C "$swapfile"
+			fallocate -l "$swap"G "$swapfile"
+			chmod 0600 "$swapfile"
+			mkswap "$swapfile"
+			swapon "$swapfile"
+		fi
+	fi
+
+	cp -rvf etc/pacman.d/* /etc/pacman.d/
+	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
+	curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'
+	pacman-key --init
+	pacman-key --keyserver keyserver.ubuntu.com -r 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
+	pacman-key -l 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
+	pacman --config /dev/null -U 'https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz' \
+		'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+		'https://mirrors.tuna.tsinghua.edu.cn/arch4edu/any/arch4edu-keyring-20200805-1-any.pkg.tar.zst'
+	pacman-key --populate
+	pacman-key --update --keyserver keyserver.ubuntu.com
+
+	if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported"; then
+		cp -fv etc/pacman_v3.conf /etc
+		pacman -Sy $(<keyrings_v3.txt)
+		pacstrap -G /mnt $(<requirements_v3.txt)
+	else
+		cp -fv etc/pacman.conf /etc
+		pacman -Sy $(<keyrings.txt)
+		pacstrap -G /mnt $(<requirements.txt)
+	fi
+
+fi 
