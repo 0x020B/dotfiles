@@ -54,21 +54,14 @@ else
 	pacman-key -l 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
 	curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'
 	pacman-key --populate
-	if /usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported"; then
-		cp -fv etc/pacman_v3.conf /etc
-		pacman-key --populate
-		pacman -Sy --overwrite "*" $(<keyrings_v3.txt)
-		pacman-key --populate
-		sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
-		pacstrap -G /mnt $(<requirements_v3.txt)
-	else
-		cp -fv etc/pacman.conf /etc
-		pacman-key --populate
-		pacman -Sy --overwrite "*" $(<keyrings.txt)
-		pacman-key --populate
-		sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
-		pacstrap -G /mnt $(<requirements.txt)
-	fi
+	
+	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && v3='_v3'
+	cp -fv etc/pacman$v3.conf /etc
+	pacman-key --populate
+	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
+	pacman-key --populate
+	sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
+	pacstrap -G /mnt $(<requirements$v3.txt)
 
 	genfstab -U /mnt >> /mnt/etc/fstab
 	arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
