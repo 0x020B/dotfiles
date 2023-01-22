@@ -8,23 +8,25 @@ self=$(dirname "$(readlink -f $0)")
 # 用于非交互
 alias pacman='/usr/bin/pacman --needed --noconfirm'
 
-if ! sha512sum -c "$self"/sha512sum --status;then
+if ! sha512sum -c "$self"/sha512sum --status; then
 	git -v 1>/dev/null || pacman -Sy git
 	# 写死IP地址，对抗DNS污染
 	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
-		echo '185.199.109.133 raw.githubusercontent.com' >> /etc/hosts
-	if [ ! -f id_ed25519 ];then
+		echo '185.199.109.133 raw.githubusercontent.com' >>/etc/hosts
+	if [ ! -f id_ed25519 ]; then
 		curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
 		chmod -v 0600 id_ed25519
 	fi
 	# 使用SSH协议更容易通过墙
 	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
 	# 写死GitHub的指纹，用于初次免验证，且更安全
-	echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >  ~/.ssh/known_hosts
+	echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >~/.ssh/known_hosts
 	cd dotfiles
 	sh install
 else
 	cd "$self"
+
+	# 分区
 	sfdisk --delete "$disk"
 	parted -sa opt "$disk" mklabel gpt mkpart esp fat32 1M 513M mkpart primary btrfs 513M 100%
 
@@ -35,19 +37,19 @@ else
 	umount /mnt
 
 	# 挂载分区及子卷
-	mount -vo noatime,nodiratime,compress=lzo,subvol=@	"$disk"2 /mnt
+	mount -vo noatime,nodiratime,compress=lzo,subvol=@ "$disk"2 /mnt
 	mkdir -v /mnt/{boot,etc,home,usr,var}
-	mount -vo noatime,nodiratime				"$disk"1 /mnt/boot
+	mount -vo noatime,nodiratime "$disk"1 /mnt/boot
 	echo -n etc,home,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
 	chattr +C /mnt/var
 
 	# 自动计算交换文件所需要的大小
-	mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}')>>20))
+	mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}') >> 20))
 	if [[ $mem < 16 ]]; then
-		swap=$(($mem*2))
+		swap=$(($mem * 2))
 		[[ $swap > 8 ]] && swap=8
 		avail=$(df -BG --output=avail "$disk"2 | tail -n1)
-		if [[ $((swap*8)) < ${avail%G*} ]]; then
+		if [[ $((swap * 8)) < ${avail%G*} ]]; then
 			truncate -s 0 "$swapfile"
 			fallocate -l "$swap"G "$swapfile"
 			chmod 0600 "$swapfile"
@@ -74,11 +76,11 @@ else
 	pacman-key --populate
 	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
 	pacman-key --populate
-	sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf		
+	sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf
 	pacstrap -G /mnt $(<packages$v3.txt)
 
 	# 分区表
-	genfstab -U /mnt >> /mnt/etc/fstab
+	genfstab -U /mnt >>/mnt/etc/fstab
 
 	# 时间
 	arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -90,14 +92,13 @@ else
 	mv -vf /mnt/etc/pacman.conf{.bak,}
 	rm -vf /mnt/etc/pacman_v3.conf
 
-
 	arch-chroot /mnt mkinitcpio -P
 	arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
-	
+
 	# 自动设置密码
-	echo -n $RANDOM > PASSWORD
+	echo -n $RANDOM >PASSWORD
 	printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(<PASSWORD)" | chpasswd -c YESCRYPT -R /mnt
-	
+
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
 	#for key in "PK" "KEK" "db"
@@ -126,8 +127,8 @@ else
 	efibootmgr | grep -i 'Shell' | grep -v 'UEFI Shell' || efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
-	
+
 	#[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	#umount -Rv /mnt
 	printf "PASSWORD: %s\n" "$(<PASSWORD)"
-fi 
+fi
