@@ -67,6 +67,10 @@ else
 	cp -rvf etc/pacman.d/* /etc/pacman.d/
 	pacman-key --keyserver keyserver.ubuntu.com -r 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
 	pacman-key -l 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
+	#if [ ! -d selinux-master/_pgp_cache ]; then
+	#	curl -Lo - https://github.com/archlinuxhardened/selinux/archive/refs/heads/master.zip | bsdtar -xv selinux-master/_pgp_cache
+	#	cat selinux-master/_pgp_cache/* >/usr/share/pacman/keyrings/selinux.gpg
+	#fi
 	[ -f /usr/share/pacman/keyrings/blackarch.gpg ] || curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'
 	pacman-key --populate
 
