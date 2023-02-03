@@ -81,7 +81,7 @@ else
 	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
 	pacman-key --populate
 	sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf
-	pacstrap -G /mnt $(<packages$v3.txt)
+	pacstrap -G /mnt $(<packages$v3.txt) $(<packages.txt)
 
 	# 分区表
 	genfstab -U /mnt >>/mnt/etc/fstab
@@ -128,15 +128,15 @@ else
 	# 配置引导
 	efibootmgr | grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' | xargs -i efibootmgr -Bb {}
 
-	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
-		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
+	efibootmgr | grep -i 'Shell' | grep -v 'UEFI Shell' || efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
+	
+	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen 'root='"$disk"'2 rootflag=subvol=@ rw initrd=initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen \
 		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
-
-	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen 'root='"$disk"'2 rootflag=subvol=@ rw initrd=initramfs-linux-zen.img'
-
-	efibootmgr | grep -i 'Shell' | grep -v 'UEFI Shell' || efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
+	
+	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
+		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 

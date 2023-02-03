@@ -23,6 +23,7 @@ mesa-vdpau
 neomutt
 neovim
 oh-my-zsh-git
+openssh
 paru
 rsync
 sway
