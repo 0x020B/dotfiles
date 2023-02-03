@@ -1,0 +1,5 @@
+#!/bin/sh
+mount -vo noatime,nodiratime,compress=lzo,subvol=@ "$1"2 /mnt
+mount -vo noatime,nodiratime "$1"1 /mnt/boot
+echo -n etc,home,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$1"2 /mnt/{}
+arch-chroot /mnt
