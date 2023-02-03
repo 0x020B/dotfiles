@@ -104,12 +104,6 @@ else
 
 	# 自动设置密码
 	echo -n $RANDOM >PASSWORD
-	expect <<-EOF
-	arch-chroot /mnt passwd -c YESCRYPT
-	expect {
-		"password*" {$(head -zn 1 /dev/urandom | sha512sum)}
-	}
-	EOF
 	arch-chroot /mnt sh -c 'printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(<PASSWORD)" | passwd -c YESCRYPT'
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
