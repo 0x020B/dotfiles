@@ -33,14 +33,14 @@ else
 	# Btrfs 配置
 	mkfs.btrfs -fn 32k "$disk"2
 	mount -vo compress=lzo "$disk"2 /mnt
-	echo -n ,etc,home,usr,var | xargs -i -d, btrfs -v subvolume create /mnt/@{}
+	echo -n ,home,usr,var | xargs -i -d, btrfs -v subvolume create /mnt/@{}
 	umount /mnt
 
 	# 挂载分区及子卷
 	mount -vo noatime,nodiratime,compress=lzo,subvol=@ "$disk"2 /mnt
 	mkdir -v /mnt/{boot,etc,home,usr,var}
 	mount -vo noatime,nodiratime "$disk"1 /mnt/boot
-	echo -n etc,home,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
+	echo -n ,home,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
 	chattr +C /mnt/var
 
 	# 自动计算交换文件所需要的大小
