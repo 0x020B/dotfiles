@@ -99,7 +99,7 @@ else
 	# 自动设置密码
 	echo -n $RANDOM > /mnt/PASSWORD
 	arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
-	arch-chroot /mnt sh -c 'printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" | passwd'
+	arch-chroot /mnt sh -c 'printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" | chpasswd -c YESCRYPT'
 	arch-chroot /mnt mkinitcpio -P
 
 	# 将 neovim 设为默认vi

@@ -1,4 +1,5 @@
 alacritty
+all-repository-fonts
 amd-ucode
 arch4edu-keyring
 archlinuxcn-keyring
@@ -30,10 +31,6 @@ mesa-vdpau
 mkinitcpio
 neomutt
 neovim
-noto-fonts
-noto-fonts-cjk
-noto-fonts-emoji
-noto-fonts-extra
 oh-my-zsh-git
 paru
 rime-pinyin-zhwiki
