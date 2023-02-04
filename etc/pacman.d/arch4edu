@@ -1,5 +1,5 @@
+Server = https://mirrors.nju.edu.cn/arch4edu/$arch
 Server = https://mirrors.bfsu.edu.cn/arch4edu/$arch
 Server = https://mirrors.tuna.tsinghua.edu.cn/arch4edu/$arch
 Server = https://mirror.iscas.ac.cn/arch4edu/$arch
-Server = https://mirrors.nju.edu.cn/arch4edu/$arch
-Server = https://mirrors.sau.edu.cn/arch4edu/$arch
+Server = https://mirrors.aliyun.com/arch4edu/$arch
