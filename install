@@ -97,12 +97,12 @@ else
 	rm -vf /mnt/etc/pacman_v3.conf
 
 	# 自动设置密码
-	echo -n $RANDOM >PASSWORD
+	echo -n $RANDOM > /mnt/root/PASSWORD
 	arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
-	arch-chroot /mnt sh -c 'printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(<PASSWORD)" | passwd -c YESCRYPT'
+	arch-chroot /mnt sh -c 'printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</root/PASSWORD)" | passwd -c YESCRYPT'
 	arch-chroot /mnt mkinitcpio -P
 
-	# 将neovim 设为默认vi
+	# 将 neovim 设为默认vi
 	arch-chroot /mnt ln -sv /usr/bin/{nvim,vi}
 
 	# TODO: UEFI安全启动
@@ -134,7 +134,8 @@ else
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
+	printf "PASSWORD: %s\n" "$(</mnt/root/PASSWORD)"
+	
 	#[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	#umount -Rv /mnt
-	printf "PASSWORD: %s\n" "$(<PASSWORD)"
 fi
