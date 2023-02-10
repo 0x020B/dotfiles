@@ -1,5 +1,4 @@
 alacritty
-all-repository-fonts
 amd-ucode
 arch4edu-keyring
 archlinuxcn-keyring
