@@ -1,5 +1,5 @@
-Server = https://download.fastgit.org/n0tr00teuorg/selinux/releases/download/ArchLinux-SELinux
-Server = https://gh.api.99988866.xyz/https://github.com/n0tr00teuorg/selinux/releases/download/ArchLinux-SELinux
-Server = https://ghproxy.com/https://github.com/n0tr00teuorg/selinux/releases/download/ArchLinux-SELinux
 Server = https://github.com/n0tr00teuorg/selinux/releases/download/ArchLinux-SELinux
+Server = https://gh.api.99988866.xyz/https://github.com/n0tr00teuorg/selinux/releases/download/ArchLinux-SELinux
+Server = https://download.fastgit.org/n0tr00teuorg/selinux/releases/download/ArchLinux-SELinux
+Server = https://ghproxy.com/https://github.com/n0tr00teuorg/selinux/releases/download/ArchLinux-SELinux
 Server = https://hub.fastgit.xyz/n0tr00teuorg/selinux/releases/download/ArchLinux-SELinux
