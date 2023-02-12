@@ -5,11 +5,9 @@ disk='/dev/sda'
 swapfile='/mnt/var/swap'
 # 脚本本身所在路径
 self=$(dirname "$(readlink -f $0)")
-# 用于非交互
-alias pacman='/usr/bin/pacman --needed --noconfirm'
 
 if ! sha512sum -c "$self"/sha512sum --status; then
-	git -v 1>/dev/null || pacman -Sy git
+	git -v 1>/dev/null || pacman --needed --noconfirm -Sy git
 	# 写死IP地址，对抗DNS污染
 	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
 		echo '185.199.109.133 raw.githubusercontent.com' >>/etc/hosts
@@ -75,7 +73,7 @@ else
 	pacman-key --populate
 	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
-	pacstrap -G /mnt $(<packages$v3.txt) $(<packages.txt)
+	pacstrap -iP /mnt $(<packages$v3.txt) $(<packages.txt)
 
 	# 分区表
 	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
