@@ -72,14 +72,12 @@ else
 	#	cat selinux-master/_pgp_cache/* >/usr/share/pacman/keyrings/selinux.gpg
 	#fi
 	[ -f /usr/share/pacman/keyrings/blackarch.gpg ] || curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'
-	pacman-key --populate
 
 	# 根据是否支持v3架构进行安装
 	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && v3='_v3'
 	cp -fv etc/pacman$v3.conf /etc
 	pacman-key --populate
 	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
-	pacman-key --populate
 	sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf
 	pacstrap -G /mnt $(<packages$v3.txt) $(<packages.txt)
 
