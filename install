@@ -65,7 +65,7 @@ else
 	# 密钥环初始化
 	pacman-key --init
 	cp -rvf etc/pacman.d/* /etc/pacman.d/
-	keys=(250A4BA6630FD7F1 63EC0ADBEA87E4E3 7533BAFE69A25079 FBA220DFC880C036)
+	keys=(250A4BA6630FD7F1 63EC0ADBEA87E4E3 7533BAFE69A25079 7931B6D628C8D3BA FBA220DFC880C036)
 	pacman-key --keyserver keyserver.ubuntu.com -r $keys
 	pacman-key --lsign-key $keys
 
