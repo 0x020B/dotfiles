@@ -65,15 +65,16 @@ else
 	# 密钥环初始化
 	pacman-key --init
 	cp -rvf etc/pacman.d/* /etc/pacman.d/
-	pacman-key --keyserver keyserver.ubuntu.com -r 250A4BA6630FD7F1 63EC0ADBEA87E4E3 7533BAFE69A25079 7931B6D628C8D3BA FBA220DFC880C036
-	pacman-key --lsign-key 250A4BA6630FD7F1 63EC0ADBEA87E4E3 7533BAFE69A25079 7931B6D628C8D3BA FBA220DFC880C036
+	keys=(250A4BA6630FD7F1 63EC0ADBEA87E4E3 7533BAFE69A25079 FBA220DFC880C036)
+	pacman-key --keyserver keyserver.ubuntu.com -r $keys
+	pacman-key --lsign-key $keys
 
 	# 根据是否支持v3架构进行安装
 	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && v3='_v3'
 	cp -fv etc/pacman$v3.conf /etc
 	pacman-key --populate
 	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
-	sed -i -E 's/(^SigLevel = TrustAll$)/#\1/g' /etc/pacman.conf
+	sed -i -E '/(^SigLevel = TrustAll$)/d' /etc/pacman.conf
 	pacstrap -G /mnt $(<packages$v3.txt) $(<packages.txt)
 
 	# 分区表
