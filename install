@@ -98,8 +98,7 @@ else
 	# 自动设置密码
 	echo -n $RANDOM > /mnt/PASSWORD
 	arch-chroot /mnt sh -c 'useradd -m -G wheel -s /usr/bin/zsh n0tr00t && \
-				printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" \
-				       "$(</PASSWORD)" \
+				printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" \
 				       | chpasswd -c YESCRYPT && \
 				mkinitcpio -P && \
 				ln -sv /usr/bin/{nvim,vi}'
