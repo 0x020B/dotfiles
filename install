@@ -26,9 +26,10 @@ else
 
 	# 分区
 	sfdisk --delete "$disk"
-	parted -sa opt "$disk" mklabel gpt \
-		               mkpart  esp     fat32   1M 513M \
-			       mkpart  primary btrfs 513M 100%
+	parted -sa opt "$disk" \
+		mklabel gpt \
+		mkpart  esp     fat32   1M 513M \
+		mkpart  primary btrfs 513M 100%
 
 	# Btrfs 配置
 	mkfs.btrfs -fn 32k "$disk"2
@@ -66,10 +67,10 @@ else
 	# 密钥环初始化
 	pacman-key --init
 	cp -rvf etc/pacman.d/* /etc/pacman.d/
-	keys=(0706B90D37D9B881   # chaotic-aur
-	      250A4BA6630FD7F1   # selinux
-	      7533BAFE69A25079   # blackarch
-	      7931B6D628C8D3BA)  # arch4edu
+	keys=(	0706B90D37D9B881   # chaotic-aur
+		250A4BA6630FD7F1   # selinux
+		7533BAFE69A25079   # blackarch
+		7931B6D628C8D3BA)  # arch4edu
 	pacman-key --keyserver keyserver.ubuntu.com -r $keys
 	pacman-key --lsign-key $keys
 
@@ -79,14 +80,15 @@ else
 	pacman-key --populate
 	pacman -Sy --needed --noconfirm --overwrite "*" $(<keyrings$v3.txt)
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
-	pacstrap -P /mnt $(<packages$v3.txt) $(<packages.txt)
+	if pacstrap -P /mnt $(<packages$v3.txt) $(<packages.txt);then
+		exit 1
+	fi
 
-	# 分区表
+	# 创建分区表
 	genfstab -L /mnt \
 		| sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
 
-	# 时间
-	arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+	# 硬件时间
 	hwclock --systohc --adjfile /mnt/etc/adjtime
 
 	# 还原dotfiles
@@ -97,11 +99,12 @@ else
 
 	# 自动设置密码
 	echo -n $RANDOM > /mnt/PASSWORD
-	arch-chroot /mnt sh -c 'useradd -m -G wheel -s /usr/bin/zsh n0tr00t && \
-				printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" \
-				       | chpasswd -c YESCRYPT && \
-				mkinitcpio -P && \
-				ln -sv /usr/bin/{nvim,vi}'
+	arch-chroot /mnt sh -c '\
+		useradd -m -G wheel -s /usr/bin/zsh n0tr00t && \
+		printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" \
+			| chpasswd -c YESCRYPT && \
+		mkinitcpio -P && \
+		ln -sv /usr/bin/{nvim,vi}'
 
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
@@ -125,8 +128,8 @@ else
 	efibootmgr \
 		| grep -i 'Shell' \
 		| grep -v 'UEFI Shell' \
-	        || efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
-	
+		|| efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
+
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
 		'root='"$disk"'2 rootflags=subvol=@ rw'\
 		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
@@ -137,7 +140,7 @@ else
 		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
-	
+
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
 		'root='"$disk"'2 rootflags=subvol=@ rw'\
 		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
@@ -146,8 +149,8 @@ else
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
-	printf "PASSWORD: %s\n" "$(</mnt/PASSWORD)"
-	
-	#[ -f "$swapfile" ] && swapoff -v "$swapfile"
-	#umount -Rv /mnt
+	printf "USER: n0tr00t\nPASSWORD: %s\n" "$(</mnt/PASSWORD)" | tee /mnt/etc/issue
+	rm /mnt/PASSWORD
+	[ -f "$swapfile" ] && swapoff -v "$swapfile"
+	umount -Rv /mnt
 fi
