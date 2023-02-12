@@ -33,14 +33,14 @@ else
 	# Btrfs 配置
 	mkfs.btrfs -fn 32k "$disk"2
 	mount -vo compress=lzo "$disk"2 /mnt
-	echo -n ,home,usr,var | xargs -i -d, btrfs -v subvolume create /mnt/@{}
+	echo -n ,home,opt,usr,var | xargs -i -d, btrfs -v subvolume create /mnt/@{}
 	umount /mnt
 
 	# 挂载分区及子卷
 	mount -vo noatime,nodiratime,compress=lzo,subvol=@ "$disk"2 /mnt
-	mkdir -v /mnt/{boot,home,usr,var}
+	mkdir -v /mnt/{boot,home,opt,usr,var}
 	mount -vo noatime,nodiratime "$disk"1 /mnt/boot
-	echo -n home,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
+	echo -n home,opt,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
 	chattr +C /mnt/var
 
 	# 自动计算交换文件所需要的大小
@@ -124,13 +124,14 @@ else
 
 	efibootmgr | grep -i 'Shell' | grep -v 'UEFI Shell' || efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
 	
-	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen 'root='"$disk"'2 rootflag=subvol=@ rw initrd=initramfs-linux-zen.img'
+	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
+		'root='"$disk"'2 rootflag=subvol=@ rw usr='"$disk"'2 usrflag=subvol=@usr rw initrd=initramfs-linux-zen.img'
 
-	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen \
-		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,integrity,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
+	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
+		'root='"$disk"'2 rootflag=subvol=@ rw usr='"$disk"'2 usrflag=subvol=@usr rw lsm=landlock,lockdown,yama,integrity,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 	
-	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen \
-		'root='"$disk"'2 rootflag=subvol=@ rw lsm=landlock,lockdown,yama,integrity,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
+	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
+		'root='"$disk"'2 rootflag=subvol=@ rw usr='"$disk"'2 usrflag=subvol=@usr rw lsm=landlock,lockdown,yama,integrity,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
