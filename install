@@ -74,7 +74,7 @@ else
 	cp -fv etc/pacman$v3.conf /etc
 	pacman-key --populate
 	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
-	sed -i -E '/(^SigLevel = TrustAll$)/d' /etc/pacman.conf
+	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacstrap -G /mnt $(<packages$v3.txt) $(<packages.txt)
 
 	# 分区表
