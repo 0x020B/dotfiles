@@ -73,7 +73,7 @@ else
 	pacman-key --populate
 	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
-	pacstrap -iP /mnt $(<packages$v3.txt) $(<packages.txt)
+	pacstrap -P /mnt $(<packages$v3.txt) $(<packages.txt)
 
 	# 分区表
 	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
