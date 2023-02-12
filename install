@@ -78,7 +78,7 @@ else
 	pacstrap -G /mnt $(<packages$v3.txt) $(<packages.txt)
 
 	# 分区表
-	genfstab -U /mnt >>/mnt/etc/fstab
+	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
 
 	# 时间
 	arch-chroot /mnt ln -svf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
