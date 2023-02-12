@@ -7,7 +7,7 @@ swapfile='/mnt/var/swap'
 self=$(dirname "$(readlink -f $0)")
 
 if ! sha512sum -c "$self"/sha512sum --status; then
-	git -v 1>/dev/null || pacman --needed --noconfirm -Sy git
+	git -v 1>/dev/null || pacman -Sy -needed --noconfirm git
 	# 写死IP地址，对抗DNS污染
 	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
 		echo '185.199.109.133 raw.githubusercontent.com' >>/etc/hosts
@@ -71,7 +71,7 @@ else
 	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && v3='_v3'
 	cp -fv etc/pacman$v3.conf /etc
 	pacman-key --populate
-	pacman -Sy --overwrite "*" $(<keyrings$v3.txt)
+	pacman -Sy --needed --noconfirm --overwrite "*" $(<keyrings$v3.txt)
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacstrap -P /mnt $(<packages$v3.txt) $(<packages.txt)
 
