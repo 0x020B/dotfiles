@@ -46,12 +46,12 @@ else
 	# 自动计算交换文件所需要的大小
 	mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}') >> 20))
 	if [[ $mem < 16 ]]; then
-		swap=$(($mem * 2))
-		[[ $swap > 8 ]] && swap=8
+		size=$(($mem * 2))
+		[[ $size > 8 ]] && swap=8
 		avail=$(df -BG --output=avail "$disk"2 | tail -n1)
-		if [[ $((swap * 8)) < ${avail%G*} ]]; then
+		if [[ $((size * 8)) < ${avail%G*} ]]; then
 			truncate -s 0 "$swapfile"
-			fallocate -l "$swap"G "$swapfile"
+			fallocate -l "$size"G "$swapfile"
 			chmod 0600 "$swapfile"
 			mkswap "$swapfile"
 			swapon "$swapfile"
@@ -65,13 +65,8 @@ else
 	# 密钥环初始化
 	pacman-key --init
 	cp -rvf etc/pacman.d/* /etc/pacman.d/
-	pacman-key --keyserver keyserver.ubuntu.com -r 250A4BA6630FD7F1 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
-	pacman-key --lsign-key 250A4BA6630FD7F1 63EC0ADBEA87E4E3 7931B6D628C8D3BA FBA220DFC880C036
-	#if [ ! -d selinux-master/_pgp_cache ]; then
-	#	curl -Lo - https://github.com/archlinuxhardened/selinux/archive/refs/heads/master.zip | bsdtar -xv selinux-master/_pgp_cache
-	#	cat selinux-master/_pgp_cache/* >/usr/share/pacman/keyrings/selinux.gpg
-	#fi
-	[ -f /usr/share/pacman/keyrings/blackarch.gpg ] || curl -o - https://www.blackarch.org/keyring/blackarch-keyring.pkg.tar.xz | tar JxvC / --exclude='\.*'
+	pacman-key --keyserver keyserver.ubuntu.com -r 250A4BA6630FD7F1 63EC0ADBEA87E4E3 7533BAFE69A25079 7931B6D628C8D3BA FBA220DFC880C036
+	pacman-key --lsign-key 250A4BA6630FD7F1 63EC0ADBEA87E4E3 7533BAFE69A25079 7931B6D628C8D3BA FBA220DFC880C036
 
 	# 根据是否支持v3架构进行安装
 	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && v3='_v3'
