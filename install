@@ -63,7 +63,10 @@ else
 	# 密钥环初始化
 	pacman-key --init
 	cp -rvf etc/pacman.d/* /etc/pacman.d/
-	keys=(250A4BA6630FD7F1 63EC0ADBEA87E4E3 7533BAFE69A25079 7931B6D628C8D3BA FBA220DFC880C036)
+	keys=(0706B90D37D9B881  # chaotic-aur
+	      250A4BA6630FD7F1  # selinux
+	      7533BAFE69A25079  # blackarch
+	      7931B6D628C8D3BA) # arch4edu
 	pacman-key --keyserver keyserver.ubuntu.com -r $keys
 	pacman-key --lsign-key $keys
 
@@ -90,12 +93,10 @@ else
 
 	# 自动设置密码
 	echo -n $RANDOM > /mnt/PASSWORD
-	arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
-	arch-chroot /mnt sh -c 'printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" | chpasswd -c YESCRYPT'
-	arch-chroot /mnt mkinitcpio -P
-
-	# 将 neovim 设为默认vi
-	arch-chroot /mnt ln -sv /usr/bin/{nvim,vi}
+	arch-chroot /mnt sh -c 'useradd -m -G wheel -s /usr/bin/zsh n0tr00t && \
+				printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" | chpasswd -c YESCRYPT && \
+				mkinitcpio -P && \
+				ln -sv /usr/bin/{nvim,vi}'
 
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
@@ -112,18 +113,31 @@ else
 	#sbsign --key db.key --cert db.crt --output /boot/Shell_x64.efi{,}
 
 	# 配置引导
-	efibootmgr | grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' | xargs -i efibootmgr -Bb {}
+	efibootmgr \
+		| grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' \
+		| xargs -i efibootmgr -Bb {}
 
-	efibootmgr | grep -i 'Shell' | grep -v 'UEFI Shell' || efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
+	efibootmgr \
+		| grep -i 'Shell' \
+		| grep -v 'UEFI Shell' \
+	        || efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
 	
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw usr='"$disk"'2 usrflags=subvol=@usr rw initrd=initramfs-linux-zen.img'
+		'root='"$disk"'2 rootflags=subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'initrd=initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw usr='"$disk"'2 usrflags=subvol=@usr rw lsm=landlock,lockdown,yama,integrity,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
+		'root='"$disk"'2 rootflags=subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
+		'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 	
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw usr='"$disk"'2 usrflags=subvol=@usr rw lsm=landlock,lockdown,yama,integrity,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
+		'root='"$disk"'2 rootflags=subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
+		'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
