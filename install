@@ -69,24 +69,31 @@ else
 		      250A4BA6630FD7F1  # selinux
 		      7533BAFE69A25079  # blackarch
 		      7931B6D628C8D3BA) # arch4edu
+	mirrorlists = (	archlinuxcn-mirrorlist-git
+			blackarch-mirrorlist
+			mirrorlist.arch4edu
+			chaotic-mirrorlist)
+	v2=_v2
 	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && {
 		keys+=0706B90D37D9B881  # alhp
-		v3='_v3'
+		mirrorlists+=alhp-mirrorlist
+		unset v2
 	        
 	}
 	pacman-key --keyserver keyserver.ubuntu.com -r $keys && \
 		pacman-key --lsign-key $keys && \
 		pacman-key --populate
 	
-	# 根据是否支持v3架构进行安装
-	cp -fv etc/pacman$v3.conf /etc
-	pacman -Sy --needed --noconfirm --overwrite "*" $(<keyrings$v3.txt)
+	# 根据是否支持架构进行安装
+	cp -fv etc/pacman.d/hooks /etc/pacman.d
+	cp -fv etc/pacman$v2.conf /etc
+	cat packages$v2* | pacman -Sy --needed --noconfirm --overwrite "*" -
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
-	pacstrap -P /mnt $(<packages$v3.txt) $(<packages.txt) || exit 1
+	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
+	cat packages$2* | pacstrap -P /mnt - || exit 1
 
 	# 创建分区表
-	genfstab -L /mnt \
-		| sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
+	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
 
 	# 硬件时间
 	hwclock --systohc --adjfile /mnt/etc/adjtime
@@ -95,7 +102,7 @@ else
 	cp -v /mnt/etc/pacman.conf{,.bak}
 	cp -vfr etc/* /mnt/etc/
 	mv -vf /mnt/etc/pacman.conf{.bak,}
-	rm -vf /mnt/etc/pacman_v3.conf
+	rm -vf /mnt/etc/pacman_v2.conf
 
 	arch-chroot /mnt sh -c '\
 		mkinitcpio -P && \

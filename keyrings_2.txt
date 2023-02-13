@@ -1,4 +1,3 @@
-alhp-keyring
 arch4edu-keyring
 archlinuxcn-keyring
 blackarch-keyring
