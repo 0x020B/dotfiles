@@ -34,6 +34,7 @@ neovim
 oh-my-zsh-git
 paru
 rime-pinyin-zhwiki
+rng-tools
 rsync
 selinux-openssh
 slurp
@@ -43,8 +44,9 @@ systemd-libs-selinux
 vulkan-radeon
 waybar
 waypipe
-wlroots
 wl-clipboard
+wlroots
 wpa_supplicant
+xdg-desktop-portal-wlr
 xf86-video-amdgpu
 xorg-xwayland

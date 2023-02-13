@@ -22,8 +22,6 @@ if ! sha512sum -c "$self"/sha512sum --status; then
 	cd dotfiles
 	sh install
 else
-	cd "$self"
-
 	# 分区
 	sfdisk --delete "$disk"
 	parted -sa opt "$disk" \
@@ -80,9 +78,7 @@ else
 	pacman-key --populate
 	pacman -Sy --needed --noconfirm --overwrite "*" $(<keyrings$v3.txt)
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
-	if pacstrap -P /mnt $(<packages$v3.txt) $(<packages.txt);then
-		exit 1
-	fi
+	pacstrap -P /mnt $(<packages$v3.txt) $(<packages.txt) || exit 1
 
 	# 创建分区表
 	genfstab -L /mnt \
@@ -107,6 +103,7 @@ else
 	ln -sv /usr/bin/nvim /mnt/usr/bin/vi
 	ln -sv /usr/lib/systemd/system/dhcpcd.service /etc/systemd/system/multi-user.target.wants/dhcpcd.service
 	ln -sv /usr/lib/systemd/system/seatd.service /etc/systemd/system/multi-user.target.wants/seatd.service
+	ln -sv /usr/lib/systemd/system/rngd.service /etc/systemd/system/multi-user.target.wants/rngd.service
 
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
@@ -153,7 +150,7 @@ else
 
 	printf "USER: n0tr00t\nPASSWORD: %s\n" "$(</mnt/PASSWORD)" | tee /mnt/etc/issue
 	rm /mnt/PASSWORD
-	arch-chroot sudo -u n0tr00t ./user
+	arch-chroot sudo -u n0tr00t "$self"/user
 	[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	umount -Rv /mnt
 	reboot
