@@ -93,17 +93,14 @@ else
 	mv -vf /mnt/etc/pacman.conf{.bak,}
 	rm -vf /mnt/etc/pacman_v3.conf
 
-	echo -n $RANDOM > /mnt/PASSWORD
 	arch-chroot /mnt sh -c '\
-		useradd -m -G wheel -s /usr/bin/zsh n0tr00t && \
-		printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" \
-			| chpasswd -c YESCRYPT && \
-		mkinitcpio -P'
-
+		mkinitcpio -P && \
+		useradd -m -G wheel -s /usr/bin/zsh n0tr00t'
+	sed -E "s#^(n0tr00t:)[^:]+#\1$(openssl passwd -1 -salt 14514 -stdin <<< 1919810)#" /mnt/etc/shadow
 	ln -sv /usr/bin/nvim /mnt/usr/bin/vi
-	ln -sv /usr/lib/systemd/system/dhcpcd.service /etc/systemd/system/multi-user.target.wants/dhcpcd.service
-	ln -sv /usr/lib/systemd/system/seatd.service /etc/systemd/system/multi-user.target.wants/seatd.service
-	ln -sv /usr/lib/systemd/system/rngd.service /etc/systemd/system/multi-user.target.wants/rngd.service
+	ln -sv /usr/lib/systemd/system/dhcpcd.service /mnt/etc/systemd/system/multi-user.target.wants/dhcpcd.service
+	ln -sv /usr/lib/systemd/system/seatd.service /mnt/etc/systemd/system/multi-user.target.wants/seatd.service
+	ln -sv /usr/lib/systemd/system/rngd.service /mnt/etc/systemd/system/multi-user.target.wants/rngd.service
 
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
