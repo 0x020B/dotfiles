@@ -7,7 +7,7 @@ swapfile='/mnt/var/swap'
 self=$(dirname "$(readlink -f $0)")
 
 if ! sha512sum -c "$self"/sha512sum --status; then
-	git -v 2>/dev/null || pacman -Sy --needed --noconfirm git
+	git -v 2>/dev/null || pacman -Sy --noconfirm git
 	# 写死IP地址，对抗DNS污染
 	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
 		echo '185.199.109.133 raw.githubusercontent.com' >>/etc/hosts
