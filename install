@@ -102,9 +102,11 @@ else
 		useradd -m -G wheel -s /usr/bin/zsh n0tr00t && \
 		printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" \
 			| chpasswd -c YESCRYPT && \
-		mkinitcpio -P && \
-		ln -sv /usr/bin/{nvim,vi} && \
-		systemctl enable dhcpcd'
+		mkinitcpio -P'
+
+	ln -sv /usr/bin/nvim /mnt/usr/bin/vi
+	ln -sv /usr/lib/systemd/system/dhcpcd.service /etc/systemd/system/multi-user.target.wants/dhcpcd.service
+	ln -sv /usr/lib/systemd/system/seatd.service /etc/systemd/system/multi-user.target.wants/seatd.service
 
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
