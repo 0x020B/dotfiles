@@ -101,9 +101,11 @@ else
 		useradd -m -G wheel -s /usr/bin/zsh n0tr00t'
 	sed -E "s#^(n0tr00t:)[^:]+#\1$(openssl passwd -1 -salt 14514 -stdin <<< 1919810)#" /mnt/etc/shadow
 	ln -sv /usr/bin/nvim /mnt/usr/bin/vi
-	ln -sv /usr/lib/systemd/system/dhcpcd.service /mnt/etc/systemd/system/multi-user.target.wants/dhcpcd.service
-	ln -sv /usr/lib/systemd/system/seatd.service /mnt/etc/systemd/system/multi-user.target.wants/seatd.service
-	ln -sv /usr/lib/systemd/system/rngd.service /mnt/etc/systemd/system/multi-user.target.wants/rngd.service
+	for service in 'dhcpcd' 'seatd' 'rngd'
+	do
+		ln -sv /usr/lib/systemd/system/$service.service \
+		       /mnt/etc/systemd/system/multi-user.target.wants/$service.service
+	done
 
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
@@ -148,8 +150,6 @@ else
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
-	printf "USER: n0tr00t\nPASSWORD: %s\n" "$(</mnt/PASSWORD)" | tee /mnt/etc/issue
-	rm /mnt/PASSWORD
 	arch-chroot sudo -u n0tr00t "$self"/user
 	[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	umount -Rv /mnt
