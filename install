@@ -97,14 +97,14 @@ else
 	mv -vf /mnt/etc/pacman.conf{.bak,}
 	rm -vf /mnt/etc/pacman_v3.conf
 
-	# 自动设置密码
 	echo -n $RANDOM > /mnt/PASSWORD
 	arch-chroot /mnt sh -c '\
 		useradd -m -G wheel -s /usr/bin/zsh n0tr00t && \
 		printf "root:%s\nn0tr00t:%s" "$(head -zn 1 /dev/urandom | sha512sum)" "$(</PASSWORD)" \
 			| chpasswd -c YESCRYPT && \
 		mkinitcpio -P && \
-		ln -sv /usr/bin/{nvim,vi}'
+		ln -sv /usr/bin/{nvim,vi} && \
+		systemctl enable dhcpcd'
 
 	# TODO: UEFI安全启动
 	#uuidgen --random > GUID.txt
@@ -151,6 +151,7 @@ else
 
 	printf "USER: n0tr00t\nPASSWORD: %s\n" "$(</mnt/PASSWORD)" | tee /mnt/etc/issue
 	rm /mnt/PASSWORD
+	arch-chroot sudo -u n0tr00t ./user
 	[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	umount -Rv /mnt
 fi
