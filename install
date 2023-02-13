@@ -154,4 +154,5 @@ else
 	arch-chroot sudo -u n0tr00t ./user
 	[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	umount -Rv /mnt
+	reboot
 fi
