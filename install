@@ -74,8 +74,9 @@ else
 		v3='_v3'
 	        
 	}
-	pacman-key --keyserver keyserver.ubuntu.com -r $keys
-	pacman-key --lsign-key $keys && pacman-key --populate
+	pacman-key --keyserver keyserver.ubuntu.com -r $keys && \
+		pacman-key --lsign-key $keys && \
+		pacman-key --populate
 	
 	# 根据是否支持v3架构进行安装
 	cp -fv etc/pacman$v3.conf /etc
