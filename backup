@@ -1,0 +1,1 @@
+tar -I zstd -cvf ./$(data +%s).tar.zst /etc /home
