@@ -1,5 +1,5 @@
 Server = https://mirrors.cqupt.edu.cn/archlinuxcn/$arch
-Server = https://repo.huaweicloud.com/archlinuxcn/$arch
 Server = https://mirrors.sustech.edu.cn/archlinuxcn/$arch
-Server = https://mirrors.zju.edu.cn/archlinuxcn/$arch
+Server = https://mirror.sjtu.edu.cn/archlinux-cn/$arch
 Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+Server = https://mirrors.nju.edu.cn/archlinuxcn/$arch

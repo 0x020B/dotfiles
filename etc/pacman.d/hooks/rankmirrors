@@ -1,2 +1,2 @@
 #!/bin/sh
-/usr/bin/sed -E 's/^#\s?[Ss]erver/Server/g' /etc/pacman.d/$1 | /usr/bin/grep '^Server\s*=\s*https' | /usr/bin/rankmirrors -r $2 -n 5 - > /etc/pacman.d/$2
+/usr/bin/sed -E 's/^#\s?[Ss]erver/Server/g' /etc/pacman.d/$1 | /usr/bin/grep '^Server\s*=\s*https' | /usr/bin/rankmirrors -vr $2 -n 5 - | tee /etc/pacman.d/$2

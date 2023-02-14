@@ -37,7 +37,6 @@ mkinitcpio
 neomutt
 neovim
 oh-my-zsh-git
-pacman-contrib
 paru
 rime-pinyin-zhwiki
 rng-tools

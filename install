@@ -5,13 +5,15 @@ disk='/dev/sda'
 swapfile='/mnt/var/swap'
 # 脚本本身所在路径
 self=$(dirname "$(readlink -f $0)")
+# 当前进程可用的处理器数
+nproc=$(nproc)
 
 if ! sha512sum -c "$self"/sha512sum --status; then
 	git -v 2>/dev/null || pacman -Sy --noconfirm git
-	# 写死IP地址，对抗DNS污染
-	grep -Fq 'raw.githubusercontent.com' /etc/hosts ||
-		echo '185.199.109.133 raw.githubusercontent.com' >>/etc/hosts
 	if [ ! -f id_ed25519 ]; then
+		# 写死IP地址，对抗DNS污染
+		grep -Fq 'raw.githubusercontent.com' /etc/hosts \
+			|| echo '185.199.109.133 raw.githubusercontent.com' >>/etc/hosts
 		curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
 		chmod -v 0600 id_ed25519
 	fi
@@ -32,14 +34,14 @@ else
 	# Btrfs 配置
 	mkfs.btrfs -fn 32k "$disk"2
 	mount -vo compress=lzo "$disk"2 /mnt
-	echo -n ,home,opt,usr,var | xargs -i -d, btrfs -v subvolume create /mnt/@{}
+	echo -n ,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
 	umount /mnt
 
 	# 挂载分区及子卷
 	mount -vo noatime,nodiratime,compress=lzo,subvol=@ "$disk"2 /mnt
 	mkdir -v /mnt/{boot,home,opt,usr,var}
 	mount -vo noatime,nodiratime "$disk"1 /mnt/boot
-	echo -n home,opt,usr,var | xargs -i -d, \
+	echo -n home,opt,usr,var | xargs -P$nproc -i -d, \
 		mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
 	chattr +C /mnt/var
 
@@ -69,34 +71,42 @@ else
 		      250A4BA6630FD7F1  # selinux
 		      7533BAFE69A25079  # blackarch
 		      7931B6D628C8D3BA) # arch4edu
-	mirrorlists = (	archlinuxcn-mirrorlist-git
-			blackarch-mirrorlist
-			mirrorlist.arch4edu
-			chaotic-mirrorlist)
+	mirrorlists = (	'archlinuxcn-mirrorlist-git'
+			'blackarch-mirrorlist'
+			'mirrorlist.arch4edu'
+			'chaotic-mirrorlist')
 	v2=_v2
 	/usr/lib/ld-linux-x86-64.so.2 --help | grep -q "x86-64-v3 (supported" && {
-		keys+=0706B90D37D9B881  # alhp
-		mirrorlists+=alhp-mirrorlist
+		keys+=(0706B90D37D9B881  # alhp
+		       F3B607488DB35A47) # cachyos
+		mirrorlists+='alhp-mirrorlist'
 		unset v2
-	        
 	}
+
 	pacman-key --keyserver keyserver.ubuntu.com -r $keys && \
 	pacman-key --lsign-key $keys && \
 	pacman-key --populate
-	
-	# 根据是否支持架构进行安装
-	cp -fv etc/pacman.d/hooks /etc/pacman.d
-	cp -fv etc/pacman$v2.conf /etc
-	cat packages$v2* | pacman -Sy --needed --noconfirm --overwrite "*" -
+
+	# 准备镜像列表
+	pacman -S --needed --noconfirm pacman-contrib
+	cp -fv etc/pacman.d/hooks /etc/pacman.d &
+	cp -fv etc/pacman$v2.conf /etc &
+	wait
+	cat keyrings$v2* | pacman -Sy --needed --noconfirm --overwrite "*" -
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
-	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
+	pacman -Sy --needed --noconfirm --overwrite "*" $mirrorlists
+
+	# 镜像测速
+	grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/* | xargs -P$nproc -i sh -c {}
+
+	# 根据是否支持架构进行安装
 	cat packages$2* | pacstrap -P /mnt - || exit 1
 
 	# 创建分区表
-	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
+	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
 
 	# 硬件时间
-	hwclock --systohc --adjfile /mnt/etc/adjtime
+	hwclock --systohc --adjfile /mnt/etc/adjtime &
 
 	# 还原dotfiles
 	cp -v /mnt/etc/pacman.conf{,.bak}
@@ -112,7 +122,7 @@ else
 	for service in 'dhcpcd' 'seatd' 'rngd'
 	do
 		ln -sv /usr/lib/systemd/system/$service.service \
-		       /mnt/etc/systemd/system/multi-user.target.wants/$service.service
+		       /mnt/etc/systemd/system/multi-user.target.wants/$service.service &
 	done
 
 	# TODO: UEFI安全启动
@@ -132,7 +142,7 @@ else
 	# 配置引导
 	efibootmgr \
 		| grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' \
-		| xargs -i efibootmgr -Bb {}
+		| xargs -P$nproc -i efibootmgr -Bb {}
 
 	efibootmgr \
 		| grep -i 'Shell' \

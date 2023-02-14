@@ -1,5 +1,5 @@
-Server = https://mirrors.ustc.edu.cn/blackarch/$repo/os/$arch
-Server = https://mirrors.tuna.tsinghua.edu.cn/blackarch/$repo/os/$arch
 Server = https://mirror.sjtu.edu.cn/blackarch/$repo/os/$arch
-Server = https://mirrors.nju.edu.cn/blackarch/$repo/os/$arch
-Server = https://mirror.archlinux.tw/BlackArch/$repo/os/$arch
+Server = https://blackarch.unixpeople.org/$repo/os/$arch
+Server = https://download.nus.edu.sg/mirror/blackarch/$repo/os/$arch
+Server = https://ftp.halifax.rwth-aachen.de/blackarch/$repo/os/$arch
+Server = https://ftp.icm.edu.pl/pub/Linux/dist/blackarch/$repo/os/$arch

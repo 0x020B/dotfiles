@@ -5,4 +5,4 @@ Type = Package
 Target = archlinuxcn-mirrorlist-git
 [Action]
 When = PostTransaction
-Exec = /etc/pacman.d/hooks/rankmirrors archlinuxcn-mirrorlist-git archlinuxcn
+Exec = /etc/pacman.d/hooks/rankmirrors archlinuxcn-mirrorlist archlinuxcn
