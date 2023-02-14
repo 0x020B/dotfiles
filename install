@@ -81,8 +81,8 @@ else
 	        
 	}
 	pacman-key --keyserver keyserver.ubuntu.com -r $keys && \
-		pacman-key --lsign-key $keys && \
-		pacman-key --populate
+	pacman-key --lsign-key $keys && \
+	pacman-key --populate
 	
 	# 根据是否支持架构进行安装
 	cp -fv etc/pacman.d/hooks /etc/pacman.d
