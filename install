@@ -3,12 +3,10 @@
 disk='/dev/sda'
 # 交换文件路径(SELINUX策略包refpolicy-arch和refpolicy-git的交换文件路径默认用/var/swap)
 swapfile='/mnt/var/swap'
-# 脚本本身所在路径
-self=$(dirname "$(readlink -f $0)")
 # 当前进程可用的处理器数
 nproc=$(nproc)
 
-if ! sha512sum -c "$self"/sha512sum --status; then
+if ! sha512sum -c sha512sum --status; then
 	git -v 2>/dev/null || pacman -Sy --noconfirm git
 	if [ ! -f id_ed25519 ]; then
 		# 写死IP地址，对抗DNS污染
@@ -99,7 +97,7 @@ else
 	# 镜像测速
 	grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/* | xargs -P$nproc -i sh -c {}
 
-	# 根据是否支持架构进行安装
+	# 安装
 	cat packages$2* | pacstrap -P /mnt - || exit 1
 
 	# 创建分区表
@@ -168,7 +166,7 @@ else
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
-	arch-chroot sudo -u n0tr00t "$self"/user
+	arch-chroot sudo -u n0tr00t "$(dirname "$(readlink -f $0)")"/user
 	[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	umount -Rv /mnt
 	reboot

@@ -50,7 +50,6 @@ vulkan-radeon
 waybar
 waypipe
 wl-clipboard
-wlroots
 wpa_supplicant
 xdg-desktop-portal-wlr
 xf86-video-amdgpu

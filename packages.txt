@@ -1,2 +1,4 @@
 alhp-keyring
 alhp-mirrorlist
+cachyos-keyring
+cachyos-v3-mirrorlist
