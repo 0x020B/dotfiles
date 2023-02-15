@@ -80,7 +80,6 @@ else
 			'chaotic-mirrorlist'
 			'mirrorlist.arch4edu')
 
-	pacman -S --needed --noconfirm pacman-contrib
 	cp -fv {,/}etc/pacman.conf
 	v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 	if [[ $v =~ 4 ]]; then
@@ -104,7 +103,8 @@ else
 	cp -vfr etc/pacman.d/* /etc/pacman.d/
 	pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
-	pacman -Sy --needed --noconfirm --overwrite "*" $mirrorlists
+	pacman -Sy --needed --noconfirm pacman-contrib
+	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
 	# 安装
 	pacstrap -P /mnt keyrings mirrorlists $(<packages.txt) || exit 1
