@@ -97,13 +97,11 @@ else
 
 	# 密钥环初始化
 	pacman-key --init
-	cp -rvf etc/pacman.d/* /etc/pacman.d/
-	pacman-key --keyserver keyserver.ubuntu.com -r $keys && \
-	pacman-key --lsign-key $keys && \
-	pacman-key --populate
+	pacman-key --keyserver keyserver.ubuntu.com -r $keys
+	pacman-key --lsign-key $keys
 
 	# 准备镜像列表
-	cp -fv etc/pacman.d/hooks /etc/pacman.d/
+	cp -vfr etc/pacman.d/* /etc/pacman.d/
 	pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -Sy --needed --noconfirm --overwrite "*" $mirrorlists
