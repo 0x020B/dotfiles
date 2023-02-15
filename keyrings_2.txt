@@ -1,4 +1,0 @@
-arch4edu-keyring
-archlinuxcn-keyring
-blackarch-keyring
-chaotic-keyring
