@@ -1,0 +1,5 @@
+Server = https://aur.cachyos.org/repo/$arch_v3/$repo
+Server = https://nl.cachyos.org/repo/$arch_v3/$repo
+Server = https://build.cachyos.org/repo/$arch_v3/$repo
+Server = https://hun.cachyos.org/repo/$arch_v3/$repo
+Server = https://kr.cachyos.org/repo/$arch_v3/$repo

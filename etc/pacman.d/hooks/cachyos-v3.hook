@@ -1,0 +1,8 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = cachyos-v3-mirrorlist
+[Action]
+When = PostTransaction
+Exec = /etc/pacman.d/hooks/rankmirrors cachyos-v3-mirrorlist cachyos-v3

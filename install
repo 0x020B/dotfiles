@@ -62,16 +62,21 @@ else
 	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 	sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
 
-	keys=(	0706B90D37D9B881 	# chaotic-aur
+	keys=(	0706B90D37D9B881 	# alhp & chaotic-aur
 		250A4BA6630FD7F1  	# selinux
 		7533BAFE69A25079  	# blackarch
-		7931B6D628C8D3BA) 	# arch4edu
+		7931B6D628C8D3BA 	# arch4edu
+		F3B607488DB35A47)	# cachyos
+
 	keyrings=(	'arch4edu-keyring'
 			'archlinuxcn-keyring'
 			'blackarch-keyring'
+			'cachyos-keyring'
 			'chaotic-keyring')
+
 	mirrorlists=(	'archlinuxcn-mirrorlist-git'
 			'blackarch-mirrorlist'
+			'cachyos-mirrorlist'
 			'chaotic-mirrorlist'
 			'mirrorlist.arch4edu')
 
@@ -79,15 +84,11 @@ else
 	cp -fv {,/}etc/pacman.conf
 	v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 	if [[ $v =~ 4 ]]; then
-		keys+=F3B607488DB35A47		# cachyos
-		keyrings+='cachyos-keyring'
 		mirrorlists+='cachyos-v4-mirrorlist'
 		cat etc/pacman_v4.conf >> /etc/pacman.conf
 	fi
 	if [[ $v =~ 3 ]]; then
-		[[ $keys =~ F3B607488DB35A47 ]] || keys+=F3B607488DB35A47	# cachyos
-		keyrings+=(	'alhp-keyring'
-				'cachyos-keyring')
+		keyrings+='alhp-keyring'
 		mirrorlists+=(	'alhp-mirrorlist'
 				'cachyos-v3-mirrorlist')
 		cat etc/pacman_v3.conf >> /etc/pacman.conf

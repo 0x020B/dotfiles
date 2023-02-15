@@ -1,0 +1,5 @@
+Server = https://kr.cachyos.org/repo/$arch/$repo
+Server = https://mirror.albony.xyz/cachylinux/repo/$arch/$repo
+Server = https://us.cachyos.org/repo/$arch/$repo
+Server = https://build.cachyos.org/repo/$arch/$repo
+Server = https://nl.cachyos.org/repo/$arch/$repo
