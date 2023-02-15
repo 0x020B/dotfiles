@@ -108,7 +108,7 @@ else
 	pacman -Sy --needed --noconfirm --overwrite "*" $mirrorlists
 
 	# 安装
-	pacstrap -P /mnt keyrings mirrorlists $(<packages.txt) || exit 1
+	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) || exit 1
 
 	# 创建分区表
 	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
