@@ -68,7 +68,7 @@ else
 
 	pacman -S --needed --noconfirm pacman-contrib
 	cp -fv {,/}etc/pacman.conf
-	v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)') in
+	v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 	if [[ $v =~ 4 ]]; then
 		keys+=F3B607488DB35A47		# cachyos
 		keyrings+='cachyos-keyring'
