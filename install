@@ -62,9 +62,18 @@ else
 	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
 	sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
 
-	keys=()
-	keyrings=()
-	mirrorlists=()
+	keys=(	0706B90D37D9B881 	# chaotic-aur
+		250A4BA6630FD7F1  	# selinux
+		7533BAFE69A25079  	# blackarch
+		7931B6D628C8D3BA) 	# arch4edu
+	keyrings=(	'arch4edu-keyring'
+			'archlinuxcn-keyring'
+			'blackarch-keyring'
+			'chaotic-keyring')
+	mirrorlists=(	'archlinuxcn-mirrorlist-git'
+			'blackarch-mirrorlist'
+			'chaotic-mirrorlist'
+			'mirrorlist.arch4edu')
 
 	pacman -S --needed --noconfirm pacman-contrib
 	cp -fv {,/}etc/pacman.conf
@@ -84,21 +93,7 @@ else
 				'cachyos-v3-mirrorlist')
 		cat etc/pacman_v3.conf >> /etc/pacman.conf
 	fi
-	if [[ $v =~ 2 ]]; then
-		keys+=(	0706B90D37D9B881 	# chaotic-aur
-			250A4BA6630FD7F1  	# selinux
-			7533BAFE69A25079  	# blackarch
-			7931B6D628C8D3BA) 	# arch4edu
-		keyrings+=(	'arch4edu-keyring'
-				'archlinuxcn-keyring'
-				'blackarch-keyring'
-				'chaotic-keyring')
-		mirrorlists+=(	'archlinuxcn-mirrorlist-git'
-				'blackarch-mirrorlist'
-				'chaotic-mirrorlist'
-				'mirrorlist.arch4edu')
-		cat etc/pacman_v2.conf >> /etc/pacman.conf
-	fi
+	cat etc/pacman_baseline.conf >> /etc/pacman.conf
 
 	# 密钥环初始化
 	pacman-key --init
@@ -126,7 +121,7 @@ else
 	cp -v /mnt/etc/pacman.conf{,.bak}
 	cp -vfr etc/* /mnt/etc/
 	mv -vf /mnt/etc/pacman.conf{.bak,}
-	rm -vf /mnt/etc/pacman_v*.conf
+	rm -vf /mnt/etc/pacman_*.conf
 
 	arch-chroot /mnt sh -c '\
 		mkinitcpio -P && \
