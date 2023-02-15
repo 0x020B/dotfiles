@@ -6,7 +6,7 @@ swapfile='/mnt/var/swap'
 # 当前进程可用的处理器数
 nproc=$(nproc)
 
-if ! sha512sum -c sha512sum --status; then
+if ! sha512sum -c sha512sums; then
 	git -v 2>/dev/null || pacman -Sy --noconfirm git
 	if [ ! -f id_ed25519 ]; then
 		# 写死IP地址，对抗DNS污染
