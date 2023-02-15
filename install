@@ -85,8 +85,7 @@ else
 		cat etc/pacman_v4.conf >> /etc/pacman.conf
 	fi
 	if [[ $v =~ 3 ]]; then
-		keys+=(	0706B90D37D9B881	# alhp
-       			F3B607488DB35A47)	# cachyos
+		[[ $keys =~ F3B607488DB35A47 ]] || keys+=F3B607488DB35A47	# cachyos
 		keyrings+=(	'alhp-keyring'
 				'cachyos-keyring')
 		mirrorlists+=(	'alhp-mirrorlist'
