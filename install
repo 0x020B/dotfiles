@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/zsh -o EXTENDED_GLOB
 # 安装系统所用的硬盘
 disk='/dev/sda'
 # 交换文件路径(SELINUX策略包refpolicy-arch和refpolicy-git的交换文件路径默认用/var/swap)
@@ -19,12 +19,11 @@ if ! sha512sum -c sha512sums; then
 	echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >~/.ssh/known_hosts
 	# 使用SSH协议更容易通过墙
 	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
-	cd dotfiles
-	zsh install 2>&1 | tee install.log
+	./dotfiles/install 2>&1 | tee install.log
 else
-	# 启用扩展GLOB语法
-	setopt EXTENDED_GLOB
-
+	# 启用repeat语法
+	enable -r repeat
+	
 	# 分区
 	sfdisk --delete "$disk"
 	parted -sa opt "$disk" \
@@ -117,12 +116,12 @@ else
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
-	# 安装
-	if ! pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt); then
-		# 如果安装失败，尝试挽救1次
-		grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$(nproc) -i sh -c {}
-		pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) || exit 1
-	fi
+	# 安装系统，如果安装失败，尝试挽救
+	repeat 2
+	do
+		pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
+		grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
+	done
 
 	# 创建分区表
 	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
