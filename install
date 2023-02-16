@@ -114,7 +114,7 @@ else
 	cp -vfr etc/pacman.d/* /etc/pacman.d/
 	pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
-	pacman -Sy --needed --noconfirm --overwrite "*" $mirrorlists
+	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
 	# 安装
 	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) || exit 1
