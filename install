@@ -90,6 +90,15 @@ else
 			'chaotic-mirrorlist'
 			'mirrorlist.arch4edu')
 
+
+	# 密钥环初始化
+	cp -vfr etc/pacman.d/* /etc/pacman.d/
+	pacman-key --init
+	pacman-key --keyserver keyserver.ubuntu.com -r $keys || pacman-key --import .
+	pacman-key --lsign-key $keys
+	pacman-key --populate
+
+	# 准备镜像列表
 	pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
 	cp -vfb {,/}etc/pacman.conf
 	v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
@@ -104,15 +113,6 @@ else
 		cat etc/pacman_v3.conf >> /etc/pacman.conf
 	fi
 	cat etc/pacman_baseline.conf >> /etc/pacman.conf
-
-	# 密钥环初始化
-	cp -vfr etc/pacman.d/* /etc/pacman.d/
-	pacman-key --init
-	pacman-key --keyserver keyserver.ubuntu.com -r $keys || pacman-key --import .
-	pacman-key --lsign-key $keys
-	pacman-key --populate
-
-	# 准备镜像列表
 	pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
