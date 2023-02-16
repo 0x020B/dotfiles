@@ -118,7 +118,11 @@ else
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
 	# 安装
-	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) || exit 1
+	if ! pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt); then
+		# 如果安装失败，尝试挽救1次
+		grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$(nproc) -i sh -c {}
+		pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) || exit 1
+	fi
 
 	# 创建分区表
 	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
