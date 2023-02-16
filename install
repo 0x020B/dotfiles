@@ -111,7 +111,6 @@ else
 	pacman-key --populate
 
 	# 准备镜像列表
-	pacman -S --needed --noconfirm pacman-contrib
 	cp -vfr etc/pacman.d/* /etc/pacman.d/
 	pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
