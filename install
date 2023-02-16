@@ -126,7 +126,7 @@ else
 	hwclock --systohc --adjfile /mnt/etc/adjtime &
 
 	# 还原dotfiles
-	cp -vfr etc/^pacman* /mnt/etc/
+	cp -vfr etc/^pacman(\.conf|_*) /mnt/etc/
 
 	arch-chroot /mnt sh -c '\
 		mkinitcpio -P && \
