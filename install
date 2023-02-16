@@ -127,7 +127,7 @@ else
 	hwclock --systohc --adjfile /mnt/etc/adjtime &
 
 	# 还原dotfiles
-	cp -vfr etc/^pacman(\.conf|_*) /mnt/etc/
+	cp -vfr etc/^pacman* /mnt/etc/
 
 	arch-chroot /mnt sh -c 'mkinitcpio -P && useradd -m -G wheel -s /usr/bin/zsh n0tr00t'	
 	sed -E "s#^(n0tr00t:)[^:]+#\1$(openssl passwd -1 -salt 14514 -stdin <<< 1919810)#" /mnt/etc/shadow
