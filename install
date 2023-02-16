@@ -157,7 +157,7 @@ else
 		| grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' \
 		| xargs -P$nproc -i efibootmgr -Bb {}
 
-	if ! efibootmgr | grep -i 'Shell' | grep -v 'UEFI Shell'; then
+	if ! efibootmgr | grep -i 'Shell'; then
 		efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
 		#sbsign --key db.key --cert db.crt --output /boot/Shell.efi{,}
 	fi
