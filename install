@@ -94,7 +94,7 @@ else
 	# 密钥环初始化
 	cp -vfr etc/pacman.d/* /etc/pacman.d/
 	pacman-key --init
-	timeout 10s -k 2s pacman-key --keyserver keyserver.ubuntu.com -r $keys || pacman-key --import .
+	timeout -k 10s 24s pacman-key --keyserver keyserver.ubuntu.com -r $keys || pacman-key --import .
 	pacman-key --lsign-key $keys
 	pacman-key --populate
 
