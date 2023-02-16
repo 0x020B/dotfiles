@@ -7,7 +7,7 @@ swapfile='/mnt/var/swap'
 nproc=$(nproc)
 
 if ! sha512sum -c sha512sums; then
-	git -v 2>/dev/null || pacman -Sy --noconfirm git
+	pacman -Sy --needed --noconfirm git
 	if [ ! -f id_ed25519 ]; then
 		# 写死IP地址，对抗DNS污染
 		grep -Fq 'raw.githubusercontent.com' /etc/hosts \
@@ -20,8 +20,11 @@ if ! sha512sum -c sha512sums; then
 	# 使用SSH协议更容易通过墙
 	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
 	cd dotfiles
-	sh install
+	zsh install
 else
+	# 开启扩展GLOB语法
+	setopt EXTENDED_GLOB
+
 	# 分区
 	sfdisk --delete "$disk"
 	parted -sa opt "$disk" \
@@ -123,10 +126,7 @@ else
 	hwclock --systohc --adjfile /mnt/etc/adjtime &
 
 	# 还原dotfiles
-	cp -v /mnt/etc/pacman.conf{,.bak}
-	cp -vfr etc/* /mnt/etc/
-	mv -vf /mnt/etc/pacman.conf{.bak,}
-	rm -vf /mnt/etc/pacman_*.conf
+	cp -vfr etc/^pacman* /mnt/etc/
 
 	arch-chroot /mnt sh -c '\
 		mkinitcpio -P && \
@@ -163,19 +163,19 @@ else
 	fi
 
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=compress=lzo,subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=compress=lzo,subvol=@usr rw'\
 		'initrd=initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
