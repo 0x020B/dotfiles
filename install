@@ -117,11 +117,15 @@ else
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
 	# 安装系统，如果安装失败，尝试挽救
-	repeat 2
+	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
+	repeat 1
 	do
-		pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
 		grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
+		pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
 	done
+	if (( $? )); then
+		exit 1
+	fi
 
 	# 创建分区表
 	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
@@ -166,19 +170,19 @@ else
 	fi
 
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=compress=lzo,subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=compress=lzo,subvol=@usr rw'\
 		'initrd=initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
