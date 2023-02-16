@@ -166,19 +166,19 @@ else
 	fi
 
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=compress=lzo,subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=compress=lzo,subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
 		'initrd=initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
+		'root='"$disk"'2 rootflags=subvol=@ rw'\
+		'usr='"$disk"'2 usrflags=subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
