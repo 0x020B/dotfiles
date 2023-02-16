@@ -20,7 +20,7 @@ if ! sha512sum -c sha512sums; then
 	# 使用SSH协议更容易通过墙
 	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
 	cd dotfiles
-	zsh install
+	zsh install 2>&1 | tee install.log
 else
 	# 开启扩展GLOB语法
 	setopt EXTENDED_GLOB
