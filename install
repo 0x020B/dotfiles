@@ -38,14 +38,14 @@ else
 	# Btrfs 配置
 	mkfs.btrfs -fn 32k "$disk"2
 	mount -vo compress=lzo "$disk"2 /mnt
-	echo -n ,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
+	echo -n ,etc,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
 	umount -v /mnt
 
 	# 挂载分区及子卷
 	mount -vo noatime,nodiratime,compress=lzo,subvol=@ "$disk"2 /mnt
-	mkdir -v /mnt/{boot,home,opt,usr,var}
+	mkdir -v /mnt/{boot,etc,home,opt,usr,var}
 	mount -vo noatime,nodiratime "$disk"1 /mnt/boot
-	echo -n home,opt,usr,var | xargs -P$nproc -i -d, \
+	echo -n etc,home,opt,usr,var | xargs -P$nproc -i -d, \
 		mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
 	chattr +C /mnt/var
 
