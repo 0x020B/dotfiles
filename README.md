@@ -1,5 +1,5 @@
 # dotfiles
 ## testing
-```bash
-curl https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/install | sh
+```zsh
+curl https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/install | zsh
 ```

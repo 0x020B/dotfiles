@@ -130,8 +130,9 @@ else
 
 	arch-chroot /mnt sh -c '\
 		mkinitcpio -P && \
-		useradd -m -G wheel -s /usr/bin/zsh n0tr00t'
+		useradd -m -G wheel -s /usr/bin/zsh n0tr00t'	
 	sed -E "s#^(n0tr00t:)[^:]+#\1$(openssl passwd -1 -salt 14514 -stdin <<< 1919810)#" /mnt/etc/shadow
+	
 	ln -sv /usr/bin/nvim /mnt/usr/bin/vi
 	for service in 'dhcpcd' 'seatd' 'rngd'
 	do
