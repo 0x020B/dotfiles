@@ -59,6 +59,7 @@ else
 		[[ $size > 8 ]] && size=8
 		avail=$(df -BG --output=avail "$disk"2 | tail -n1)
 		if [[ $((size * 8)) < ${avail%G*} ]]; then
+			# 创建交换文件
 			truncate -s 0 "$swapfile"
 			fallocate -l "$size"G "$swapfile"
 			chmod 0600 "$swapfile"
@@ -89,7 +90,7 @@ else
 			'chaotic-mirrorlist'
 			'mirrorlist.arch4edu')
 
-	pacman -S --needed --noconfirm pacman-contrib
+	pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
 	cp -fv {,/}etc/pacman.conf
 	v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 	if [[ $v =~ 4 ]]; then
