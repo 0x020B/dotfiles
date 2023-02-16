@@ -1,5 +1,5 @@
 #!/usr/bin/zsh
-# 安装系统所用的分区
+# 安装系统所用的硬盘
 disk='/dev/sda'
 # 交换文件路径(SELINUX策略包refpolicy-arch和refpolicy-git的交换文件路径默认用/var/swap)
 swapfile='/mnt/var/swap'
