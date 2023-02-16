@@ -29,7 +29,7 @@ else
 		mkpart  esp     fat32   1M 513M \
 		mkpart  primary btrfs 513M 100%
 	
-	# TODO: 硬盘加密
+	# TODO: 磁盘加密
 	#mount -v /dev/"$disk"1 /mnt
 	#dd bs=512 count=8 if=/dev/random /mnt/diskkey
 	#chmod 600 /etc/diskkey
