@@ -91,7 +91,7 @@ else
 			'mirrorlist.arch4edu')
 
 	pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
-	cp -fv {,/}etc/pacman.conf
+	cp -vfb {,/}etc/pacman.conf
 	v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 	if [[ $v =~ 4 ]]; then
 		mirrorlists+='cachyos-v4-mirrorlist'
