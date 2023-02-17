@@ -57,7 +57,7 @@ else
 	if [[ $mem < 16 ]]; then
 		size=$(($mem * 2))
 		[[ $size > 8 ]] && size=8
-		avail=$(df -BG --output=avail "$disk"2 | tail -n1)
+		avail=$(df -BG --output=avail /dev/mapper/fs | tail -n1)
 		if [[ $((size * 8)) < ${avail%G*} ]]; then
 			# 创建交换文件
 			truncate -s 0 "$swapfile"
