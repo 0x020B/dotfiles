@@ -124,8 +124,6 @@ else
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
-	cp -v boot/* /mnt/boot
-	
 	# 安装系统，如果安装失败，尝试挽救
 	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
 	repeat 1
@@ -181,21 +179,21 @@ else
 
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
 		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
-		'root=/dev/mapper/fs rootflags=compress=lzo,subvol=@ rw'\
-		'usr=/dev/mapper/fs usrflags=compress=lzo,subvol=@usr rw'\
+		'root=/dev/mapper/fs rootflags=subvol=@ rw'\
+		'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
 		'initrd=initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
 		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
-		'root=/dev/mapper/fs rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
-		'usr=/dev/mapper/fs usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
+		'root=/dev/mapper/fs rootflags=subvol=@ rw'\
+		'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
 		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
-		'root=/dev/mapper/fs rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
-		'usr=/dev/mapper/fs usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
+		'root=/dev/mapper/fs rootflags=subvol=@ rw'\
+		'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
