@@ -9,4 +9,4 @@ mount -vo noatime,nodiratime "${1=/dev/sda}"1 /mnt/boot
 echo -n etc,home,opt,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 arch-chroot /mnt
 umount -Rv /mnt
-cryptsetup close "$disk"2
+cryptsetup close fs
