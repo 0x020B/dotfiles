@@ -28,27 +28,28 @@ else
 	sfdisk --delete "$disk"
 	parted -sa opt "$disk" \
 		mklabel gpt \
-		mkpart  esp     fat32   1M 513M \
-		mkpart  primary btrfs 513M 100%
+		mkpart  esp     fat32   1M 250M \
+		mkpart  primary btrfs 251M 100%
 	
-	# TODO: 磁盘加密
-	#mount -v /dev/"$disk"1 /mnt
-	#dd bs=512 count=8 if=/dev/random /mnt/diskkey
-	#chmod 600 /etc/diskkey
-	#umount -v /mnt
-	
+	# 磁盘加密
+	dd bs=512 count=8 if=/dev/random diskkey
+	chmod 600 diskkey
+	cryptsetup -q luksFormat "$disk"2 diskkey
+	cryptsetup open "$disk"2 fs -d diskkey
+
 	# Btrfs 配置
-	mkfs.btrfs -fn 32k "$disk"2
-	mount -vo compress=lzo "$disk"2 /mnt
+	mkfs.btrfs -fn 32k /dev/mapper/fs
+	mount -vo compress=lzo /dev/mapper/fs /mnt
+
 	echo -n ,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
 	umount -v /mnt
 
 	# 挂载分区及子卷
-	mount -vo noatime,nodiratime,compress=lzo,subvol=@ "$disk"2 /mnt
+	mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
 	mkdir -v /mnt/{boot,home,opt,usr,var}
 	mount -vo noatime,nodiratime "$disk"1 /mnt/boot
 	echo -n home,opt,usr,var | xargs -P$nproc -i -d, \
-		mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "$disk"2 /mnt/{}
+		mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 	chattr +C /mnt/var
 
 	# 自动计算交换文件所需要的大小
@@ -116,6 +117,8 @@ else
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
+	cp -vf diskkey /mnt/boot
+	
 	# 安装系统，如果安装失败，尝试挽救
 	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
 	repeat 1
@@ -170,19 +173,22 @@ else
 	fi
 
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=compress=lzo,subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=compress=lzo,subvol=@usr rw'\
+		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
+		'root=/dev/mapper/fs rootflags=compress=lzo,subvol=@ rw'\
+		'usr=/dev/mapper/fs usrflags=compress=lzo,subvol=@usr rw'\
 		'initrd=initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
+		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
+		'root=/dev/mapper/fs rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
+		'usr=/dev/mapper/fs usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
-		'root='"$disk"'2 rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
-		'usr='"$disk"'2 usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
+		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
+		'root=/dev/mapper/fs rootflags=noatime,nodiratime,compress=lzo,subvol=@ rw'\
+		'usr=/dev/mapper/fs usrflags=noatime,nodiratime,compress=lzo,subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
@@ -191,5 +197,6 @@ else
 	arch-chroot sudo -u n0tr00t "$(dirname "$(readlink -f $0)")"/user
 	[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	umount -Rv /mnt
+	cryptsetup close root
 	reboot
 fi

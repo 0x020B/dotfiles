@@ -1,5 +1,11 @@
 #!/bin/sh
-mount -vo noatime,nodiratime,compress=lzo,subvol=@ "${1=/dev/sda}"2 /mnt
+mount -vo noatime,nodiratime "${1=/dev/sda}"1 /mnt
+cp -v /mnt/diskkey .
+chmod -v 600 diskkey
+cryptsetup open "$disk"2 fs -d diskkey
+mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
 mount -vo noatime,nodiratime "${1=/dev/sda}"1 /mnt/boot
-echo -n etc,home,opt,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} "${1=/dev/sda}"2 /mnt/{}
+echo -n etc,home,opt,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 arch-chroot /mnt
+umount -Rv /mnt
+cryptsetup close "$disk"2
