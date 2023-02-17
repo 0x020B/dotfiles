@@ -2,6 +2,7 @@
 mount -vo noatime,nodiratime "${1=/dev/sda}"1 /mnt
 cp -v /mnt/diskkey .
 chmod -v 600 diskkey
+umount -v /mnt
 cryptsetup open "$disk"2 fs -d diskkey
 mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
 mount -vo noatime,nodiratime "${1=/dev/sda}"1 /mnt/boot
