@@ -36,15 +36,16 @@ else
 		mkpart  primary btrfs 251M 100%
 	
 	# 磁盘加密
+	mkfs.fat -vF 32 "$disk"1
 	mount -v "$disk"1 /mnt
-	dd bs=512 count=4 if=/dev/random of=/mnt/ iflag=fullblock
+	dd bs=512 count=4 if=/dev/random of=/mnt/diskkey iflag=fullblock
 	chmod 600 /mnt/diskkey
 	cryptsetup -vq luksFormat "$disk"2 /mnt/diskkey
 	cryptsetup -v open "$disk"2 fs -d /mnt/diskkey
 	umount -v /mnt
 
 	# Btrfs 配置
-	mkfs.btrfs -fn 32k /dev/mapper/fs
+	mkfs.btrfs -vfn 32k /dev/mapper/fs
 	mount -vo compress=lzo /dev/mapper/fs /mnt
 
 	echo -n ,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
