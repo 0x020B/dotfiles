@@ -6,7 +6,7 @@ umount -v /mnt
 cryptsetup open "$disk"2 fs -d diskkey
 mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
 mount -vo noatime,nodiratime "${1=/dev/sda}"1 /mnt/boot
-echo -n etc,home,opt,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
+echo -n home,opt,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 arch-chroot /mnt
 umount -Rv /mnt
 cryptsetup close fs
