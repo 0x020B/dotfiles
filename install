@@ -36,10 +36,12 @@ else
 		mkpart  primary btrfs 251M 100%
 	
 	# 磁盘加密
-	dd bs=512 count=8 if=/dev/random of=diskkey
-	chmod 600 diskkey
-	cryptsetup -vq luksFormat "$disk"2 diskkey
-	cryptsetup -v open "$disk"2 fs -d diskkey
+	mount -v "$disk"1 /mnt
+	dd bs=512 count=4 if=/dev/random of=/mnt/ iflag=fullblock
+	chmod 600 /mnt/diskkey
+	cryptsetup -vq luksFormat "$disk"2 /mnt/diskkey
+	cryptsetup -v open "$disk"2 fs -d /mnt/diskkey
+	umount -v /mnt
 
 	# Btrfs 配置
 	mkfs.btrfs -fn 32k /dev/mapper/fs
@@ -121,7 +123,7 @@ else
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
-	cp -vf {diskkey,boot/*} /mnt/boot
+	cp -v boot/* /mnt/boot
 	
 	# 安装系统，如果安装失败，尝试挽救
 	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
