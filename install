@@ -117,7 +117,7 @@ else
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
-	cp -vf diskkey /mnt/boot
+	cp -vf {diskkey,boot/*} /mnt/boot
 	
 	# 安装系统，如果安装失败，尝试挽救
 	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
@@ -197,6 +197,6 @@ else
 	arch-chroot sudo -u n0tr00t "$(dirname "$(readlink -f $0)")"/user
 	[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	umount -Rv /mnt
-	cryptsetup close fs
+	cryptsetup -v close fs
 	reboot
 fi
