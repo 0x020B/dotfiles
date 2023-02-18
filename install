@@ -131,9 +131,7 @@ else
 		grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
 		pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
 	done
-	if (( $? )); then
-		exit 1
-	fi
+	(( $? )) && exit 1
 
 	# 创建分区表
 	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
@@ -180,20 +178,17 @@ else
 	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
 		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
 		'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-		'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
 		'initrd=initramfs-linux-zen.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
 		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
 		'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-		'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 
 	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
 		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
 		'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-		'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
 		'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
 		'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
