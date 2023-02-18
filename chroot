@@ -1,11 +1,9 @@
 #!/bin/sh
-mount -v "${1=/dev/sda}"1 /mnt
-cp -v /mnt/diskkey .
-chmod -v 600 diskkey
+mount -v "${1-/dev/sda}"1 /mnt
+cryptsetup open "${1-/dev/sda}"2 fs -d /mnt/diskkey
 umount -v /mnt
-cryptsetup open "${1=/dev/sda}"2 fs -d diskkey
 mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
-mount -vo noatime,nodiratime "${1=/dev/sda}"1 /mnt/boot
+mount -vo noatime,nodiratime "${1-/dev/sda}"1 /mnt/boot
 echo -n home,opt,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 arch-chroot /mnt
 umount -Rv /mnt
