@@ -121,7 +121,6 @@ else
 	fi
 	cat etc/pacman_baseline.conf >> /etc/pacman.conf
 	pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
-	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
 	# 安装汐统
