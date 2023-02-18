@@ -124,8 +124,10 @@ else
 	sed -i -E '/^SigLevel = TrustAll$/d' /etc/pacman.conf
 	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
-	# 安装系统，如果安装失败，尝试挽救
+	# 安装汐统
 	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
+	
+	# 如果安装失败，尝试挽救
 	repeat 1
 	do
 		grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
@@ -136,15 +138,22 @@ else
 	# 创建分区表
 	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
 
-	# 硬件时间
+	# 将系统时钟设置到硬件时钟
 	hwclock --systohc --adjfile /mnt/etc/adjtime &
 
+
+	arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
+	
+	# 玩个梗，想必知道明文是什么吧
+	sed -i -E 's#^(n0tr00t:).*#\1$1$4514$j.EmU3yBwWBVqykd7p2c00:0:0:99999:7:::#' /mnt/etc/shadow
+	
+	
 	# 还原dotfiles
 	cp -vfr etc/^pacman* /mnt/etc/
+	install -o1000 -Dm600 home/* /mnt/home/n0tr00t/
+	chown -Rv 1000:wheel /mnt/home/n0tr00t
+	arch-chroot mkinitcpio -vP
 
-	arch-chroot /mnt sh -c 'mkinitcpio -P && useradd -m -G wheel -s /usr/bin/zsh n0tr00t'	
-	sed -i -E "s#^(n0tr00t:).*#\1$(openssl passwd -1 -salt 14514 -stdin <<< 1919810):0:0:99999:7:::#" /mnt/etc/shadow
-	
 	ln -sv /usr/bin/nvim /mnt/usr/bin/vi
 	for service in 'dhcpcd' 'seatd' 'rngd'
 	do
@@ -194,7 +203,6 @@ else
 
 	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
-	arch-chroot sudo -u n0tr00t "$(dirname "$(readlink -f $0)")"/user
 	[ -f "$swapfile" ] && swapoff -v "$swapfile"
 	umount -Rv /mnt
 	cryptsetup -v close fs
