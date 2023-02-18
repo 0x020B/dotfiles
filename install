@@ -32,8 +32,8 @@ else
 	sfdisk --delete "$disk"
 	parted -sa opt "$disk" \
 		mklabel gpt \
-		mkpart  esp     fat32   1M 250M \
-		mkpart  primary btrfs 251M 100%
+		mkpart  esp     fat32   1M 201M \
+		mkpart  primary btrfs 201M 100%
 	
 	# 磁盘加密
 	mkfs.fat -vF 32 "$disk"1
