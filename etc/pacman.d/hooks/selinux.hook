@@ -1,0 +1,17 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = alhp-mirrorlist
+Target = mirrorlist.arch4edu
+Target = archlinuxcn-mirrorlist-git
+Target = archlinux-mirrorlist
+Target = archstrike-mirrorlist
+Target = blackarch-mirrorlist
+Target = cachyos-mirrorlist
+Target = cachyos-v3-mirrorlist
+Target = cachyos-v4-mirrorlist
+Target = chaotic-mirrorlist
+[Action]
+When = PostTransaction
+Exec = /etc/pacman.d/hooks/rankmirrors selinux-mirrorlist selinux
