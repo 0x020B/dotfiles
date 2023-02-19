@@ -184,7 +184,8 @@ else
          efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
          #sbsign --key db.key --cert db.crt --output /boot/Shell.efi{,}
      fi
- 
+
+     # TODO: 改用systemd，sd-encrypt
      efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
          'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
          'root=/dev/mapper/fs rootflags=subvol=@ rw'\
