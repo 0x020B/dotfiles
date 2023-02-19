@@ -44,6 +44,9 @@ else
      cryptsetup -v open "$disk"2 fs -d /mnt/diskkey
      umount -v /mnt
 
+     # TODO: 密钥放在TPM
+
+
      # Btrfs 配置
      mkfs.btrfs -vfn 32k /dev/mapper/fs
      mount -vo compress=lzo /dev/mapper/fs /mnt
@@ -98,7 +101,6 @@ else
                   'mirrorlist.arch4edu'
                   'selinux-mirrorlist')
 
-
      # 密钥环初始化
      cp -vfr etc/pacman.d/* /etc/pacman.d/
      pacman-key --init
@@ -141,12 +143,11 @@ else
      # 将系统时钟设置到硬件时钟
      hwclock --systohc --adjfile /mnt/etc/adjtime &
 
-
+     # 新建用户
      arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
      
-     # 玩个梗，想必知道明文是什么吧
+     # 修改密码，玩个梗，想必知道明文是什么吧
      sed -i -E 's#^(n0tr00t:).*#\1$1$4514$j.EmU3yBwWBVqykd7p2c00:0:0:99999:7:::#' /mnt/etc/shadow
-     
      
      # 还原dotfiles
      cp -vfr etc/^pacman* /mnt/etc/
