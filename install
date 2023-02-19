@@ -7,195 +7,207 @@ swapfile='/mnt/var/swap'
 nproc=$(nproc)
 
 if ! sha512sum -c sha512sums; then
-	pacman -Sy --needed --noconfirm git
-	if [ ! -f id_ed25519 ]; then
-		# 写死IP地址，对抗DNS污染
-		grep -Fq 'raw.githubusercontent.com' /etc/hosts \
-			|| echo '185.199.109.133 raw.githubusercontent.com' >>/etc/hosts
-		curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
-		chmod -v 0600 id_ed25519
-	fi
-	# 写死GitHub的指纹，用于初次免验证，且更安全
-	echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >~/.ssh/known_hosts
-	# 使用SSH协议更容易通过墙
-	GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
-	cd dotfiles
-	./install 2>&1 | tee install.log
+     pacman -Sy --needed --noconfirm git
+     if [ ! -f id_ed25519 ]; then
+         # 写死IP地址，对抗DNS污染
+         grep -Fq 'raw.githubusercontent.com' /etc/hosts \
+             || echo '185.199.109.133 raw.githubusercontent.com' >>/etc/hosts
+         curl -O 'https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519'
+         chmod -v 0600 id_ed25519
+     fi
+     # 写死GitHub的指纹，用于初次免验证，且更安全
+     echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >~/.ssh/known_hosts
+     # 使用SSH协议更容易通过墙
+     GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
+     cd dotfiles
+     ./install 2>&1 | tee install.log
 else
-	# 启用扩展GLOB语法
-	setopt EXTENDED_GLOB
-	
-	# 启用repeat语法
-	enable -r repeat
-	
-	# 分区
-	sfdisk --delete "$disk"
-	parted -sa opt "$disk" \
-		mklabel gpt \
-		mkpart  esp     fat32   1M 201M \
-		mkpart  primary btrfs 201M 100%
-	
-	# 磁盘加密
-	mkfs.fat -vF 32 "$disk"1
-	mount -v "$disk"1 /mnt
-	dd bs=512 count=4 if=/dev/random of=/mnt/diskkey iflag=fullblock
-	chmod 600 /mnt/diskkey
-	cryptsetup -vq luksFormat "$disk"2 /mnt/diskkey
-	cryptsetup -v open "$disk"2 fs -d /mnt/diskkey
-	umount -v /mnt
+     # 启用扩展GLOB语法
+     setopt EXTENDED_GLOB
+     
+     # 启用repeat语法
+     enable -r repeat
+     
+     # 分区
+     sfdisk --delete "$disk"
+     parted -sa opt "$disk" \
+         mklabel gpt \
+         mkpart  esp     fat32   1M 201M \
+         mkpart  primary btrfs 201M 100%
+     
+     # 磁盘加密
+     mkfs.fat -vF 32 "$disk"1
+     mount -v "$disk"1 /mnt
+     dd bs=512 count=4 if=/dev/random of=/mnt/diskkey iflag=fullblock
+     chmod 600 /mnt/diskkey
+     cryptsetup -vq luksFormat "$disk"2 /mnt/diskkey
+     cryptsetup -v open "$disk"2 fs -d /mnt/diskkey
+     umount -v /mnt
 
-	# Btrfs 配置
-	mkfs.btrfs -vfn 32k /dev/mapper/fs
-	mount -vo compress=lzo /dev/mapper/fs /mnt
+     # Btrfs 配置
+     mkfs.btrfs -vfn 32k /dev/mapper/fs
+     mount -vo compress=lzo /dev/mapper/fs /mnt
 
-	echo -n ,etc,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
-	umount -v /mnt
+     echo -n ,etc,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
+     umount -v /mnt
 
-	# 挂载分区及子卷
-	mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
-	mkdir -v /mnt/{boot,etc,home,opt,usr,var}
-	mount -vo noatime,nodiratime "$disk"1 /mnt/boot
-	echo -n etc,home,opt,usr,var | xargs -P$nproc -i -d, \
-		mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
-	chattr +C /mnt/var
+     # 挂载分区及子卷
+     mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
+     mkdir -v /mnt/{boot,etc,home,opt,usr,var}
+     mount -vo noatime,nodiratime "$disk"1 /mnt/boot
+     echo -n etc,home,opt,usr,var | xargs -P$nproc -i -d, \
+         mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
+     chattr +C /mnt/var
 
-	# 自动计算交换文件所需要的大小
-	mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}') >> 20))
-	if [[ $mem < 16 ]]; then
-		size=$(($mem * 2))
-		[[ $size > 8 ]] && size=8
-		avail=$(df -BG --output=avail /dev/mapper/fs | tail -n1)
-		if [[ $((size * 8)) < ${avail%G*} ]]; then
-			# 创建交换文件
-			truncate -s 0 "$swapfile"
-			fallocate -l "$size"G "$swapfile"
-			chmod 0600 "$swapfile"
-			mkswap "$swapfile"
-			swapon "$swapfile"
-		fi
-	fi
+     # 自动计算交换文件所需要的大小
+     mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}') >> 20))
+     if [[ $mem < 16 ]]; then
+         size=$(($mem * 2))
+         [[ $size > 8 ]] && size=8
+         avail=$(df -BG --output=avail /dev/mapper/fs | tail -n1)
+         if [[ $((size * 8)) < ${avail%G*} ]]; then
+             # 创建交换文件
+             truncate -s 0 "$swapfile"
+             fallocate -l "$size"G "$swapfile"
+             chmod 0600 "$swapfile"
+             mkswap "$swapfile"
+             swapon "$swapfile"
+         fi
+     fi
 
-	# 修改pacstrap脚本, 支持复制第三方源镜像列表和强行覆盖文件
-	sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
-	sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
+     # 修改pacstrap脚本, 支持复制第三方源镜像列表和强行覆盖文件
+     sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
+     sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
 
-	keys=(	0706B90D37D9B881 	# alhp & chaotic-aur
-	      	250A4BA6630FD7F1 	# selinux
-	      	7533BAFE69A25079 	# blackarch
-	      	7931B6D628C8D3BA 	# arch4edu
-	      	F3B607488DB35A47)	# cachyos
+     keys=(0706B90D37D9B881     # alhp & chaotic-aur
+           250A4BA6630FD7F1     # selinux
+           7533BAFE69A25079     # blackarch
+           7931B6D628C8D3BA     # arch4edu
+           F3B607488DB35A47)    # cachyos
 
-	keyrings=(	'arch4edu-keyring'
-			'archlinuxcn-keyring'
-			'blackarch-keyring'
-			'cachyos-keyring'
-			'chaotic-keyring')
+     keyrings=('arch4edu-keyring'
+               'archlinuxcn-keyring'
+               'blackarch-keyring'
+               'cachyos-keyring'
+               'chaotic-keyring')
 
-	mirrorlists=(	'archlinuxcn-mirrorlist-git'
-			'blackarch-mirrorlist'
-			'cachyos-mirrorlist'
-			'chaotic-mirrorlist'
-			'mirrorlist.arch4edu')
-
-
-	# 密钥环初始化
-	cp -vfr etc/pacman.d/* /etc/pacman.d/
-	pacman-key --init
-	timeout -k 10 24 pacman-key --keyserver keyserver.ubuntu.com -r $keys || pacman-key --import .
-	pacman-key --lsign-key $keys
-	pacman-key --populate
-
-	# 准备镜像列表
-	pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
-	cp -vfb {,/}etc/pacman.conf
-	v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
-	if [[ $v =~ 4 ]]; then
-		mirrorlists+='cachyos-v4-mirrorlist'
-		cat etc/pacman_v4.conf >> /etc/pacman.conf
-	fi
-	if [[ $v =~ 3 ]]; then
-		keyrings+='alhp-keyring'
-		mirrorlists+=(	'alhp-mirrorlist'
-				'cachyos-v3-mirrorlist')
-		cat etc/pacman_v3.conf >> /etc/pacman.conf
-	fi
-	cat etc/pacman_baseline.conf >> /etc/pacman.conf
-	pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
-	pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
-
-	# 安装汐统
-	pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
-	
-	# 如果安装失败，尝试挽救
-	repeat 1
-	do
-		grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
-		pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
-	done
-	(( $? )) && exit 1
-
-	# 创建分区表
-	genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
-
-	# 将系统时钟设置到硬件时钟
-	hwclock --systohc --adjfile /mnt/etc/adjtime &
+     mirrorlists=('archlinuxcn-mirrorlist-git'
+                  'blackarch-mirrorlist'
+                  'cachyos-mirrorlist'
+                  'chaotic-mirrorlist'
+                  'mirrorlist.arch4edu'
+                  'selinux-mirrorlist')
 
 
-	arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
-	
-	# 玩个梗，想必知道明文是什么吧
-	sed -i -E 's#^(n0tr00t:).*#\1$1$4514$j.EmU3yBwWBVqykd7p2c00:0:0:99999:7:::#' /mnt/etc/shadow
-	
-	
-	# 还原dotfiles
-	cp -vfr etc/^pacman* /mnt/etc/
-	install -o1000 -Dm600 home/* /mnt/home/n0tr00t/
-	chown -Rv 1000:wheel /mnt/home/n0tr00t
-	arch-chroot mkinitcpio -vP
+     # 密钥环初始化
+     cp -vfr etc/pacman.d/* /etc/pacman.d/
+     pacman-key --init
+     timeout -k 10 24 pacman-key --keyserver keyserver.ubuntu.com -r $keys || pacman-key --import .
+     pacman-key --lsign-key $keys
+     pacman-key --populate
 
-	ln -sv /usr/bin/nvim /mnt/usr/bin/vi
-	for service in 'dhcpcd' 'seatd' 'rngd'
-	do
-		ln -sv /usr/lib/systemd/system/$service.service \
-		       /mnt/etc/systemd/system/multi-user.target.wants/$service.service &
-	done
+     # 准备镜像列表
+     pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
+     cp -vfb {,/}etc/pacman.conf
+     v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
+     if [[ $v =~ 4 ]]; then
+         mirrorlists+='cachyos-v4-mirrorlist'
+         cat etc/pacman_v4.conf >> /etc/pacman.conf
+     fi
+     if [[ $v =~ 3 ]]; then
+         keyrings+='alhp-keyring'
+         mirrorlists+=(    'alhp-mirrorlist'
+                 'cachyos-v3-mirrorlist')
+         cat etc/pacman_v3.conf >> /etc/pacman.conf
+     fi
+     cat etc/pacman_baseline.conf >> /etc/pacman.conf
+     pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
+     pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
-	# TODO: UEFI安全启动
-	#uuidgen --random > GUID.txt
-	#for key in "PK" "KEK" "db"
-	#do
-	#	openssl req -newkey rsa:4096 -nodes -keyout $key.key -new -x509 -sha512 -days 3650 -subj '/CN=12339/' -out $key.crt
-	#	openssl x509 -outform DER -in $key.crt -out $key.cer
-	#	cert-to-efi-sig-list -g "$(< GUID.txt)" $key.crt $key.esl
-	#done
-	#sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt PK PK.esl PK.auth
-	#sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt KEK KEK.esl KEK.auth
-	#sign-efi-sig-list -g "$(< GUID.txt)" -k KEK.key -c KEK.crt db db.esl db.auth
-	#sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
+     # 安装汐统
+     pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
+     
+     # 如果安装失败，尝试挽救
+     repeat 1
+     do
+         grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
+         pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
+     done
+     (( $? )) && exit 1
 
-	# 配置引导
-	efibootmgr \
-		| grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' \
-		| xargs -P$nproc -i efibootmgr -Bb {}
+     # 创建分区表
+     genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
 
-	if ! efibootmgr | grep -i 'Shell'; then
-		efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
-		#sbsign --key db.key --cert db.crt --output /boot/Shell.efi{,}
-	fi
+     # 将系统时钟设置到硬件时钟
+     hwclock --systohc --adjfile /mnt/etc/adjtime &
 
-	efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
-		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey initrd=initramfs-linux-zen.img'
 
-	efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
-		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey lsm=landlock,lockdown,yama,integrity,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
+     arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
+     
+     # 玩个梗，想必知道明文是什么吧
+     sed -i -E 's#^(n0tr00t:).*#\1$1$4514$j.EmU3yBwWBVqykd7p2c00:0:0:99999:7:::#' /mnt/etc/shadow
+     
+     
+     # 还原dotfiles
+     cp -vfr etc/^pacman* /mnt/etc/
+     install -o1000 -Dm600 home/* /mnt/home/n0tr00t/
+     chown -Rv 1000:wheel /mnt/home/n0tr00t
+     arch-chroot mkinitcpio -vP
 
-	efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
-		'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey lsm=landlock,lockdown,yama,integrity,selinux,bpf initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
+     ln -sv /usr/bin/nvim /mnt/usr/bin/vi
+     for service in 'dhcpcd' 'seatd' 'rngd'
+     do
+         ln -sv /usr/lib/systemd/system/$service.service \
+                /mnt/etc/systemd/system/multi-user.target.wants/$service.service &
+     done
 
-	efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
+     # TODO: UEFI安全启动
+     #uuidgen --random > GUID.txt
+     #for key in "PK" "KEK" "db"
+     #do
+     #    openssl req -newkey rsa:4096 -nodes -keyout $key.key -new -x509 -sha512 -days 3650 -subj '/CN=12339/' -out $key.crt
+     #    openssl x509 -outform DER -in $key.crt -out $key.cer
+     #    cert-to-efi-sig-list -g "$(< GUID.txt)" $key.crt $key.esl
+     #done
+     #sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt PK PK.esl PK.auth
+     #sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt KEK KEK.esl KEK.auth
+     #sign-efi-sig-list -g "$(< GUID.txt)" -k KEK.key -c KEK.crt db db.esl db.auth
+     #sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
 
-	[ -f "$swapfile" ] && swapoff -v "$swapfile"
-	umount -Rv /mnt
-	cryptsetup -v close fs
-	reboot
-fi
+     # 配置引导
+     efibootmgr \
+         | grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' \
+         | xargs -P$nproc -i efibootmgr -Bb {}
+
+     if ! efibootmgr | grep -i 'Shell'; then
+         efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
+         #sbsign --key db.key --cert db.crt --output /boot/Shell.efi{,}
+     fi
+ 
+     efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
+         'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
+         'root=/dev/mapper/fs rootflags=subvol=@ rw'\
+         'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
+         'initrd=initramfs-linux-zen.img'
+
+     efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
+         'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
+         'root=/dev/mapper/fs rootflags=subvol=@ rw'\
+         'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
+         'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
+         'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
+
+     efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
+         'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
+         'root=/dev/mapper/fs rootflags=subvol=@ rw'\
+         'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
+         'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
+         'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
+
+     efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
+
+     [ -f "$swapfile" ] && swapoff -v "$swapfile"
+     umount -Rv /mnt
+     cryptsetup -v close fs
+     reboot
+     fi
