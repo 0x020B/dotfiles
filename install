@@ -116,8 +116,8 @@ else
      fi
      if [[ $v =~ 3 ]]; then
          keyrings+='alhp-keyring'
-         mirrorlists+=(    'alhp-mirrorlist'
-                 'cachyos-v3-mirrorlist')
+         mirrorlists+=('alhp-mirrorlist'
+                       'cachyos-v3-mirrorlist')
          cat etc/pacman_v3.conf >> /etc/pacman.conf
      fi
      cat etc/pacman_baseline.conf >> /etc/pacman.conf
@@ -207,4 +207,4 @@ else
      umount -Rv /mnt
      cryptsetup -v close fs
      reboot
-     fi
+fi
