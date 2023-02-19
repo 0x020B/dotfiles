@@ -48,14 +48,14 @@ else
      mkfs.btrfs -vfn 32k /dev/mapper/fs
      mount -vo compress=lzo /dev/mapper/fs /mnt
 
-     echo -n ,etc,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
+     echo -n ,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
      umount -v /mnt
 
      # 挂载分区及子卷
      mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
-     mkdir -v /mnt/{boot,etc,home,opt,usr,var}
+     mkdir -v /mnt/{boot,home,opt,usr,var}
      mount -vo noatime,nodiratime "$disk"1 /mnt/boot
-     echo -n etc,home,opt,usr,var | xargs -P$nproc -i -d, \
+     echo -n home,opt,usr,var | xargs -P$nproc -i -d, \
          mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
      chattr +C /mnt/var
 
@@ -187,20 +187,17 @@ else
      efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
          'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
          'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-         'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
          'initrd=initramfs-linux-zen.img'
 
      efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
          'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
          'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-         'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
          'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
          'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 
      efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
          'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
          'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-         'usr=/dev/mapper/fs usrflags=subvol=@usr rw'\
          'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
          'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
