@@ -205,6 +205,8 @@ else
 
      efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
+     # 允许15秒内终止脚本执行进行debug
+     sleep 15
      [ -f "$swapfile" ] && swapoff -v "$swapfile"
      umount -Rv /mnt
      cryptsetup -v close fs
