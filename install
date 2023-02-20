@@ -3,6 +3,8 @@
 disk='/dev/sda'
 # 交换文件路径(SELINUX策略包refpolicy-arch和refpolicy-git的交换文件路径默认用/var/swap)
 swapfile='/mnt/var/swap'
+#默认用户
+user="n0tr00t"
 # 当前进程可用的处理器数
 nproc=$(nproc)
 
@@ -144,15 +146,15 @@ else
      hwclock --systohc --adjfile /mnt/etc/adjtime &
 
      # 新建用户
-     arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh n0tr00t
+     arch-chroot /mnt useradd -m -G wheel -s /usr/bin/zsh "$user"
      
      # 修改密码，玩个梗，想必知道明文是什么吧
-     sed -i -E 's#^(n0tr00t:).*#\1$1$4514$j.EmU3yBwWBVqykd7p2c00:0:0:99999:7:::#' /mnt/etc/shadow
+     sed -i -E 's#^('"$user"':).*#\1$1$4514$j.EmU3yBwWBVqykd7p2c00:0:0:99999:7:::#' /mnt/etc/shadow
      
      # 还原dotfiles
      cp -vfr etc/^pacman* /mnt/etc/
-     install -o1000 -Dm600 home/* /mnt/home/n0tr00t/
-     chown -Rv 1000:wheel /mnt/home/n0tr00t
+     install -o1000 -Dm600 home/* /mnt/home/"$user"/
+     chown -Rv 1000:wheel /mnt/home/"$user"
      arch-chroot mkinitcpio -vP
 
      ln -sv /usr/bin/nvim /mnt/usr/bin/vi
