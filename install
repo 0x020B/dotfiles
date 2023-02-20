@@ -187,6 +187,7 @@ else
      fi
 
      # TODO: 改用systemd，sd-encrypt
+     # NOTE: https://www.freedesktop.org/software/systemd/man/kernel-command-line.html
      efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
          'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
          'root=/dev/mapper/fs rootflags=subvol=@ rw'\
