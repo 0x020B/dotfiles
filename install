@@ -23,6 +23,13 @@ if ! sha512sum -c sha512sums; then
      GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
      cd dotfiles
      ./install 2>&1 | tee install.log
+     mv -v install.log /mnt/boot
+     # 允许15秒内终止脚本执行进行debug
+     sleep 15
+     [ -f "$swapfile" ] && swapoff -v "$swapfile"
+     umount -Rv /mnt
+     cryptsetup -v close fs
+     reboot
 else
      # 启用扩展glob语法
      setopt EXTENDED_GLOB
@@ -188,11 +195,4 @@ else
          'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
 
      efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
-
-     # 允许15秒内终止脚本执行进行debug
-     sleep 15
-     [ -f "$swapfile" ] && swapoff -v "$swapfile"
-     umount -Rv /mnt
-     cryptsetup -v close fs
-     reboot
 fi
