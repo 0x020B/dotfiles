@@ -144,8 +144,7 @@ else
      
      # 还原dotfiles
      cp -vfr etc/^pacman* /mnt/etc/
-     install -o1000 -Dm600 home/* /mnt/home/"$user"/
-     chown -Rv 1000:wheel /mnt/home/"$user"
+     install -o1000 -g998 -Dm600 home/* /mnt/home/"$user"/
      install -Dm600 fs.key /mnt/etc/cryptsetup-keys.d/fs.key
      
      # 创建分区表
