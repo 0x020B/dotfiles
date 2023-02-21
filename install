@@ -39,12 +39,9 @@ else
      
      # 磁盘加密
      mkfs.fat -vF 32 "$disk"1
-     mount -v "$disk"1 /mnt
-     dd bs=512 count=4 if=/dev/random of=/mnt/diskkey iflag=fullblock
-     chmod 600 /mnt/diskkey
-     cryptsetup -vq luksFormat "$disk"2 /mnt/diskkey
-     cryptsetup -v open "$disk"2 fs -d /mnt/diskkey
-     umount -v /mnt
+     dd bs=512 count=4 if=/dev/random of=fs.key iflag=fullblock
+     cryptsetup -vq luksFormat "$disk"2 fs.key
+     cryptsetup -v open "$disk"2 fs -d fs.key
 
      # TODO: 密钥放在TPM
 
@@ -136,9 +133,6 @@ else
      done
      (( $? )) && exit 1
 
-     # XXX: 创建分区表
-     genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab &
-
      # 将系统时钟设置到硬件时钟
      hwclock --systohc --adjfile /mnt/etc/adjtime &
 
@@ -152,8 +146,12 @@ else
      cp -vfr etc/^pacman* /mnt/etc/
      install -o1000 -Dm600 home/* /mnt/home/"$user"/
      chown -Rv 1000:wheel /mnt/home/"$user"
-
-     # XXX
+     install -Dm600 fs.key /mnt/etc/cryptsetup-keys.d/fs.key
+     
+     # 创建分区表
+     genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
+     echo "fs\t$disk"2 >>/mnt/etc/crypttab.initramfs
+     
      arch-chroot mkinitcpio -vP
 
      ln -sv /usr/bin/nvim /mnt/usr/bin/vi
@@ -189,18 +187,15 @@ else
      # TODO: 改用systemd，sd-encrypt
      # NOTE: https://www.freedesktop.org/software/systemd/man/kernel-command-line.html
      efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
-         'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
          'root=/dev/mapper/fs rootflags=subvol=@ rw'\
          'initrd=initramfs-linux-zen.img'
 
      efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
-         'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
          'root=/dev/mapper/fs rootflags=subvol=@ rw'\
          'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
          'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
 
      efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
-         'cryptdevice='"$disk"'2:fs cryptkey='"$disk"'1:vfat:diskkey'\
          'root=/dev/mapper/fs rootflags=subvol=@ rw'\
          'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
          'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
