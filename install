@@ -136,9 +136,10 @@ else
      
      # 创建分区表
      genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
-     echo "fs\t$disk"2 >>/mnt/etc/crypttab.initramfs
+     echo "fs $disk"2 >>/mnt/etc/crypttab.initramfs
      
      arch-chroot mkinitcpio -vP
+     chmod -R g-rwx,o-rwx /mnt/boot
 
      ln -sv /usr/bin/nvim /mnt/usr/bin/vi
      for service in 'dhcpcd' 'seatd' 'rngd'
