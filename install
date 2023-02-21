@@ -27,9 +27,6 @@ else
      # 启用扩展glob语法
      setopt EXTENDED_GLOB
 
-     # 启用repeat语法
-     enable -r repeat
-
      # 分区
      sfdisk --delete "$disk"
      parted -sa opt "$disk" \
@@ -121,12 +118,7 @@ else
      pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
      # 安装汐统
-     pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) \
-         || repeat 1; do
-                # 如果安装失败，尝试挽救
-                grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
-                pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
-            done || exit 1
+     pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
 
      # 将系统时钟设置到硬件时钟
      hwclock --systohc --adjfile /mnt/etc/adjtime &
