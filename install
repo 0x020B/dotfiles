@@ -4,7 +4,7 @@ disk='/dev/sda'
 # 交换文件路径(SELINUX策略包refpolicy-arch和refpolicy-git的交换文件路径默认用/var/swap)
 swapfile='/mnt/var/swap'
 # 默认用户
-user="n0tr00t"
+user='n0tr00t'
 # 当前进程可用的处理器数
 nproc=$(nproc)
 
@@ -24,12 +24,12 @@ if ! sha512sum -c sha512sums; then
      cd dotfiles
      ./install 2>&1 | tee install.log
 else
-     # 启用扩展GLOB语法
+     # 启用扩展glob语法
      setopt EXTENDED_GLOB
-     
+
      # 启用repeat语法
      enable -r repeat
-     
+
      # 分区
      sfdisk --delete "$disk"
      parted -sa opt "$disk" \
@@ -38,10 +38,9 @@ else
          mkpart  primary btrfs 201M 100%
      
      # 磁盘加密
-     mkfs.fat -vF 32 "$disk"1
      dd bs=512 count=4 if=/dev/random of=fs.key iflag=fullblock
      cryptsetup -vq luksFormat "$disk"2 fs.key
-     cryptsetup -v open "$disk"2 fs -d fs.key
+     cryptsetup -v open "$disk"2 -d fs{.key,}
 
      # TODO: 密钥放在TPM
 
@@ -114,8 +113,7 @@ else
      fi
      if [[ $v =~ 3 ]]; then
          keyrings+='alhp-keyring'
-         mirrorlists+=('alhp-mirrorlist'
-                       'cachyos-v3-mirrorlist')
+         mirrorlists+=('alhp-mirrorlist' 'cachyos-v3-mirrorlist')
          cat etc/pacman_v3.conf >> /etc/pacman.conf
      fi
      cat etc/pacman_baseline.conf >> /etc/pacman.conf
@@ -123,15 +121,12 @@ else
      pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
 
      # 安装汐统
-     pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
-     
-     # 如果安装失败，尝试挽救
-     repeat 1
-     do
-         grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
-         pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
-     done
-     (( $? )) && exit 1
+     pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) \
+         || repeat 1; do
+                # 如果安装失败，尝试挽救
+                grep -Pho '(?<=Exec = ).*' /etc/pacman.d/hooks/^shell* | xargs -P$nproc -i sh -c {}
+                pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt) && break
+            done || exit 1
 
      # 将系统时钟设置到硬件时钟
      hwclock --systohc --adjfile /mnt/etc/adjtime &
@@ -162,7 +157,7 @@ else
 
      # TODO: UEFI安全启动
      #uuidgen --random > GUID.txt
-     #for key in "PK" "KEK" "db"
+     #for key in 'PK' 'KEK' 'db'
      #do
      #    openssl req -newkey rsa:4096 -nodes -keyout $key.key -new -x509 -sha512 -days 3650 -subj '/CN=12339/' -out $key.crt
      #    openssl x509 -outform DER -in $key.crt -out $key.cer
