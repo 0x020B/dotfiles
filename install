@@ -170,29 +170,14 @@ else
 
      # 配置引导
      efibootmgr \
-         | grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)|(minimal)) options)|(UEFI Shell)))' \
+         | grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)) options)|(UEFI Shell)))' \
          | xargs -P$nproc -i efibootmgr -Bb {}
 
      if ! efibootmgr | grep -i 'Shell'; then
          efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
          #sbsign --key db.key --cert db.crt --output /boot/Shell.efi{,}
      fi
-
-     # TODO: 改用systemd，sd-encrypt
-     # NOTE: https://www.freedesktop.org/software/systemd/man/kernel-command-line.html
-     efibootmgr -c -d "$disk" -L 'Boot with minimal options' -l vmlinuz-linux-zen -u \
-         'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-         'initrd=initramfs-linux-zen.img'
-
-     efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l vmlinuz-linux-zen -u \
-         'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-         'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
-         'initrd=amd-ucode.img initrd=initramfs-linux-zen-fallback.img'
-
-     efibootmgr -c -d "$disk" -L 'Boot with standard options' -l vmlinuz-linux-zen -u \
-         'root=/dev/mapper/fs rootflags=subvol=@ rw'\
-         'lsm=landlock,lockdown,yama,integrity,selinux,bpf'\
-         'initrd=amd-ucode.img initrd=initramfs-linux-zen.img'
-
+     efibootmgr -c -d "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
+     efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l linux-zen-fallback.efi -u
      efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 fi
