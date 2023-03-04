@@ -87,10 +87,6 @@ else
            CCED9BE21E1173C61DC1C9407931B6D628C8D3BA	# arch4edu
 	   F9A6E68A711354D84A9B91637533BAFE69A25079)	# blackarch
 
-
-
-
-
      keyrings=('arch4edu-keyring'
                'archlinuxcn-keyring'
                'blackarch-keyring'
