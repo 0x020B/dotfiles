@@ -36,11 +36,12 @@ else
 
      # 分区
      sfdisk --delete "$disk"
-     shred -zvs 514M "$disk"
+     shred -zvs 514M "$disk"  # 据说幸运儿可以看到神秘数字
      parted -sa opt "$disk" \
          mklabel gpt \
          mkpart  esp     fat32   1M 501M \
          mkpart  primary btrfs 501M 100%
+     mkfs.fat -vF 32 "$disk"1
 
      # 磁盘加密
      dd bs=512 count=4 if=/dev/random of=fs.key iflag=fullblock
