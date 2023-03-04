@@ -145,7 +145,8 @@ else
      # 创建分区表
      genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
      echo "fs $disk"2 >>/mnt/etc/crypttab.initramfs
-     
+    
+     rm -rv /mnt/boot/initramfs-linux-zen*.img
      arch-chroot /mnt mkinitcpio -vP
      chmod -R g-rwx,o-rwx /mnt/boot
 
