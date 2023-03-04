@@ -36,7 +36,7 @@ else
 
      # 分区
      sfdisk --delete "$disk"
-     shred -zvs 520M "$disk"
+     shred -zvs 514M "$disk"
      parted -sa opt "$disk" \
          mklabel gpt \
          mkpart  esp     fat32   1M 501M \
