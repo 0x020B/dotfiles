@@ -133,7 +133,7 @@ else
      # 新建用户
      useradd -mg wheel -s /usr/bin/zsh "$user" -P /mnt
      
-     # 修改密码，玩个梗，想必知道明文是什么吧
+     # FIXME: 修改密码，玩个梗，想必知道明文是什么吧
      sed -i -E 's#^('"$user"':).*#\1$1$4514$j.EmU3yBwWBVqykd7p2c00:0:0:99999:7:::#' /mnt/etc/shadow
      
      # 还原dotfiles
