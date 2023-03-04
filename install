@@ -36,11 +36,11 @@ else
 
      # 分区
      sfdisk --delete "$disk"
-     shred -zvs 252M "$disk"
+     shred -zvs 222M "$disk"
      parted -sa opt "$disk" \
          mklabel gpt \
-         mkpart  esp     fat32   1M 251M \
-         mkpart  primary btrfs 251M 100%
+         mkpart  esp     fat32   1M 221M \
+         mkpart  primary btrfs 221M 100%
      mkfs.fat -vF 32 "$disk"1
 
      # 磁盘加密
