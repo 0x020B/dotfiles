@@ -8,4 +8,4 @@ Target = edk2-shell
 Description = Copying shell_x64.efi to ESP
 Depends = edk2-shell
 When = PostTransaction
-Exec = /usr/bin/cp -fv /usr/share/edk2-shell/x64/Shell_Full.efi /boot/Shell.efi
+Exec = /usr/bin/install -Dm600 /usr/share/edk2-shell/x64/Shell_Full.efi /boot/EFI/BOOT/BOOTx64.EFI
