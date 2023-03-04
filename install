@@ -35,19 +35,20 @@ else
      setopt EXTENDED_GLOB
 
      # 分区
+     shred -zvn 0 "$disk"
      sfdisk --delete "$disk"
      parted -sa opt "$disk" \
          mklabel gpt \
          mkpart  esp     fat32   1M 501M \
          mkpart  primary btrfs 501M 100%
-     
+     shred -zvs 500M "$disk"1
+     mkfs.fat -vF 32 "$disk"1
+
      # 磁盘加密
      dd bs=512 count=4 if=/dev/random of=fs.key iflag=fullblock
+     cryptsetup -v erase "$disk"2
      cryptsetup -vq luksFormat "$disk"2 fs.key
      cryptsetup -v open "$disk"2 -d fs{.key,}
-
-     # TODO: 密钥放在TPM
-
 
      # Btrfs 配置，子卷管理和分区挂载
      mkfs.btrfs -vfn 32k /dev/mapper/fs
