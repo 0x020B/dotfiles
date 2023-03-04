@@ -38,8 +38,8 @@ else
      sfdisk --delete "$disk"
      parted -sa opt "$disk" \
          mklabel gpt \
-         mkpart  esp     fat32   1M 201M \
-         mkpart  primary btrfs 201M 100%
+         mkpart  esp     fat32   1M 501M \
+         mkpart  primary btrfs 501M 100%
      
      # 磁盘加密
      dd bs=512 count=4 if=/dev/random of=fs.key iflag=fullblock
