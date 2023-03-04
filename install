@@ -81,11 +81,15 @@ else
      sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
      sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
 
-     keys=(0706B90D37D9B881     # alhp & chaotic-aur
-           250A4BA6630FD7F1     # selinux
-           7533BAFE69A25079     # blackarch
-           7931B6D628C8D3BA     # arch4edu
-           F3B607488DB35A47)    # cachyos
+     keys=(07C1003E46490054A20D3A8E250A4BA6630FD7F1	# selinux
+           882DCFE48E2051D48E2562ABF3B607488DB35A47	# cachyos
+           A3873AB27021C5DD39E0501AFBA220DFC880C036	# alhp & chaotic-aur
+           CCED9BE21E1173C61DC1C9407931B6D628C8D3BA	# arch4edu
+	   F9A6E68A711354D84A9B91637533BAFE69A25079)	# blackarch
+
+
+
+
 
      keyrings=('arch4edu-keyring'
                'archlinuxcn-keyring'
