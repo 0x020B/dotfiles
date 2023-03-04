@@ -36,11 +36,11 @@ else
 
      # 分区
      sfdisk --delete "$disk"
-     shred -zvs 514M "$disk"  # 据说幸运儿可以看到神秘数字
+     shred -zvs 300M "$disk"
      parted -sa opt "$disk" \
          mklabel gpt \
-         mkpart  esp     fat32   1M 501M \
-         mkpart  primary btrfs 501M 100%
+         mkpart  esp     fat32   1M 251M \
+         mkpart  primary btrfs 251M 100%
      mkfs.fat -vF 32 "$disk"1
 
      # 磁盘加密
@@ -174,11 +174,6 @@ else
      efibootmgr \
          | grep -Po '(?<=Boot)....(?=\*? ((Boot with ((standard)|(fallback)) options)|(UEFI Shell)))' \
          | xargs -P$nproc -i efibootmgr -Bb {}
-
-     if ! efibootmgr | grep -i 'Shell'; then
-         efibootmgr -c -d "$disk" -L 'UEFI Shell' -l Shell.efi -u
-         #sbsign --key db.key --cert db.crt --output /boot/Shell.efi{,}
-     fi
      efibootmgr -c -d "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
      efibootmgr -c -d "$disk" -L 'Boot with fallback options' -l linux-zen-fallback.efi -u
      efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
