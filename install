@@ -35,7 +35,6 @@ else
      setopt EXTENDED_GLOB
 
      # 分区
-     shred -zvn 0 "$disk"
      sfdisk --delete "$disk"
      parted -sa opt "$disk" \
          mklabel gpt \
