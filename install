@@ -134,7 +134,7 @@ else
      useradd -mg wheel -s /usr/bin/zsh "$user" -P /mnt
      
      # 修改密码
-     echo -n "n0tr00t:1145141919810" \
+     echo -n "$user:1145141919810" \
          | arch-chroot /mnt chpasswd -c YESCRYPT
 
      # 还原dotfiles
