@@ -5,7 +5,7 @@ Type = Package
 Target = edk2-shell
 
 [Action]
-Description = Copying shell_x64.efi to ESP
+Description = Copying shell_Full.efi to ESP
 Depends = edk2-shell
 When = PostTransaction
 Exec = /usr/bin/install -Dm600 /usr/share/edk2-shell/x64/Shell_Full.efi /boot/EFI/BOOT/BOOTx64.EFI
