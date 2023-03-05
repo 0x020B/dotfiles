@@ -140,7 +140,7 @@ else
      # 还原dotfiles
      cp -rvf etc/^pacman* /mnt/etc/
      cp -rv home/. "/mnt/home/$user/"
-     chmod -Rv 1000:998 "/mnt/home/$user"
+     chown -hRv 1000:998 "/mnt/home/$user"
      install -Dm600 fs.key /mnt/etc/cryptsetup-keys.d/fs.key
      
      # 创建分区表

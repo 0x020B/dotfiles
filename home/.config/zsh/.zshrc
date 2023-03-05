@@ -4,7 +4,7 @@ export PATH=$PATH:$HOME/.local/bin
 umask 077
 
 # Path to your oh-my-zsh installation.
-ZSH=/usr/share/zsh
+ZSH=/usr/share/oh-my-zsh
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
