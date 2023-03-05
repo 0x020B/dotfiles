@@ -5,6 +5,7 @@ base-devel-selinux
 bat
 btrfs-progs
 colordiff
+cpio
 dhcpcd
 duperemove
 edk2-shell
