@@ -5,6 +5,9 @@ disk='/dev/sda'
 swapfile='/mnt/var/swap'
 # 默认用户
 user='n0tr00t'
+# 默认用户的密码
+password='1145141919810'
+
 # 当前进程可用的处理器数
 nproc=$(nproc)
 
@@ -31,18 +34,17 @@ setopt EXTENDED_GLOB
 
 # 分区
 sfdisk --delete "$disk"
-shred -zvs 251M "$disk"
-parted -sa opt "$disk" \
-    mklabel gpt \
+shred -zsv 251M "$disk"
+parted -sa opt  "$disk"             \
+    mklabel gpt                     \
     mkpart  esp     fat32   1M 250M \
     mkpart  primary btrfs 250M 100%
-    mkfs.fat -vF 32 "$disk"1
+mkfs.fat -vF 32 "$disk"1
 
 # 磁盘加密
 dd bs=512 count=4 if=/dev/random of=fs.key iflag=fullblock
-cryptsetup -v erase "$disk"2
-cryptsetup -vq luksFormat "$disk"2 fs.key
-cryptsetup -v open "$disk"2 -d fs{.key,}
+cryptsetup -vq luksFormat "$disk"2    fs.key
+cryptsetup -v  open       "$disk"2 -d fs{.key,}
 
 # Btrfs 配置，子卷管理和分区挂载
 mkfs.btrfs -vfn 32k /dev/mapper/fs
@@ -118,7 +120,7 @@ if [[ $v =~ 3 ]]; then
 fi
 cat etc/pacman_baseline.conf >> /etc/pacman.conf
 pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
-pacman -S --needed --noconfirm --overwrite "*" $mirrorlists
+pacman -S  --needed --noconfirm --overwrite "*" $mirrorlists
 
 # 安装汐统
 pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
@@ -130,12 +132,12 @@ hwclock --systohc --adjfile /mnt/etc/adjtime &
 useradd -mG seat,wheel -s /usr/bin/zsh "$user" -P /mnt
 
 # 修改密码
-echo -n "$user:1145141919810" | arch-chroot /mnt chpasswd -c YESCRYPT
+echo -n "$user:$password" | arch-chroot /mnt chpasswd -c YESCRYPT
 
 # 还原配置
 cp -rvf etc/^pacman* /mnt/etc/
-cp -rv home/. "/mnt/home/$user/"
-chown -hRv 1000:998 "/mnt/home/$user"
+cp -rv home/.        "/mnt/home/$user"
+chown -Rhv 1000:998  "/mnt/home/$user"
 chmod -R g-rwx,o-rwx "/mnt/home/$user"
 install -Dm600 fs.key /mnt/etc/cryptsetup-keys.d/fs.key
 cat > /mnt/usr/lib/initcpio/install/fstab << EOF
@@ -147,9 +149,10 @@ build() {
 EOF
 
 # 创建分区表
-genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
-genfstab -L /mnt/etc | sed -E '/^(#.*)?$/d' | sed 's#/ #/sysroot/etc #' >>/mnt/etc/fstab.initramfs
-echo "fs $disk"2 >>/mnt/etc/crypttab.initramfs
+echo "fs $disk"2                                 >>/mnt/etc/crypttab.initramfs
+genfstab -L /mnt/etc | sed -E '/^(#.*)?$/d'      \
+	             | sed 's#/ #/sysroot/etc #' >>/mnt/etc/fstab.initramfs
+genfstab -L /mnt     | sed -E '/^(#.*)?$/d'      >>/mnt/etc/fstab
 
 rm -rv /mnt/boot/initramfs-linux-zen*.img
 arch-chroot /mnt mkinitcpio -vP
@@ -177,10 +180,10 @@ done
 
 # 配置引导
 efibootmgr \
-    | grep -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
+    | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
     | xargs -P$nproc -i efibootmgr -Bb {}
-efibootmgr -c -d "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
-efibootmgr -a -b $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
+efibootmgr  -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
+efibootmgr  -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
 # 允许15秒内终止脚本执行进行debug
 sleep 15
