@@ -140,7 +140,7 @@ install -Dm600 fs.key /mnt/etc/cryptsetup-keys.d/fs.key
 cat > /mnt/usr/lib/initcpio/install/fstab << EOF
 build() {
     local rules unit
-    add_file "/etc/fstab.initramfs" "/etc/fstab"
+    [[ -f /etc/fstab.initramfs ]] && add_file "/etc/fstab.initramfs" "/etc/fstab"
 }
 EOF
 
