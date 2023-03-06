@@ -1,14 +1,8 @@
 #!/bin/sh
 mount -v "${1-/dev/sda}"1 /mnt
-objcopy -O binary -j .initrd /mnt/linux-zen.efi initrd.img
+objcopy -O binary -j .initrd /mnt/linux-zen.efi ../initrd.img
 umount -v /mnt
-TMPDIR=`mktemp -d`
-pushd $TMPDIR
-curl -O https://salsa.debian.org/kernel-team/initramfs-tools/-/raw/master/unmkinitramfs
-chmod +xv ./unmkinitramfs
-alias unmkinitramfs=$TMPDIR/unmkinitramfs
-popd
-unmkinitramfs initrd.img .
+# FIXME
 cryptsetup open "${1-/dev/sda}"2 fs -d etc/cryptsetup-keys.d/fs.key
 mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
 mount -vo noatime,nodiratime "${1-/dev/sda}"1 /mnt/boot
