@@ -69,11 +69,11 @@ if [[ $mem < 16 ]]; then
     avail=$(df -BG --output=avail /dev/mapper/fs | tail -n1)
     if [[ $((size * 8)) < ${avail%G*} ]]; then
         # 创建交换文件
-        truncate -s 0 "$swapfile"
-        fallocate -l "$size"G "$swapfile"
-        chmod 0600 "$swapfile"
-        mkswap "$swapfile"
-        swapon "$swapfile"
+        truncate  -s 0 "$swapfile"
+        fallocate -l   "$size"G "$swapfile"
+        chmod -v 0600  "$swapfile"
+        mkswap         "$swapfile"
+        swapon         "$swapfile"
     fi
 fi
 
@@ -103,8 +103,7 @@ mirrorlists=('archlinuxcn-mirrorlist-git'
 # 密钥环初始化
 cp -vfr etc/pacman.d/* /etc/pacman.d/
 pacman-key --verbose --init
-timeout -k 10 24 pacman-key --verbose --keyserver keyserver.ubuntu.com -r $keys \
-              || pacman-key --verbose --import .
+pacman-key --verbose --import .
 pacman-key --verbose --lsign-key $keys
 pacman-key --verbose --populate
 
@@ -154,7 +153,7 @@ EOF
 # 创建分区表
 echo "fs $disk"2                                 >>/mnt/etc/crypttab.initramfs
 genfstab -L /mnt/etc | sed -E '/^(#.*)?$/d'      \
-	             | sed 's#/ #/sysroot/etc #' >>/mnt/etc/fstab.initramfs
+                     | sed 's#/ #/sysroot/etc #' >>/mnt/etc/fstab.initramfs
 genfstab -L /mnt     | sed -E '/^(#.*)?$/d'      >>/mnt/etc/fstab
 
 rm -rv /mnt/boot/initramfs-linux-zen*.img
@@ -184,8 +183,8 @@ done
 # 配置引导
 efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
            | xargs -P$nproc -i efibootmgr -Bb {}
-efibootmgr  -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
-efibootmgr  -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
+efibootmgr -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
+efibootmgr -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
 # 允许15秒内终止脚本执行进行debug
 sleep 15
