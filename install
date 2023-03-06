@@ -36,11 +36,11 @@ else
 
      # 分区
      sfdisk --delete "$disk"
-     shred -zvs 255M "$disk"
+     shred -zvs 251M "$disk"
      parted -sa opt "$disk" \
          mklabel gpt \
-         mkpart  esp     fat32   1M 251M \
-         mkpart  primary btrfs 251M 100%
+         mkpart  esp     fat32   1M 250M \
+         mkpart  primary btrfs 250M 100%
      mkfs.fat -vF 32 "$disk"1
 
      # 磁盘加密
@@ -147,6 +147,7 @@ else
      
      # 创建分区表
      genfstab -L /mnt | sed -E '/^(#.*)?$/d' >>/mnt/etc/fstab
+     genfstab -L /mnt/etc | sed -E '/^(#.*)?$/d' | sed 's#/ #/new_root/etc #' >>/mnt/etc/fstab.initramfs
      echo "fs $disk"2 >>/mnt/etc/crypttab.initramfs
     
      rm -rv /mnt/boot/initramfs-linux-zen*.img

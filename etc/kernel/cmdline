@@ -1,1 +1,1 @@
-root=/dev/mapper/fs rootflags=subvol=@ rw lsm=landlock,lockdown,yama,integrity,selinux,bpf
+rd.fstab=/etc/fstab.initramfs root=/dev/mapper/fs rootflags=subvol=@ rw lsm=landlock,lockdown,yama,integrity,selinux,bpf
