@@ -139,6 +139,7 @@ chown -hRv 1000:998 "/mnt/home/$user"
 chmod -R g-rwx,o-rwx "/mnt/home/$user"
 install -Dm600 fs.key /mnt/etc/cryptsetup-keys.d/fs.key
 cat > /mnt/usr/lib/initcpio/install/fstab << EOF
+#!/bin/bash
 build() {
     local rules unit
     [[ -f /etc/fstab.initramfs ]] && add_file "/etc/fstab.initramfs" "/etc/fstab"
