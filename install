@@ -1,4 +1,6 @@
 #!/usr/bin/zsh
+# vim: set ft=sh ts=4 sw=4 et:
+
 # 安装系统所用的硬盘
 disk='/dev/sda'
 # 交换文件路径(SELINUX策略包refpolicy-arch和refpolicy-git的交换文件路径默认用/var/swap)
@@ -23,7 +25,8 @@ if ! sha512sum -c sha512sums; then
     # 写死GitHub的指纹，用于初次免验证，且更安全
     echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >~/.ssh/known_hosts
     # 使用SSH协议更容易通过墙
-    GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
+    GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" \
+        git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
     cd dotfiles
     ./install 2>&1 | tee install.log
     mv -v install.log /mnt/boot
@@ -54,7 +57,7 @@ umount -v /mnt
 mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
 mkdir -v /mnt/{boot,etc,home,opt,usr,var}
 mount -vo noatime,nodiratime "$disk"1 /mnt/boot
-echo -n etc,home,opt,usr,var | xargs -P$nproc -i -d, \
+echo -n  etc,home,opt,usr,var | xargs -P$nproc -i -d, \
     mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 chattr +C /mnt/var
 
@@ -106,7 +109,7 @@ pacman-key --verbose --lsign-key $keys
 pacman-key --verbose --populate
 
 # 准备镜像列表
-pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
+pacman -S --needed --noconfirm pacman-contrib  # 软件源测速排序需要 rankmirrors
 cp -vfb {,/}etc/pacman.conf
 v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 if [[ $v =~ 4 ]]; then
@@ -135,7 +138,7 @@ useradd -mG seat,wheel -s /usr/bin/zsh "$user" -P /mnt
 echo -n "$user:$password" | arch-chroot /mnt chpasswd -c YESCRYPT
 
 # 还原配置
-cp -rvf etc/^pacman* /mnt/etc/
+cp -rvf etc/^pacman* "/mnt/etc"
 cp -rv home/.        "/mnt/home/$user"
 chown -Rhv 1000:998  "/mnt/home/$user"
 chmod -R g-rwx,o-rwx "/mnt/home/$user"
@@ -179,9 +182,8 @@ done
 #sbsign --key db.key --cert db.crt --output /boot/vmlinuz-linux-zen{,}
 
 # 配置引导
-efibootmgr \
-    | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
-    | xargs -P$nproc -i efibootmgr -Bb {}
+efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
+           | xargs -P$nproc -i efibootmgr -Bb {}
 efibootmgr  -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
 efibootmgr  -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
