@@ -153,7 +153,7 @@ EOF
 # 创建分区表
 echo "fs $disk"2                                 >>/mnt/etc/crypttab.initramfs
 genfstab -L /mnt/etc | sed -E '/^(#.*)?$/d'      \
-                     | sed 's#/ #/sysroot/etc #' >>/mnt/etc/fstab.initramfs
+                     | sed 's# /# /sysroot/etc#' >>/mnt/etc/fstab.initramfs
 genfstab -L /mnt     | sed -E '/^(#.*)?$/d'      >>/mnt/etc/fstab
 
 rm -rv /mnt/boot/initramfs-linux-zen*.img
