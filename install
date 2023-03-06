@@ -38,7 +38,7 @@ setopt EXTENDED_GLOB
 # 分区
 sfdisk --delete "$disk"
 shred -zvs 251M "$disk"
-parted -as opt  "$disk"             \
+parted -sa opt  "$disk"             \
     mklabel gpt                     \
     mkpart  esp     fat32   1M 250M \
     mkpart  primary btrfs 250M 100%
