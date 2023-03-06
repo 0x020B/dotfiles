@@ -52,12 +52,12 @@ else
      # Btrfs 配置，子卷管理和分区挂载
      mkfs.btrfs -vfn 32k /dev/mapper/fs
      mount -vo compress=lzo /dev/mapper/fs /mnt
-     echo -n ,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
+     echo -n ,etc,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
      umount -v /mnt
      mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
-     mkdir -v /mnt/{boot,home,opt,usr,var}
+     mkdir -v /mnt/{boot,etc,home,opt,usr,var}
      mount -vo noatime,nodiratime "$disk"1 /mnt/boot
-     echo -n home,opt,usr,var | xargs -P$nproc -i -d, \
+     echo -n etc,home,opt,usr,var | xargs -P$nproc -i -d, \
          mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
      chattr +C /mnt/var
 
