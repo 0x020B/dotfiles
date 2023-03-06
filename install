@@ -24,6 +24,7 @@ if ! sha512sum -c sha512sums; then
     cd dotfiles
     ./install 2>&1 | tee install.log
     mv -v install.log /mnt/boot
+    exit
 fi
 # 启用扩展glob语法
 setopt EXTENDED_GLOB
