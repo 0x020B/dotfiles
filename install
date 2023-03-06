@@ -102,10 +102,11 @@ else
 
      # 密钥环初始化
      cp -vfr etc/pacman.d/* /etc/pacman.d/
-     pacman-key --init
-     timeout -k 10 24 pacman-key --keyserver keyserver.ubuntu.com -r $keys || pacman-key --import .
-     pacman-key --lsign-key $keys
-     pacman-key --populate
+     pacman-key --verbose --init
+     timeout -k 10 24 pacman-key --verbose --keyserver keyserver.ubuntu.com -r $keys \
+                   || pacman-key --verbose --import .
+     pacman-key --verbose --lsign-key $keys
+     pacman-key --verbose --populate
 
      # 准备镜像列表
      pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
