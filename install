@@ -77,10 +77,6 @@ if [[ $mem < 16 ]]; then
     fi
 fi
 
-# 修改pacstrap脚本, 支持复制第三方源镜像列表和强行覆盖文件
-sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
-sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
-
 keys=(07C1003E46490054A20D3A8E250A4BA6630FD7F1	# selinux
       882DCFE48E2051D48E2562ABF3B607488DB35A47	# cachyos
       A3873AB27021C5DD39E0501AFBA220DFC880C036	# alhp & chaotic-aur
@@ -149,6 +145,8 @@ genfstab -L /mnt/usr | sed -E  '/^(#.*)?$/d'       \
 genfstab -L /mnt     | sed -E  '/^(#.*)?$/d'       >>/mnt/etc/fstab
 
 # 安装汐统
+sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
+#sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
 pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
 
 # 将系统时钟设置到硬件时钟
