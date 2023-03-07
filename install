@@ -3,12 +3,10 @@
 
 # 安装系统所用的硬盘
 disk='/dev/sda'
-# 交换文件路径(SELINUX策略包refpolicy-arch和refpolicy-git的交换文件路径默认用/var/swap)
-swapfile='/mnt/var/swap'
-# 默认用户
+# 默认用户名称
 user='n0tr00t'
-# 默认用户的密码
-password='1145141919810'
+# 默认用户密码
+pass='1145141919810'
 
 # 当前进程可用的处理器数
 nproc=$(nproc)
@@ -29,7 +27,6 @@ if ! sha512sum -c sha512sums; then
         git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
     cd dotfiles
     ./install 2>&1 | tee install.log
-    mv -v install.log /mnt/boot
     exit
 fi
 
@@ -70,11 +67,11 @@ if [[ $mem < 16 ]]; then
     avail=$(df -BG --output=avail /dev/mapper/fs | tail -n1)
     if [[ $((size * 8)) < ${avail%G*} ]]; then
         # 创建交换文件
-        truncate  -s 0 "$swapfile"
-        fallocate -l   "$size"G "$swapfile"
-        chmod -v 0600  "$swapfile"
-        mkswap         "$swapfile"
-        swapon         "$swapfile"
+        truncate  -s 0 /mnt/var/swap
+        fallocate -l   "$size"G /mnt/var/swap
+        chmod -v 0600  /mnt/var/swap
+        mkswap         /mnt/var/swap
+        swapon         /mnt/var/swap
     fi
 fi
 
@@ -156,7 +153,7 @@ hwclock --systohc --adjfile /mnt/etc/adjtime &
 useradd -mg wheel -G seat -s /usr/bin/zsh "$user" -P /mnt
 
 # 修改密码
-echo -n "$user:$password" | arch-chroot /mnt chpasswd -c YESCRYPT
+echo -n "$user:$pass" | arch-chroot /mnt chpasswd -c YESCRYPT
 
 ln -sv /usr/bin/nvim /mnt/usr/bin/vi
 for service in 'dhcpcd' 'seatd' 'rngd'
@@ -186,7 +183,8 @@ efibootmgr -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standa
 
 # 允许15秒内终止脚本执行进行debug
 sleep 15
-[ -f "$swapfile" ] && swapoff -v "$swapfile"
+[ -f install.log ]   && mv -v install.log /mnt/boot
+[ -f /mnt/var/swap ] && swapoff -v        /mnt/var/swap
 umount -Rv /mnt
 cryptsetup -v close fs
 reboot
