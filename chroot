@@ -1,14 +1,14 @@
 #!/bin/sh
-mount -v "${1-/dev/sda}"1 /mnt
+disk="${1-/dev/sda}"
+mount -v "$disk"1 /mnt
 objcopy -j .initrd /mnt/linux-zen.efi -O binary initrd.img
 umount -v /mnt
 dd if=initrd.img of=rootfs.img bs=512 skip=100
 cpio -idv etc/cryptsetup-keys.d/fs.key <rootfs.img
-cryptsetup open "${1-/dev/sda}"2 fs -d etc/cryptsetup-keys.d/fs.key
-mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
-mount -vo noatime,nodiratime "${1-/dev/sda}"1 /mnt/boot
-echo -n etc,home,opt,usr,var \
+cryptsetup open "$disk"2 fs -d etc/cryptsetup-keys.d/fs.key
+echo -n ,etc,home,opt,usr,var \
     | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
+mount -vo noatime,nodiratime "$disk"1 /mnt/boot
 arch-chroot /mnt
 umount -Rv /mnt
 cryptsetup close fs
