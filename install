@@ -113,35 +113,25 @@ cp -vfb {,/}etc/pacman.conf
 v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 if [[ $v =~ 4 ]]; then
     mirrorlists+='cachyos-v4-mirrorlist'
-    cat etc/pacman_v4.conf >> /etc/pacman.conf
+    cat etc/pacman_v4.conf   >> /etc/pacman.conf
 fi
 if [[ $v =~ 3 ]]; then
     keyrings+='alhp-keyring'
     mirrorlists+=('alhp-mirrorlist' 'cachyos-v3-mirrorlist')
-    cat etc/pacman_v3.conf >> /etc/pacman.conf
+    cat etc/pacman_v3.conf   >> /etc/pacman.conf
 fi
 cat etc/pacman_baseline.conf >> /etc/pacman.conf
 pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 pacman -S  --needed --noconfirm --overwrite "*" $mirrorlists
 
-# 安装汐统
-pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
-
-# 将系统时钟设置到硬件时钟
-hwclock --systohc --adjfile /mnt/etc/adjtime &
-
-# 新建用户
-useradd -mg wheel -G seat -s /usr/bin/zsh "$user" -P /mnt
-
-# 修改密码
-echo -n "$user:$password" | arch-chroot /mnt chpasswd -c YESCRYPT
-
 # 还原配置
-cp -rvf etc/^pacman* "/mnt/etc"
-cp -rv  home/.       "/mnt/home/$user"
-chown -Rhv 1000:998  "/mnt/home/$user"
-chmod -R g-rwx,o-rwx "/mnt/home/$user"
+cp -rvf etc/^pacman*  "/mnt/etc"
+cp -rv  home/.        "/mnt/home/$user"
+chown -Rvh 1000:998   "/mnt/home/$user"
+chmod -R  g-rwx,o-rwx "/mnt/home/$user"
+chmod -Rv g-rwx,o-rwx "/mnt/boot"
 install -Dm600 fs.key /mnt/etc/cryptsetup-keys.d/fs.key
+mkdir -pv /mnt/usr/lib/initcpio/install
 cat > /mnt/usr/lib/initcpio/install/fstab << EOF
 #!/bin/bash
 build() {
@@ -156,9 +146,18 @@ genfstab -L /mnt/etc | sed -E  '/^(#.*)?$/d'       \
                      | sed 's#\t/#\t/sysroot/etc#' >>/mnt/etc/fstab.initramfs
 genfstab -L /mnt     | sed -E  '/^(#.*)?$/d'       >>/mnt/etc/fstab
 
-rm -v /mnt/boot/initramfs-linux-zen*.img
-arch-chroot /mnt mkinitcpio -vP
-chmod -R g-rwx,o-rwx /mnt/boot
+# 安装汐统
+pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
+
+# 将系统时钟设置到硬件时钟
+hwclock --systohc --adjfile /mnt/etc/adjtime &
+
+# 新建用户
+useradd -mg wheel -G seat -s /usr/bin/zsh "$user" -P /mnt
+
+# 修改密码
+echo -n "$user:$password" | arch-chroot /mnt chpasswd -c YESCRYPT
+
 
 ln -sv /usr/bin/nvim /mnt/usr/bin/vi
 for service in 'dhcpcd' 'seatd' 'rngd'
