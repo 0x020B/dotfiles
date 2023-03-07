@@ -32,6 +32,7 @@ if ! sha512sum -c sha512sums; then
     mv -v install.log /mnt/boot
     exit
 fi
+
 # 启用扩展glob语法
 setopt EXTENDED_GLOB
 
@@ -146,7 +147,6 @@ genfstab -L /mnt     | sed -E  '/^(#.*)?$/d'       >>/mnt/etc/fstab
 
 # 安装汐统
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
-#sed -i -E 's/(pacman_args=).*/\1(--overwrite "*")/' /usr/bin/pacstrap
 pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
 
 # 将系统时钟设置到硬件时钟
@@ -157,7 +157,6 @@ useradd -mg wheel -G seat -s /usr/bin/zsh "$user" -P /mnt
 
 # 修改密码
 echo -n "$user:$password" | arch-chroot /mnt chpasswd -c YESCRYPT
-
 
 ln -sv /usr/bin/nvim /mnt/usr/bin/vi
 for service in 'dhcpcd' 'seatd' 'rngd'
