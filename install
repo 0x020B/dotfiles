@@ -144,6 +144,8 @@ EOF
 echo "fs $disk"2                                   >>/mnt/etc/crypttab.initramfs
 genfstab -L /mnt/etc | sed -E  '/^(#.*)?$/d'       \
                      | sed 's#\t/#\t/sysroot/etc#' >>/mnt/etc/fstab.initramfs
+genfstab -L /mnt/usr | sed -E  '/^(#.*)?$/d'       \
+                     | sed 's#\t/#\t/sysroot/usr#' >>/mnt/etc/fstab.initramfs
 genfstab -L /mnt     | sed -E  '/^(#.*)?$/d'       >>/mnt/etc/fstab
 
 # 安装汐统
