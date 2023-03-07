@@ -123,7 +123,6 @@ cp -rvf etc/^pacman*  "/mnt/etc"
 cp -rv  home/.        "/mnt/home/$user"
 chown -Rvh 1000:998   "/mnt/home/$user"
 chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
-install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
 mkdir -pv /mnt/usr/lib/initcpio/install
 cat > /mnt/usr/lib/initcpio/install/fstab << EOF
 #!/bin/bash
@@ -132,6 +131,13 @@ build() {
     [[ -f /etc/fstab.initramfs ]] && add_file "/etc/fstab.initramfs" "/etc/fstab"
 }
 EOF
+
+#if journalctl -k --grep=tpm; then
+#    systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 "$disk"
+#    /usr/lib/systemd/systemd-cryptsetup attach fs "$disk" --tpm2-device=auto
+#else
+install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
+#fi
 
 # 创建分区表
 echo "fs $disk"2                                   >>/mnt/etc/crypttab.initramfs
@@ -159,6 +165,25 @@ do
     ln -sv /usr/lib/systemd/system/$service.service \
            /mnt/etc/systemd/system/multi-user.target.wants/$service.service &
 done
+
+# TODO: UEFI安全启动
+if bootctl status; then
+    uuidgen --random > GUID.txt
+    for key in 'PK' 'KEK' 'db'
+    do
+        openssl req -newkey rsa:4096 -nodes -keyout $key.key -new -x509 -sha512 -days 3650 -subj '/CN=12339/' -out $key.crt
+        openssl x509 -outform DER -in $key.crt -out $key.cer
+        cert-to-efi-sig-list -g "$(< GUID.txt)" $key.crt $key.esl
+    done
+    sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt PK PK.esl PK.auth
+    sign-efi-sig-list -g "$(< GUID.txt)" -k PK.key -c PK.crt KEK KEK.esl KEK.auth
+    sign-efi-sig-list -g "$(< GUID.txt)" -k KEK.key -c KEK.crt db db.esl db.auth
+    echo -n db,KEK,PK | xargs -P$nproc -i -d, install -Dm600 {}.auth /etc/secureboot/keys/{}/{}.auth
+    sbsign --key db.key --cert db.crt --output /mnt/boot/linux-zen.efi{,}
+    chattr -iv /sys/firmware/efi/efivars/{PK,KEK,db}*
+    sbkeysync --verbose
+    sbkeysync --verbose --pk
+fi
 
 # 配置引导
 efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
