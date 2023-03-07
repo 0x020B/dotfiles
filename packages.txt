@@ -1,9 +1,12 @@
 alacritty
+amule
 amd-ucode
 aria2
 base-devel-selinux
 bat
+bluez-utils
 btrfs-progs
+chromium
 colordiff
 cpio
 dhcpcd
@@ -13,11 +16,13 @@ fcitx5-gtk
 fcitx5-pinyin-moegirl-rime
 fcitx5-qt
 fcitx5-rime
+firefox-developer-edition-i18n-zh-cn
 firejail
 goimapnotify
 grim
 isync
 libglvnd
+libnotify
 libva-mesa-driver
 linux-firmware
 linux-firmware-qlogic
@@ -26,8 +31,10 @@ man-db
 man-pages
 mesa-vdpau
 mkinitcpio
+mpv
 neomutt
 neovim
+obs-studio
 oh-my-zsh-git
 pacman-contrib
 paru
@@ -45,6 +52,7 @@ waypipe
 wl-clipboard
 wpa_supplicant
 xdg-desktop-portal-wlr
+xdg-user-dirs
 xf86-video-amdgpu
 xorg-xwayland
 zsh-autosuggestions
