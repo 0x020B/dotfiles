@@ -1,16 +1,14 @@
 #!/bin/sh
 mount -v "${1-/dev/sda}"1 /mnt
-objcopy -j .initrd /mnt/linux-zen.efi -O binary ../initrd.img
+objcopy -j .initrd /mnt/linux-zen.efi -O binary initrd.img
 umount -v /mnt
-# FIXME
-# 直接用cpio拆initrd的话，只能拆出CPU微码，拆不出秘钥，中间应该隔了\x00
-# binwalk 倒是可以拆出来，但需要额外安装依赖
-# 注意到一个数字：51200，暂时不知道是不是固定的
-# debian的unmkinitcpio不用额外安装依赖可以分离initrd，研究了源码，有点长
+dd if=initrd.img of=rootfs.img bs=512 skip=100
+cpio -idv etc/cryptsetup-keys.d/fs.key <rootfs.img
 cryptsetup open "${1-/dev/sda}"2 fs -d etc/cryptsetup-keys.d/fs.key
 mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
 mount -vo noatime,nodiratime "${1-/dev/sda}"1 /mnt/boot
-echo -n home,opt,usr,var | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
+echo -n etc,home,opt,usr,var \
+    | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 arch-chroot /mnt
 umount -Rv /mnt
 cryptsetup close fs
