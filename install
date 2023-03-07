@@ -122,8 +122,7 @@ pacman -S  --needed --noconfirm --overwrite "*" $mirrorlists
 cp -rvf etc/^pacman*  "/mnt/etc"
 cp -rv  home/.        "/mnt/home/$user"
 chown -Rvh 1000:998   "/mnt/home/$user"
-chmod -R  g-rwx,o-rwx "/mnt/home/$user"
-chmod -Rv g-rwx,o-rwx "/mnt/boot"
+chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
 install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
 mkdir -pv /mnt/usr/lib/initcpio/install
 cat > /mnt/usr/lib/initcpio/install/fstab << EOF
