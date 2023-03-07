@@ -54,9 +54,9 @@ mkfs.btrfs -vfn 32k /dev/mapper/fs
 mount -vo compress=lzo /dev/mapper/fs /mnt
 echo -n ,etc,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
 umount -v /mnt
-mount -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
-mkdir -v /mnt/{boot,etc,home,opt,usr,var}
-mount -vo noatime,nodiratime "$disk"1 /mnt/boot
+mount  -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
+mkdir  -v /mnt/{boot,etc,home,opt,usr,var}
+mount  -vo noatime,nodiratime "$disk"1 /mnt/boot
 echo -n  etc,home,opt,usr,var | xargs -P$nproc -i -d, \
     mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 chattr +C /mnt/var
@@ -151,12 +151,12 @@ build() {
 EOF
 
 # 创建分区表
-echo "fs $disk"2                                 >>/mnt/etc/crypttab.initramfs
-genfstab -L /mnt/etc | sed -E '/^(#.*)?$/d'      \
-                     | sed 's# /# /sysroot/etc#' >>/mnt/etc/fstab.initramfs
-genfstab -L /mnt     | sed -E '/^(#.*)?$/d'      >>/mnt/etc/fstab
+echo "fs $disk"2                                   >>/mnt/etc/crypttab.initramfs
+genfstab -L /mnt/etc | sed -E  '/^(#.*)?$/d'       \
+                     | sed 's#\t/#\t/sysroot/etc#' >>/mnt/etc/fstab.initramfs
+genfstab -L /mnt     | sed -E  '/^(#.*)?$/d'       >>/mnt/etc/fstab
 
-rm -rv /mnt/boot/initramfs-linux-zen*.img
+rm -v /mnt/boot/initramfs-linux-zen*.img
 arch-chroot /mnt mkinitcpio -vP
 chmod -R g-rwx,o-rwx /mnt/boot
 
