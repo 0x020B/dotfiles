@@ -12,7 +12,7 @@ pass='1145141919810'
 nproc=$(nproc)
 
 if ! sha512sum -c sha512sums; then
-    pacman -Sy --needed --noconfirm git
+    pacman -Sy --needed --noconfirm git &
     if [ ! -f id_ed25519 ]; then
         # 写死IP地址，对抗DNS污染
         grep  -Fq   'raw.githubusercontent.com' /etc/hosts \
@@ -22,11 +22,13 @@ if ! sha512sum -c sha512sums; then
     fi
     # 写死GitHub的指纹，用于初次免验证，且更安全
     echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >~/.ssh/known_hosts
+    wait 
     # 使用SSH协议更容易通过墙
     GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" \
         git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
     cd dotfiles
     ./install 2>&1 | tee install.log
+    [ -f install.log ] && mv -v install.log /mnt/boot
     exit
 fi
 
@@ -48,13 +50,13 @@ cryptsetup -vq luksFormat "$disk"2    fs.key
 cryptsetup -v  open       "$disk"2 -d fs{.key,}
 
 # Btrfs 配置，子卷管理和分区挂载
-mkfs.btrfs -vfn 32k /dev/mapper/fs
+mkfs.btrfs -vfn 32k    /dev/mapper/fs
 mount -vo compress=lzo /dev/mapper/fs /mnt
 echo -n ,etc,home,opt,usr,var | xargs -P$nproc -i -d, btrfs -v subvolume create /mnt/@{}
 umount -v /mnt
 mount  -vo noatime,nodiratime,compress=lzo,subvol=@ /dev/mapper/fs /mnt
 mkdir  -v /mnt/{boot,etc,home,opt,usr,var}
-mount  -vo noatime,nodiratime "$disk"1 /mnt/boot
+mount  -vo noatime,nodiratime "$disk"1 /mnt/boot &
 echo -n  etc,home,opt,usr,var | xargs -P$nproc -i -d, \
     mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
 chattr +C /mnt/var
@@ -67,15 +69,15 @@ if [[ $mem < 16 ]]; then
     avail=$(df -BG --output=avail /dev/mapper/fs | tail -n1)
     if [[ $((size << 3)) < ${avail%G*} ]]; then
         # 创建交换文件
-        truncate  -s 0 /mnt/var/swap
-        fallocate -l   "$size"G /mnt/var/swap
-        chmod -v 0600  /mnt/var/swap
-        mkswap         /mnt/var/swap
-        swapon         /mnt/var/swap
+        truncate -s 0 /mnt/var/swap
+        fallocate -l "$size"G /mnt/var/swap
+        chmod -v 0600 /mnt/var/swap
+        mkswap        /mnt/var/swap
+        swapon        /mnt/var/swap
     fi
 fi
 
-keys=(07C1003E46490054A20D3A8E250A4BA6630FD7F1	# selinux（我自签的selinux镜像仓库，即使使用github镜像，也不用担心被篡改）
+keys=(07C1003E46490054A20D3A8E250A4BA6630FD7F1	# selinux（我自签的selinux镜像，即使使用github镜像，也不用担心被篡改）
       882DCFE48E2051D48E2562ABF3B607488DB35A47	# cachyos
       A3873AB27021C5DD39E0501AFBA220DFC880C036	# alhp & chaotic-aur
       CCED9BE21E1173C61DC1C9407931B6D628C8D3BA	# arch4edu
@@ -102,7 +104,7 @@ pacman-key --verbose --lsign-key $keys
 pacman-key --verbose --populate
 
 # 准备镜像列表
-pacman -S --needed --noconfirm pacman-contrib  # 软件源测速排序需要 rankmirrors
+pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
 cp -vfb {,/}etc/pacman.conf
 v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 if [[ $v =~ 4 ]]; then
@@ -119,7 +121,7 @@ pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 pacman -S  --needed --noconfirm --overwrite "*" $mirrorlists
 
 # 还原配置
-cp -rvf etc/^pacman*  "/mnt/etc"
+cp -rvf etc/^pacman*  "/mnt/etc" &
 cp -rv  home/.        "/mnt/home/$user"
 chown -Rvh 1000:998   "/mnt/home/$user"
 chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
@@ -140,12 +142,13 @@ install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
 #fi
 
 # 创建分区表
-echo "fs $disk"2                                   >>/mnt/etc/crypttab.initramfs
+echo "fs $disk"2                                   >>/mnt/etc/crypttab.initramfs &
 genfstab -L /mnt/etc | sed -E  '/^(#.*)?$/d'       \
-                     | sed 's#\t/#\t/sysroot/etc#' >>/mnt/etc/fstab.initramfs
+                     | sed 's#\t/#\t/sysroot/etc#' >>/mnt/etc/fstab.initramfs    &
 genfstab -L /mnt/usr | sed -E  '/^(#.*)?$/d'       \
-                     | sed 's#\t/#\t/sysroot/usr#' >>/mnt/etc/fstab.initramfs
-genfstab -L /mnt     | sed -E  '/^(#.*)?$/d'       >>/mnt/etc/fstab
+                     | sed 's#\t/#\t/sysroot/usr#' >>/mnt/etc/fstab.initramfs    &
+genfstab -L /mnt     | sed -E  '/^(#.*)?$/d'       >>/mnt/etc/fstab              &
+wait
 
 # 安装汐统
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
