@@ -30,7 +30,7 @@ if ! sha512sum -c sha512sums; then
         git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
     cd dotfiles
     ./install 2>&1 | tee install.log
-    [ -f install.log ] && mv -v install.log /mnt/boot
+    mv -v install.log /mnt/boot
     exit
 fi
 
@@ -64,9 +64,8 @@ echo -n  etc,home,opt,usr,var | xargs -P$nproc -i -d, \
 chattr +C /mnt/var
 
 # 自动计算交换文件所需要的大小
-mem=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}') >> 20))
-if [[ $mem < 16 ]]; then
-    size=$(($mem << 1))
+size=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}') >> 19))
+if [[ $size < 32 ]]; then
     [[ $size > 8 ]] && size=8
     avail=$(df -BG --output=avail /dev/mapper/fs | tail -n1)
     if [[ $((size << 3)) < ${avail%G*} ]]; then
