@@ -147,7 +147,7 @@ build() {
 EOF
 
 # 创建分区表
-echo -n "fs $disk"2                                   >>/mnt/etc/crypttab.initramfs &
+echo -n "fs $disk"2                                >>/mnt/etc/crypttab.initramfs &
 genfstab -L /mnt/etc | sed -E  '/^(#.*)?$/d'       \
                      | sed 's#\t/#\t/sysroot/etc#' >>/mnt/etc/fstab.initramfs    &
 genfstab -L /mnt/usr | sed -E  '/^(#.*)?$/d'       \
