@@ -26,7 +26,10 @@ if ! sha512sum -c sha512sums; then
     GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" \
         git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
 fi
+
+cd "$(dirname $0)"
 [ -d dotfiles ] && cd dotfiles
+
 if [ -d /sys/firmware/efi/efivars ]; then
     ./install.uefi "$disk" "$user" "$pass" 2>&1 | tee install.log
 else
@@ -34,6 +37,7 @@ else
     exit 1
     ./install.bios "$disk" "$user" "$pass" 2>&1 | tee install.log
 fi
+
 # 允许15秒内终止脚本执行进行debug
 sleep 15
 mv -v install.log /mnt/boot
