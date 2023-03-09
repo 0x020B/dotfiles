@@ -189,9 +189,9 @@ ln -sv '/usr/lib/systemd/system/systemd-networkd.socket'  \
 
 # 更改默认虚拟终端
 {
-    rm -fv '/usr/lib/systemd/system/getty@.service'
+    rm -fv '/mnt/etc/systemd/system/getty.target.wants/getty@tty1.service'
     ln -sv '/usr/lib/systemd/system/kmsconvt@.service' \
-           '/mnt/etc/systemd/system/kmsconvt@.service'
+           '/mnt/etc/systemd/system/getty.target.wants/kmsconvt@tty1.service'
     ln -sv '/usr/lib/systemd/system/kmsconvt@.service' \
            '/mnt/etc/systemd/system/autovt@.service'
 }&
