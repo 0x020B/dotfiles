@@ -5,4 +5,5 @@ Type = Package
 Target = mirrorlist.arch4edu
 [Action]
 When = PostTransaction
+Description = Sorting the list of mirrors for arch4edu
 Exec = /etc/pacman.d/hooks/rankmirrors mirrorlist.arch4edu arch4edu

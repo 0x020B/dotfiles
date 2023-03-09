@@ -5,4 +5,5 @@ Type = Package
 Target = archlinux-mirrorlist
 [Action]
 When = PostTransaction
+Description = Sorting the list of mirrors for archlinux
 Exec = /etc/pacman.d/hooks/rankmirrors mirrorlist archlinux

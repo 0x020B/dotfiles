@@ -5,4 +5,5 @@ Type = Package
 Target = chaotic-mirrorlist
 [Action]
 When = PostTransaction
+Description = Sorting the list of mirrors for chaotic-aur
 Exec = /etc/pacman.d/hooks/rankmirrors chaotic-mirrorlist chaotic-aur
