@@ -1,3 +1,5 @@
+[Match]
+OriginalName=*
 [Link]
 MACAddressPolicy=random
 NamePolicy=kernel database onboard slot path

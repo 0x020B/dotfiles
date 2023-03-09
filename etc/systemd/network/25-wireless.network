@@ -3,5 +3,4 @@ Name=wl*
 
 [Network]
 DHCP=yes
-RouteMetric=20
 IPv6PrivacyExtensions=kernel
