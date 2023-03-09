@@ -77,7 +77,7 @@ if [[ $size < 32 ]]; then
     if [[ $((size << 3)) < ${avail%G*} ]]; then
         # 创建交换文件
         truncate -s 0 /mnt/var/swap
-        fallocate -l "$size"G /mnt/var/swap
+        fallocate -vl "$size"G /mnt/var/swap
         chmod -v 0600 /mnt/var/swap
         mkswap        /mnt/var/swap
         swapon        /mnt/var/swap
@@ -128,12 +128,15 @@ pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 pacman -S  --needed --noconfirm --overwrite "*" $mirrorlists
 
 # 还原配置
-cp -rvf etc/^pacman*  "/mnt/etc" &
-cp -rv  home/.        "/mnt/home/$user"
-chown -Rvh 1000:998   "/mnt/home/$user"
-chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
-wait
-install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
+(
+    cp -rvf etc/^pacman*  "/mnt/etc"
+    install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
+)&
+(
+    cp -rv  home/.        "/mnt/home/$user"
+    chown -Rvh 1000:998   "/mnt/home/$user"
+    chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
+)&
 mkdir -pv /mnt/usr/lib/initcpio/install
 cat > /mnt/usr/lib/initcpio/install/fstab << EOF
 #!/bin/bash
@@ -144,7 +147,7 @@ build() {
 EOF
 
 # 创建分区表
-echo "fs $disk"2                                   >>/mnt/etc/crypttab.initramfs &
+echo -n "fs $disk"2                                   >>/mnt/etc/crypttab.initramfs &
 genfstab -L /mnt/etc | sed -E  '/^(#.*)?$/d'       \
                      | sed 's#\t/#\t/sysroot/etc#' >>/mnt/etc/fstab.initramfs    &
 genfstab -L /mnt/usr | sed -E  '/^(#.*)?$/d'       \
