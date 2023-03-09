@@ -128,15 +128,15 @@ pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 pacman -S  --needed --noconfirm --overwrite "*" $mirrorlists
 
 # 还原配置
-(
+{
     cp -rvf etc/^pacman*  "/mnt/etc"
     install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
-)&
-(
+}&
+{
     cp -rv  home/.        "/mnt/home/$user"
     chown -Rvh 1000:998   "/mnt/home/$user"
     chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
-)&
+}&
 mkdir -pv /mnt/usr/lib/initcpio/install
 cat > /mnt/usr/lib/initcpio/install/fstab << EOF
 #!/bin/bash
