@@ -9,7 +9,6 @@ btrfs-progs
 chromium
 colordiff
 cpio
-dhcpcd
 duperemove
 edk2-shell
 fcitx5-gtk
