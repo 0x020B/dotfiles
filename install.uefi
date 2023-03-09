@@ -18,7 +18,7 @@ if ! sha512sum -c sha512sums; then
         for ip in 185.199.{108..111}.133; do
             curl --connect-timeout 1 \
                  --resolve raw.githubusercontent.com:443:$ip \
-                 -O https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519 && break
+                 -sO https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519 && break
         done
         chmod -v 0600 id_ed25519
     fi
