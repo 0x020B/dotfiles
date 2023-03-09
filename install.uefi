@@ -4,7 +4,7 @@
 # 安装系统所用的硬盘
 disk="${1-/dev/sda}"
 # 用户名称
-user="${2-n0tr00t}"
+user="${2-administrator}"
 # 用户密码
 pass="${3-1145141919810}"
 
@@ -179,7 +179,7 @@ for service in 'systemd-network-generator' 'systemd-networkd-wait-online' 'syste
            /mnt/etc/systemd/system/sysinit.target.wants/$service.service &
 done
 
-for service in 'systemd-networkd' 'seatd'; do
+for service in 'restorecond' 'systemd-networkd' 'seatd'; do
     ln -sv /usr/lib/systemd/system/$service.service \
            /mnt/etc/systemd/system/multi-user.target.wants/$service.service &
 done

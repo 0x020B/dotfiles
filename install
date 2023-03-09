@@ -4,7 +4,7 @@
 # 安装系统所用的硬盘
 disk='/dev/sda'
 # 默认用户名称
-user='n0tr00t'
+user='administrator'
 # 默认用户密码
 pass='1145141919810'
 
