@@ -165,15 +165,31 @@ useradd -mg wheel -G lp,seat -s /usr/bin/zsh "$user" -P /mnt
 echo -n "$user:$pass" | arch-chroot /mnt chpasswd -c YESCRYPT
 echo -n "$user localhost = (ALL) ALL" > "/mnt/etc/sudoers.d/$user"
 
+# 设置默认vi为nvim
 ln -sv /usr/bin/nvim /mnt/usr/bin/vi
-for service in 'systemd-networkd' 'seatd' 'rngd'
-do
+
+# 设置开机启动服务
+for service in 'network' 'resolve'; do
+    ln -sv /usr/lib/systemd/system/systemd-"$service"d.service \
+           /mnt/etc/systemd/system/dbus-org.freedesktop."$service"1.service &
+done
+
+for service in 'systemd-network-generator' 'systemd-networkd-wait-online' 'systemd-resolved' 'rngd'; do
+    ln -sv /usr/lib/systemd/system/$service.service \
+           /mnt/etc/systemd/system/sysinit.target.wants/$service.service &
+done
+
+for service in 'systemd-networkd' 'seatd'; do
     ln -sv /usr/lib/systemd/system/$service.service \
            /mnt/etc/systemd/system/multi-user.target.wants/$service.service &
 done
+
+ln -sv /usr/lib/systemd/system/systemd-networkd.socket  \
+   /mnt/etc/systemd/system/sockets.target.wants/systemd-networkd.socket &
 
 # 配置引导
 efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
            | xargs -P$nproc -i efibootmgr -Bb {}
 efibootmgr -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
 efibootmgr -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
+wait
