@@ -147,7 +147,7 @@ build() {
 EOF
 
 # 创建分区表
-sed -E 's/"(\$prefixfilter)"/\1/' /usr/bin/genfstab  # 添加支持正则表达式过滤
+sed -i -E 's/"(\$prefixfilter)"/\1/' /usr/bin/genfstab  # 添加支持正则表达式过滤
 genfstab -L /mnt -f '/[eu]'                 \
                  | sed 's#\t/#\t/sysroot/#' \
                  | sed -E  '/^(#.*)?$/d' >>/mnt/etc/fstab.initramfs    &
@@ -156,7 +156,7 @@ echo -n "fs $disk"2                      >>/mnt/etc/crypttab.initramfs &
 wait
 
 # 安装汐统
-sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap
+sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap  # 添加支持复制第三方镜像列表
 pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
 rm -vf /mnt/etc/**/*.pacnew
 
