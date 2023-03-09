@@ -26,6 +26,7 @@ libva-mesa-driver
 linux-firmware
 linux-firmware-qlogic
 linux-zen
+kmscon
 man-db
 man-pages
 mesa-vdpau
