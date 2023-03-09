@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/zsh --extendedglob
 # vim: set ft=sh ts=4 sw=4 et:
 
 # 安装系统所用的硬盘
@@ -39,9 +39,6 @@ if ! sha512sum -c sha512sums; then
     cryptsetup -v close fs
     reboot
 fi
-
-# 启用扩展glob语法
-setopt EXTENDED_GLOB
 
 # 分区
 sfdisk --delete "$disk"
