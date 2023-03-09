@@ -25,8 +25,8 @@ if ! sha512sum -c sha512sums; then
     # 使用SSH协议更容易通过墙
     GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" \
         git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
-    cd dotfiles
 fi
+[ -d dotfiles ] && cd dotfiles
 if [ -d /sys/firmware/efi/efivars ]; then
     ./install.uefi "$disk" "$user" "$pass" 2>&1 | tee install.log
 else
