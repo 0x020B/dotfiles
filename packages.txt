@@ -39,6 +39,7 @@ oh-my-zsh-git
 pacman-contrib
 paru
 qemu-base
+qemu-system-x86
 qemu-ui-egl-headless
 qemu-ui-dbus
 qemu-ui-gtk
