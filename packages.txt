@@ -38,6 +38,11 @@ obs-studio
 oh-my-zsh-git
 pacman-contrib
 paru
+qemu-base
+qemu-ui-egl-headless
+qemu-ui-dbus
+qemu-ui-gtk
+qemu-ui-sdl
 rime-pinyin-zhwiki
 rng-tools
 rsync
