@@ -194,13 +194,13 @@ ln -sv '/usr/lib/systemd/system/systemd-networkd.socket'  \
        '/mnt/etc/systemd/system/sockets.target.wants/systemd-networkd.socket' &
 
 # 更改默认虚拟终端
-#{
-#    rm -fv '/mnt/etc/systemd/system/getty.target.wants/getty@tty1.service'
-#    ln -sv '/usr/lib/systemd/system/kmsconvt@.service' \
-#           '/mnt/etc/systemd/system/getty.target.wants/kmsconvt@tty1.service'
-#    ln -sv '/usr/lib/systemd/system/kmsconvt@.service' \
-#           '/mnt/etc/systemd/system/autovt@.service'
-#}&
+{
+    rm -fv '/mnt/etc/systemd/system/getty.target.wants/getty@tty1.service'
+    ln -sv '/usr/lib/systemd/system/kmsconvt@.service' \
+           '/mnt/etc/systemd/system/getty.target.wants/kmsconvt@tty1.service'
+    ln -sv '/usr/lib/systemd/system/kmsconvt@.service' \
+           '/mnt/etc/systemd/system/autovt@.service'
+}&
 
 # 配置引导
 efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
