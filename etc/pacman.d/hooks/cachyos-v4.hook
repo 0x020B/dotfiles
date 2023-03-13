@@ -1,9 +1,0 @@
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = cachyos-v4-mirrorlist
-[Action]
-When = PostTransaction
-Description = Sorting the list of mirrors for cachyos-v4
-Exec = /etc/pacman.d/hooks/rankmirrors cachyos-v4-mirrorlist cachyos-v4

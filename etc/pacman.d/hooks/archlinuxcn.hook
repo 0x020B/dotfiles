@@ -1,9 +1,0 @@
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = archlinuxcn-mirrorlist-git
-[Action]
-When = PostTransaction
-Description = Sorting the list of mirrors for archlinuxcn
-Exec = /etc/pacman.d/hooks/rankmirrors archlinuxcn-mirrorlist archlinuxcn

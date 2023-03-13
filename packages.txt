@@ -7,7 +7,6 @@ bat
 bluez-utils
 btrfs-progs
 chromium
-colordiff
 cpio
 duperemove
 edk2-shell
@@ -19,6 +18,7 @@ firefox-developer-edition-i18n-zh-cn
 firejail
 goimapnotify
 grim
+hugo
 isync
 libglvnd
 libnotify
@@ -26,10 +26,12 @@ libva-mesa-driver
 linux-firmware
 linux-firmware-qlogic
 linux-zen
+kdeconnect
 kmscon
 man-db
 man-pages
 mesa-vdpau
+mingw-w64-binutils
 mkinitcpio
 mpv
 neomutt
@@ -56,6 +58,7 @@ vulkan-radeon
 waybar
 waypipe
 wl-clipboard
+wol
 wpa_supplicant
 xdg-desktop-portal-wlr
 xdg-user-dirs

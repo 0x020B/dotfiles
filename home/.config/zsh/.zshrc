@@ -163,6 +163,5 @@ alias la="ls -a"
 alias cp="rsync --archive -hh --partial --info=stats1,progress2 --modify-window=1"
 alias mv="rsync --archive -hh --partial --info=stats1,progress2 --modify-window=1 --remove-source-files"
 alias cat="bat --style=plain"
-alias diff="colordiff"
 alias telegram="flatpak run org.telegram.desktop --socket=fallback-x11 2>/dev/null&"
 function pass(){PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback  --passphrase 秘密" /usr/bin/pass $@}

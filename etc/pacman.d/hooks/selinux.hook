@@ -1,9 +1,0 @@
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = selinux-mirrorlist
-[Action]
-When = PostTransaction
-Description = Sorting the list of mirrors for selinux
-Exec = /etc/pacman.d/hooks/rankmirrors selinux-mirrorlist selinux

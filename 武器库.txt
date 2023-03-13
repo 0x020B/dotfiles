@@ -1,0 +1,6 @@
+ansible
+apktool
+autosploit
+enum4linux
+githack
+radare2

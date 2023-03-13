@@ -1,9 +1,0 @@
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = alhp-mirrorlist
-[Action]
-When = PostTransaction
-Description = Sorting the list of mirrors for alhp
-Exec = /etc/pacman.d/hooks/rankmirrors alhp-mirrorlist alhp

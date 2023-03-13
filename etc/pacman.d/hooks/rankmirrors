@@ -1,2 +1,14 @@
 #!/bin/sh
-/usr/bin/sed -E 's/^#\s?[Ss]erver/Server/g' /etc/pacman.d/$1 | /usr/bin/grep '^Server\s*=\s*https' | /usr/bin/rankmirrors -vr $2 -n 5 - | tee /etc/pacman.d/$2
+PATH='/usr/bin'
+while read -r f; do
+    list=${f%%-git}
+    repo=${list/mirrorlist}
+    repo=${repo##.}
+    repo=${repo%%-}
+    [[ $repo == 'chaotic' ]] && repo='chaotic-aur'
+    [[ $list == 'archlinux-mirrorlist' ]] && list='mirrorlist'
+    sed -E 's/^#\s?[Ss]erver/Server/g' "/etc/pacman.d/$list" \
+        | grep '^Server\s*=\s*https' \
+        | rankmirrors -v -r $repo -n 5 - \
+        | tee /etc/pacman.d/$repo
+done

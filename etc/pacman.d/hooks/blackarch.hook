@@ -1,9 +1,0 @@
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = blackarch-mirrorlist
-[Action]
-When = PostTransaction
-Description = Sorting the list of mirrors for blackarch
-Exec = /etc/pacman.d/hooks/rankmirrors blackarch-mirrorlist blackarch
