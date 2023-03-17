@@ -104,14 +104,6 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible/ansible.cfg"
 export mailpath=(~/mail/index/new'?您有新的邮件')
-export INPUT_METHOD DEFAULT=fcitx
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS=@im=fcitx
-export GLFW_IM_MODULE=fcitx
-export SDL_IM_MODULE=fcitx
-export QT_QPA_PLATFORMTHEME=qt5ct
-export SDL_VIDEODRIVER=x11
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
