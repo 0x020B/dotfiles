@@ -12,6 +12,9 @@ pass="${3-1145141919810}"
 nproc=$(nproc)
 
 if ! sha512sum -c sha512sums; then
+    if ! ping -c 3 AI; then
+        nmtui
+    fi
     pacman -Sy --needed --noconfirm git &
     if [ ! -f id_ed25519 ]; then
         # 写死IP地址，对抗DNS污染
