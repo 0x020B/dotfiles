@@ -1,1 +1,1 @@
-quiet lsm=landlock,lockdown,yama,integrity,selinux,bpf
+root=/dev/mapper/fs rootflags=subvol=@ rw quiet lsm=landlock,lockdown,yama,integrity,selinux,bpf
