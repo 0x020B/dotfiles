@@ -12,6 +12,7 @@ Target = cachyos-mirrorlist
 Target = cachyos-v3-mirrorlist
 Target = cachyos-v4-mirrorlist
 Target = chaotic-mirrorlist
+Target = pacman-mirrorlist
 Target = selinux-mirrorlist
 
 [Action]
