@@ -102,6 +102,7 @@ mirrorlists=('archlinuxcn-mirrorlist-git'
              'cachyos-mirrorlist'
              'chaotic-mirrorlist'
              'mirrorlist.arch4edu'
+             'pacman-mirrorlist'
              'selinux-mirrorlist')
 
 # 密钥环初始化
