@@ -9,8 +9,21 @@ user='administrator'
 pass='1145141919810'
 
 if ! sha512sum -c sha512sums; then
-    ping -c 3 AI || iwctl
-    pacman -Sy --needed --noconfirm git &
+    if ping -c 3 AI; then
+        {
+            while ! systemctl status reflector | grep success >/dev/null; do
+                sleep 1
+            done
+            pacman -Sy --needed --noconfirm git
+        }&
+    else
+        iwctl
+        {
+            systemctl restart reflector
+            pacman -Sy --needed --noconfirm git
+        }&
+    fi
+
     if [ ! -f id_ed25519 ]; then
         # 写死IP地址，对抗DNS污染
         for ip in 185.199.{108..111}.133; do
