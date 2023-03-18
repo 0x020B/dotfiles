@@ -9,7 +9,7 @@ user='administrator'
 pass='1145141919810'
 
 if ! sha512sum -c sha512sums; then
-    ping -c 3 AI || iwctl
+    curl -so /dev/null https://ping.archlinux.org || iwctl
     {
         systemctl restart reflector
         pacman -Sy --needed --noconfirm git
