@@ -112,8 +112,8 @@ pacman-key --verbose --lsign-key $keys
 pacman-key --verbose --populate
 
 # 准备镜像列表
-pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
 cp -vfb {,/}etc/pacman.conf
+pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
 v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 if [[ $v =~ 4 ]]; then
     mirrorlists+='cachyos-v4-mirrorlist'
@@ -125,8 +125,8 @@ if [[ $v =~ 3 ]]; then
     cat etc/pacman_v3.conf   >> /etc/pacman.conf
 fi
 cat etc/pacman_baseline.conf >> /etc/pacman.conf
+tr ' ' '\n' <<< "$mirrorlists" | etc/pacman.d/hooks/rankmirrors
 pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
-pacman -S  --needed --noconfirm --overwrite "*" $mirrorlists
 
 # 还原配置
 {

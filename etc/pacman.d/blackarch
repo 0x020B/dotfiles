@@ -1,5 +1,0 @@
-Server = https://mirror.sjtu.edu.cn/blackarch/$repo/os/$arch
-Server = https://mirrors.nju.edu.cn/blackarch/$repo/os/$arch
-Server = https://ftp.halifax.rwth-aachen.de/blackarch/$repo/os/$arch
-Server = https://mirrors.ustc.edu.cn/blackarch/$repo/os/$arch
-Server = https://mirror.cyberbits.eu/blackarch/$repo/os/$arch

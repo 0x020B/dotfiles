@@ -1,5 +1,0 @@
-Server = https://us-mi-mirror.chaotic.cx/$repo/$arch
-Server = https://br-2-mirror.chaotic.cx/$repo/$arch
-Server = https://de-mirror.chaotic.cx/$repo/$arch
-Server = https://in-mirror.chaotic.cx/$repo/$arch
-Server = https://cdn-mirror.chaotic.cx/$repo/$arch

@@ -1,5 +1,0 @@
-Server = https://kr.cachyos.org/repo/$arch_v4/$repo
-Server = https://hun.cachyos.org/repo/$arch_v4/$repo
-Server = https://us.cachyos.org/repo/$arch_v4/$repo
-Server = https://build.cachyos.org/repo/$arch_v4/$repo
-Server = https://sg.cachyos.org/repo/$arch_v4/$repo
