@@ -174,7 +174,7 @@ hwclock --systohc --adjfile /mnt/etc/adjtime &
 ln -sv /usr/bin/nvim /mnt/usr/bin/vi
 
 # 设置开机启动服务
-mkdir -v /mnt/etc/systemd/system/{socket,sysinit}.target.wants
+mkdir -v /mnt/etc/systemd/system/{sockets,sysinit}.target.wants
 {
     for service in 'network' 'resolve'; do
         ln -sv /usr/lib/systemd/system/systemd-"$service"d.service \
