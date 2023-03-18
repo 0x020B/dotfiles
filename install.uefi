@@ -102,19 +102,15 @@ mirrorlists=('archlinuxcn-mirrorlist-git'
              'cachyos-mirrorlist'
              'chaotic-mirrorlist'
              'mirrorlist.arch4edu'
-             'pacman-mirrorlist'
              'selinux-mirrorlist')
 
-# 密钥环初始化
-cp -vfr etc/pacman.d/* /etc/pacman.d/
-pacman-key --verbose --init
-pacman-key --verbose --import .
-pacman-key --verbose --lsign-key $keys
-pacman-key --verbose --populate
+# 软件源测速排序需要 rankmirrors
+pacman -Sy --needed --noconfirm pacman-contrib
 
-# 准备镜像列表
-pacman -S --needed --noconfirm pacman-contrib # 软件源测速排序需要 rankmirrors
+# 密钥环初始化 & 准备镜像列表
+cp -vfr etc/pacman.d/* /etc/pacman.d/
 cp -vfb {,/}etc/pacman.conf
+mv -vf /etc/pacman.d/{mirrorlist,archlinux}
 v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
 if [[ $v =~ 4 ]]; then
     mirrorlists+='cachyos-v4-mirrorlist'
@@ -127,7 +123,11 @@ if [[ $v =~ 3 ]]; then
 fi
 cat etc/pacman_baseline.conf >> /etc/pacman.conf
 tr ' ' '\n' <<< "$mirrorlists" | etc/pacman.d/hooks/rankmirrors
-pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
+pacman-key --verbose --init
+pacman-key --verbose --import .
+pacman-key --verbose --lsign-key $keys
+pacman-key --verbose --populate
+pacman -Sy --needed  --noconfirm --overwrite "*" $keyrings
 
 # 还原配置
 {
