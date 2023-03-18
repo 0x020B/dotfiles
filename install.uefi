@@ -125,6 +125,7 @@ if [[ $v =~ 3 ]]; then
     cat etc/pacman_v3.conf   >> /etc/pacman.conf
 fi
 cat etc/pacman_baseline.conf >> /etc/pacman.conf
+touch /etc/pacman.d/archlinux
 tr ' ' '\n' <<< "$mirrorlists" | etc/pacman.d/hooks/rankmirrors
 pacman -Sy --needed --noconfirm --overwrite "*" $keyrings
 
