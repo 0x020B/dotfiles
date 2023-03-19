@@ -135,6 +135,7 @@ pacman -Sy --needed  --noconfirm --overwrite "*" $keyrings
     install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
 }&
 {
+    git init              "/mnt/home/$user"
     cp -rv  home/.        "/mnt/home/$user"
     chown -Rvh 1000:998   "/mnt/home/$user"
     chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
@@ -157,7 +158,7 @@ wait
 
 # 安装汐统
 sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap  # 添加支持复制第三方镜像列表
-pacstrap -P /mnt $keyrings $mirrorlists $(<packages.txt)
+pacstrap -P /mnt $keyrings $mirrorlists $(<pkgs.txt)
 rm -vf /mnt/etc/**/*.pacnew &
 
 # 将系统时钟设置到硬件时钟
