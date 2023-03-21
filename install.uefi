@@ -174,38 +174,8 @@ hwclock --systohc --adjfile /mnt/etc/adjtime &
 # 设置默认vi为nvim
 ln -sv /usr/bin/nvim /mnt/usr/bin/vi
 
-# 设置开机启动服务
-mkdir -v /mnt/etc/systemd/system/{sockets,sysinit}.target.wants
-{
-    for service in 'network' 'resolve'; do
-        ln -sv /usr/lib/systemd/system/systemd-"$service"d.service \
-               /mnt/etc/systemd/system/dbus-org.freedesktop."$service"1.service
-    done
-}&
-{
-    for service in 'systemd-network-generator' 'systemd-networkd-wait-online' 'systemd-resolved' 'rngd'; do
-        ln -sv /usr/lib/systemd/system/$service.service \
-               /mnt/etc/systemd/system/sysinit.target.wants/$service.service
-    done
-}&
-{
-    for service in 'restorecond' 'systemd-networkd' 'seatd'; do
-        ln -sv /usr/lib/systemd/system/$service.service \
-               /mnt/etc/systemd/system/multi-user.target.wants/$service.service
-    done
-}&
-
-ln -sv '/usr/lib/systemd/system/systemd-networkd.socket'  \
-       '/mnt/etc/systemd/system/sockets.target.wants/systemd-networkd.socket' &
-
 # 更改默认虚拟终端
-{
-    rm -fv '/mnt/etc/systemd/system/getty.target.wants/getty@tty1.service'
-    ln -sv '/usr/lib/systemd/system/kmsconvt@.service' \
-           '/mnt/etc/systemd/system/getty.target.wants/kmsconvt@tty1.service'
-    ln -sv '/usr/lib/systemd/system/kmsconvt@.service' \
-           '/mnt/etc/systemd/system/autovt@.service'
-}&
+rm -fv '/mnt/etc/systemd/system/getty.target.wants/getty@tty1.service' &
 
 # 配置引导
 efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
