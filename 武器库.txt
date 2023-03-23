@@ -3,4 +3,9 @@ apktool
 autosploit
 enum4linux
 githack
+john
+hashcat
+nmap
+gobuster
 radare2
+rustscan
