@@ -67,3 +67,4 @@ xorg-xwayland
 virtio-win
 zsh-autosuggestions
 zsh-syntax-highlighting
+zathura
