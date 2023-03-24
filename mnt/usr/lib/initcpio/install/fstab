@@ -1,0 +1,5 @@
+#!/bin/bash
+build() {
+    local rules unit
+    [[ -f /etc/fstab.initramfs ]] && add_file "/etc/fstab.initramfs" "/etc/fstab"
+}
