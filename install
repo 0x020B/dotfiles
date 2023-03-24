@@ -137,7 +137,6 @@ cp -rvf {,/}mnt
 rm -rvf /mnt/etc/pacman*
 install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
 {
-    git init              "/mnt/home/$user"
     cp    -rv   home/.    "/mnt/home/$user"
     chown -Rvh 1000:998   "/mnt/home/$user"
     chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
