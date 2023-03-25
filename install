@@ -55,10 +55,10 @@ sfdisk --delete "$disk"
 shred -zvs 251M "$disk"
 parted -sa  opt "$disk"             \
     mklabel gpt                     \
-    mkpart  EFI     fat32   1M 250M \
-    mkpart  primary btrfs 250M 100% \
+    mkpart  EFI     fat32   1M 150M \
+    mkpart  primary btrfs 150M 100% \
     set     1       esp     on
-    mkfs.fat -vF 32 "$disk"1
+mkfs.fat -vF 32 "$disk"1
 
 # 磁盘加密
 dd bs=512 count=4 if=/dev/random of=fs.key iflag=fullblock
