@@ -170,4 +170,8 @@ efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
            | xargs -P$nproc -i efibootmgr -Bb {}
 efibootmgr -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
 efibootmgr -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
+
+# 本地化
+sed -i -E 's#(localedef)#\1 --prefix=/mnt#' locale-gen
+locale-gen
 wait
