@@ -7,8 +7,6 @@ disk='/dev/sda'
 user='administrator'
 # 默认用户密码
 pass='1145141919810'
-# 当前进程可用处理器数
-nproc="$(nproc)"
 
 if ! sha512sum -c sha512sums; then
     curl -so /dev/null https://ping.archlinux.org || iwctl
@@ -43,6 +41,11 @@ if ! sha512sum -c sha512sums; then
     cryptsetup -v close fs
     reboot
 fi
+
+# 当前进程可用处理器数
+nproc="$(nproc)"
+# 临时目录
+tmp="$(mktemp)"
 
 UEFI=([ -d /sys/firmware/efi/efivars ])
 if ! $UEFI; then
@@ -147,8 +150,9 @@ echo -n "fs $disk"2                      >>/mnt/etc/crypttab.initramfs &
 wait
 
 # 安装汐统
-sed -i 's#/mirrorlist#/*#g' /usr/bin/pacstrap  # 添加支持复制第三方镜像列表
-pacstrap -P /mnt $keyrings $mirrorlists $(<pkgs.txt)
+cp -v {/usr/bin,$tmp}/pacstrap
+sed -i 's#/mirrorlist#/*#g' $tmp/pacstrap  # 添加支持复制第三方镜像列表
+$tmp/pacstrap -P /mnt $keyrings $mirrorlists $(<pkgs.txt)
 rm -vf /mnt/etc/**/*.pacnew &
 
 # 将系统时钟设置到硬件时钟
@@ -172,9 +176,10 @@ efibootmgr -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
 efibootmgr -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
 # 本地化
-sed -i -E 's#(LOCALE.{,3}=)#\1/mnt#g'                   /usr/bin/locale-gen
-sed -i -E 's#(/usr/lib/locale/locale-archive)#/mnt\1#'  /usr/bin/locale-gen
-sed -i -E 's#(localedef)#\1 --prefix=/mnt#'             /usr/bin/locale-gen
-sed -i -E 's#(/usr/share/locale/locale.alias)#/mnt\1#'  /usr/bin/locale-gen
-locale-gen
+cp -v {/usr/bin,$tmp}/locale-gen
+sed -i -E 's#(LOCALE.{,3}=)#\1/mnt#g'                   $tmp/locale-gen
+sed -i -E 's#(/usr/lib/locale/locale-archive)#/mnt\1#'  $tmp/locale-gen
+sed -i -E 's#(localedef)#\1 --prefix=/mnt#'             $tmp/locale-gen
+sed -i -E 's#(/usr/share/locale/locale.alias)#/mnt\1#'  $tmp/locale-gen
+$tmp/locale-gen
 wait
