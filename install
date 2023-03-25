@@ -172,6 +172,9 @@ efibootmgr -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
 efibootmgr -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
 # 本地化
-sed -i -E 's#(localedef)#\1 --prefix=/mnt#' locale-gen
+sed -i -E 's#(LOCALE.{,3}=)#\1/mnt#g'                   /usr/bin/locale-gen
+sed -i -E 's#(/usr/lib/locale/locale-archive)#/mnt\1#'  /usr/bin/locale-gen
+sed -i -E 's#(localedef)#\1 --prefix=/mnt#'             /usr/bin/locale-gen
+sed -i -E 's#(/usr/share/locale/locale.alias)#/mnt\1#'  /usr/bin/locale-gen
 locale-gen
 wait
