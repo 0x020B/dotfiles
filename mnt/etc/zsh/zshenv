@@ -1,1 +1,9 @@
+ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible/ansible.cfg"
+mailpath=(~/mail/index/new'?您有新的邮件')
+XCURSOR_PATH=${XCURSOR_PATH}:~/.local/share/icons
+XDG_CONFIG_HOME="$HOME/.config"
+XDG_CACHE_HOME="$HOME/.cache"
+XDG_DATA_HOME="$HOME/.local/share"
+XDG_RUNTIME_DIR="/run/user/$(id -u)"
+XDG_STATE_HOME="$HOME/.local/state"
 ZDOTDIR=$HOME/.config/zsh

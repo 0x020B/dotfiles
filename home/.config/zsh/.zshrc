@@ -23,15 +23,14 @@ ZSH_THEME_RANDOM_CANDIDATES=(
 	"eastwood"		"edvardm"	"evan"		"flazz"
 	"frontcube"		"fwalch"	"gallifrey"	"gallois"
 	"garyblessington"	"gozilla"	"imajes"	"jaischeema"
-	"jbergantine"		"jnrowe"	"jonathan"	"kennethreitz"
-	"kolo"			"lambda"	"macovsky"	"mgutz"
-	"mikeh"			"miloshadzic"	"minimal"	"mrtazz"
-	"muse"			"nanotech"	"nebirhos"	"nicoulaj"
-	"norm"			"peepcode"	"refined"	"robbyrussell"
-	"sammy"			"simple"	"skaro"		"sonicradish"
-	"sorin"			"sunaku"	"sunrise"	"superjarin"
-	"terminalparty"		"theunraveler"	"wedisagree"	"wezm"
-	"zhann"
+	"jbergantine"		"jnrowe"	"kennethreitz"	"kolo"
+	"lambda"		"macovsky"	"mgutz"		"mikeh"
+	"miloshadzic"		"minimal"	"mrtazz"	"muse"
+	"nanotech"		"nebirhos"	"nicoulaj"	"norm"
+	"peepcode"		"refined"	"robbyrussell"	"sammy"
+	"simple"		"skaro"		"sonicradish"	"sorin"
+	"sunaku"		"sunrise"	"superjarin"	"terminalparty"
+	"theunraveler"		"wedisagree"	"wezm"		"zhann"
 )
 
 # Uncomment the following line to use case-sensitive completion.
@@ -96,14 +95,7 @@ ZSH_TMUX_AUTOSTART=true
 ZSH_TMUX_CONFIG=$HOME/.config/tmux/tmux.conf
 
 # export MANPATH="/usr/local/man:$MANPATH"
-export XCURSOR_PATH=${XCURSOR_PATH}:~/.local/share/icons
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_CURRENT_DESKTOP="sway"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_STATE_HOME="$HOME/.local/state"
-export ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible/ansible.cfg"
-export mailpath=(~/mail/index/new'?您有新的邮件')
+
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
