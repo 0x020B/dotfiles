@@ -35,7 +35,7 @@ mingw-w64-binutils
 mkinitcpio
 mpv
 neomutt
-neovim-lspconfig
+neovim
 nvim-packer-git
 obs-studio
 oh-my-zsh-git
