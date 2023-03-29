@@ -7,6 +7,7 @@ bat
 bluez-utils
 btrfs-progs
 chromium
+cmake
 cpio
 duperemove
 edk2-shell
@@ -26,6 +27,7 @@ libva-mesa-driver
 linux-firmware
 linux-firmware-qlogic
 linux-zen
+luarocks
 kdeconnect
 kmscon
 man-db
@@ -48,6 +50,7 @@ qemu-ui-dbus
 qemu-ui-gtk
 qemu-ui-sdl
 rime-pinyin-zhwiki
+ripgrep
 rng-tools
 rsync
 selinux-openssh
