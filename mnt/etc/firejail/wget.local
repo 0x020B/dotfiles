@@ -1,0 +1,2 @@
+noblacklist ${HOME}/.cache/luarocks
+whitelist ${HOME}/.cache/luarocks
