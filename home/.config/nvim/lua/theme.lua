@@ -1,15 +1,9 @@
-require('lualine').setup {
-  options = {
-    theme = 'auto'
-  }
-}
+require('lualine').setup {options = {theme = 'auto'}}
 local time = os.date('%H', os.time()) + 0
 if time >= 13 then
-    require('onedark').setup {
-      style = 'darker'
-   }
+    require('onedark').setup {style = 'darker'}
 elseif time >= 10 then
-   require('onedark').setup {}
+    require('onedark').setup {}
 elseif time >= 0 then
     require('onedark').setup {}
 end

@@ -1,11 +1,7 @@
 local packer = require('packer')
 packer.init {
-    display = {
-        compact = true
-    },
-    git = {
-    default_url_format = 'https://githubfast.com/%s.git'
-    }
+    display = {compact = true},
+    git = {default_url_format = 'https://githubfast.com/%s.git'}
 }
 
 packer.startup(function(use)
@@ -14,10 +10,7 @@ packer.startup(function(use)
     use 'navarasu/onedark.nvim'
     use 'nvim-tree/nvim-tree.lua'
     use 'neovim/nvim-lspconfig'
-    use {
-        'williamboman/mason.nvim',
-        run = ":MasonUpdate"
-    }
+    use {'williamboman/mason.nvim', run = ":MasonUpdate"}
     use 'nvim-lua/plenary.nvim'
     use 'jose-elias-alvarez/null-ls.nvim'
     use 'jay-babu/mason-null-ls.nvim'
@@ -28,9 +21,8 @@ packer.startup(function(use)
     use 'L3MON4D3/LuaSnip'
     use 'ray-x/lsp_signature.nvim'
     use {
-	"kylechui/nvim-surround",
-    	config = function()
-        	require("nvim-surround").setup {}
-    end}
+        "kylechui/nvim-surround",
+        config = function() require("nvim-surround").setup {} end
+    }
     use 'nvim-telescope/telescope.nvim'
 end)
