@@ -1,4 +1,5 @@
 require('basic')
+require('theme')
 require('plugins')
 require('lsp')
-require('autocompletion')
+require('completion')

@@ -1,0 +1,25 @@
+mkdir '/tmp/run_archiso.IGxdWyusZB'
+cp -v '/usr/share/edk2-ovmf/x64/OVMF_VARS.fd' '/tmp/run_archiso.IGxdWyusZB/OVMF_VARS.fd'
+qemu-system-x86_64 \
+    -boot order=d,menu=on,reboot-timeout=5000 \
+    -m size=3072,slots=0,maxmem=3221225472 \
+    -k en-us \
+    -name archiso,process=archiso_0 \
+    -device virtio-scsi-pci,id=scsi0 \
+    -device scsi-cd,bus=scsi0.0,drive=cdrom0 \
+    -display sdl \
+    -vga virtio \
+    -audiodev pa,id=snd0 \
+    -device ich9-intel-hda \
+    -device hda-output,audiodev=snd0 \
+    -device virtio-net-pci,romfile=,netdev=net0 \
+    -netdev user,id=net0,hostfwd=tcp::60022-:22 \
+    -machine type=q35,smm=on,accel=kvm,usb=on,pcspk-audiodev=snd0 \
+    -global ICH9-LPC.disable_s3=1 \
+    -enable-kvm \
+    -drive if=pflash,format=raw,unit=0,file=/usr/share/edk2-ovmf/x64/OVMF_CODE.fd,read-only=on \
+    -drive if=pflash,format=raw,unit=1,file=/tmp/run_archiso.IGxdWyusZB/OVMF_VARS.fd \
+    -global driver=cfi.pflash01,property=secure,value=off \
+    -drive id=cdrom0,if=none,format=raw,media=cdrom,read-only=on,file=/home/$USER/Downloads/archlinux-2023.03.01-x86_64.iso \
+    -drive file=arch.qcow2 \
+    -serial stdio
