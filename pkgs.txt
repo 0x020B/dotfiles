@@ -63,6 +63,7 @@ vulkan-radeon
 waybar
 waypipe
 wl-clipboard
+words
 wol
 wpa_supplicant
 wqy-microhei

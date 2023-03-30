@@ -1,4 +1,4 @@
-#!/usr/bin/zsh --extendedglob
+#!/usr/bin/zsh
 # vim: set ft=sh ts=4 sw=4 et:
 
 # 安装系统所用的硬盘
@@ -18,14 +18,14 @@ if ! sha512sum -c sha512sums; then
         # 写死IP地址，对抗DNS污染
         for ip in 185.199.{108..111}.133; do
             curl --connect-timeout 1 \
-                 --resolve raw.githubusercontent.com:443:$ip \
-                 -sO https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519 && break
+                --resolve raw.githubusercontent.com:443:$ip \
+                -sO https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/id_ed25519 && break
         done
         chmod -v 0600 id_ed25519
     fi
     # 写死GitHub的指纹，用于初次免验证，且更安全
     echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >~/.ssh/known_hosts
-    wait 
+    wait
     # 使用SSH协议更容易通过墙
     GIT_SSH_COMMAND="ssh -i $(pwd)/id_ed25519" \
         git clone git@github.com:n0tr00teuorg/dotfiles --depth 1
@@ -96,90 +96,90 @@ if [[ $size < 32 ]]; then
 fi
 
 keys=(07C1003E46490054A20D3A8E250A4BA6630FD7F1	# selinux（我自签的selinux镜像，即使使用github镜像，也不用担心被篡改）
-      882DCFE48E2051D48E2562ABF3B607488DB35A47	# cachyos
-      A3873AB27021C5DD39E0501AFBA220DFC880C036	# alhp & chaotic-aur
-      CCED9BE21E1173C61DC1C9407931B6D628C8D3BA	# arch4edu
-      F9A6E68A711354D84A9B91637533BAFE69A25079)	# blackarch
+        882DCFE48E2051D48E2562ABF3B607488DB35A47	# cachyos
+        A3873AB27021C5DD39E0501AFBA220DFC880C036	# alhp & chaotic-aur
+        CCED9BE21E1173C61DC1C9407931B6D628C8D3BA	# arch4edu
+    F9A6E68A711354D84A9B91637533BAFE69A25079)	# blackarch
 
-keyrings=('arch4edu-keyring'
-          'archlinuxcn-keyring'
-          'blackarch-keyring'
-          'cachyos-keyring'
-          'chaotic-keyring')
+    keyrings=('arch4edu-keyring'
+        'archlinuxcn-keyring'
+        'blackarch-keyring'
+        'cachyos-keyring'
+    'chaotic-keyring')
 
-mirrorlists=('archlinuxcn-mirrorlist-git'
-             'blackarch-mirrorlist'
-             'cachyos-mirrorlist'
-             'chaotic-mirrorlist'
-             'mirrorlist.arch4edu'
-             'selinux-mirrorlist')
+    mirrorlists=('archlinuxcn-mirrorlist-git'
+        'blackarch-mirrorlist'
+        'cachyos-mirrorlist'
+        'chaotic-mirrorlist'
+        'mirrorlist.arch4edu'
+    'selinux-mirrorlist')
 
-# 软件源测速排序需要 rankmirrors
-pacman -Sy --needed --noconfirm pacman-contrib
+    # 软件源测速排序需要 rankmirrors
+    pacman -Sy --needed --noconfirm pacman-contrib
 
-# 密钥环初始化 & 准备镜像列表
-cp -vfr mnt/etc/pacman.d/* /etc/pacman.d/
-cp -vfb {mnt,}/etc/pacman.conf
-mv -vf /etc/pacman.d/{mirrorlist,archlinux}
-v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
-if [[ $v =~ 4 ]]; then
-    mirrorlists+='cachyos-v4-mirrorlist'
-    cat mnt/etc/pacman_v4.conf   >> /etc/pacman.conf
-fi
-if [[ $v =~ 3 ]]; then
-    keyrings+='alhp-keyring'
-    mirrorlists+=('alhp-mirrorlist' 'cachyos-v3-mirrorlist')
-    cat mnt/etc/pacman_v3.conf   >> /etc/pacman.conf
-fi
-cat mnt/etc/pacman_baseline.conf >> /etc/pacman.conf
-tr ' ' '\n' <<< "$mirrorlists" | mnt/etc/pacman.d/hooks/rankmirrors
-pacman-key --verbose --init
-pacman-key --verbose --import .
-pacman-key --verbose --lsign-key $keys
-pacman-key --verbose --populate
-pacman -Sy --needed  --noconfirm --overwrite "*" $keyrings
-cp -rvf  mnt/.  /mnt
-rm -rvf /mnt/etc/pacman*
-install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
+    # 密钥环初始化 & 准备镜像列表
+    cp -vfr mnt/etc/pacman.d/* /etc/pacman.d/
+    cp -vfb {mnt,}/etc/pacman.conf
+    mv -vf /etc/pacman.d/{mirrorlist,archlinux}
+    v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
+    if [[ $v =~ 4 ]]; then
+        mirrorlists+='cachyos-v4-mirrorlist'
+        cat mnt/etc/pacman_v4.conf   >> /etc/pacman.conf
+    fi
+    if [[ $v =~ 3 ]]; then
+        keyrings+='alhp-keyring'
+        mirrorlists+=('alhp-mirrorlist' 'cachyos-v3-mirrorlist')
+        cat mnt/etc/pacman_v3.conf   >> /etc/pacman.conf
+    fi
+    cat mnt/etc/pacman_baseline.conf >> /etc/pacman.conf
+    tr ' ' '\n' <<< "$mirrorlists" | mnt/etc/pacman.d/hooks/rankmirrors
+    pacman-key --verbose --init
+    pacman-key --verbose --import .
+    pacman-key --verbose --lsign-key $keys
+    pacman-key --verbose --populate
+    pacman -Sy --needed  --noconfirm --overwrite "*" $keyrings
+    cp -rvf  mnt/.  /mnt
+    rm -rvf /mnt/etc/pacman*
+    install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
 
-# 创建分区表
-genfstab /mnt | grep -E '/(etc|usr)' \
-              | sed 's#\t/#\t/sysroot/#' >>/mnt/etc/fstab.initramfs    &
-genfstab /mnt | sed -E  '/^(#.*)?$/d'    >>/mnt/etc/fstab              &
-echo -n "fs $disk"2                      >>/mnt/etc/crypttab.initramfs &
-wait
+    # 创建分区表
+    genfstab /mnt | grep -E '/(etc|usr)' \
+        | sed 's#\t/#\t/sysroot/#' >>/mnt/etc/fstab.initramfs    &
+    genfstab /mnt | sed -E  '/^(#.*)?$/d'    >>/mnt/etc/fstab              &
+    echo -n "fs $disk"2                      >>/mnt/etc/crypttab.initramfs &
+    wait
 
-# 安装汐统
-cp -v {/usr/bin,$tmp}/pacstrap
-sed -i 's#/mirrorlist#/*#g' $tmp/pacstrap  # 添加支持复制第三方镜像列表
-$tmp/pacstrap -P /mnt $keyrings $mirrorlists $(<pkgs.txt)
-rm -vf /mnt/etc/**/*.pacnew &
+    # 安装汐统
+    cp -v {/usr/bin,$tmp}/pacstrap
+    sed -i 's#/mirrorlist#/*#g' $tmp/pacstrap  # 添加支持复制第三方镜像列表
+    $tmp/pacstrap -P /mnt $keyrings $mirrorlists $(<pkgs.txt)
+    rm -vf /mnt/etc/**/*.pacnew &
 
-# 将系统时钟设置到硬件时钟
-hwclock --systohc --adjfile /mnt/etc/adjtime &
+    # 将系统时钟设置到硬件时钟
+    hwclock --systohc --adjfile /mnt/etc/adjtime &
 
-# 新建用户
-useradd -mg wheel -G lp,seat -s /usr/bin/zsh "$user" -P /mnt
-echo -n "$user:$pass" | arch-chroot /mnt chpasswd -c YESCRYPT
-echo -n "$user localhost = (ALL) ALL" > "/mnt/etc/sudoers.d/$user"
-cp    -rv home/.      "/mnt/home/$user"
-chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
-chown -Rvh 1000:998   "/mnt/home/$user"
+    # 新建用户
+    useradd -mg wheel -G lp,seat -s /usr/bin/zsh "$user" -P /mnt
+    echo -n "$user:$pass" | arch-chroot /mnt chpasswd -c YESCRYPT
+    echo -n "$user localhost = (ALL) ALL" > "/mnt/etc/sudoers.d/$user"
+    cp    -rv home/.      "/mnt/home/$user"
+    chmod -Rv g-rwx,o-rwx "/mnt/home/$user" "/mnt/boot"
+    chown -Rvh 1000:998   "/mnt/home/$user"
 
-# 更改默认虚拟终端
-rm -fv '/mnt/etc/systemd/system/getty.target.wants/getty@tty1.service' &
+    # 更改默认虚拟终端
+    rm -fv '/mnt/etc/systemd/system/getty.target.wants/getty@tty1.service' &
 
-# 配置引导
-efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
-           | xargs -P$nproc -i efibootmgr -Bb {}
-efibootmgr -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
-efibootmgr -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
+    # 配置引导
+    efibootmgr | grep  -Po '(?<=Boot)....(?=\*? Boot with standard options)' \
+        | xargs -P$nproc -i efibootmgr -Bb {}
+    efibootmgr -cd "$disk" -L 'Boot with standard options' -l linux-zen.efi -u
+    efibootmgr -ab  $(efibootmgr | grep -Pom 1 '(?<=Boot)....(?=\*? Boot with standard options)')
 
-# 本地化
-cp -v {/usr/bin,$tmp}/locale-gen
-sed -i -E 's#(LOCALE.{,3}=)#\1/mnt#g'                   $tmp/locale-gen
-sed -i -E 's#(/usr/lib/locale/locale-archive)#/mnt\1#'  $tmp/locale-gen
-sed -i -E 's#(localedef)#\1 --prefix=/mnt#'             $tmp/locale-gen
-sed -i -E 's#(/usr/share/locale/locale.alias)#/mnt\1#'  $tmp/locale-gen
-$tmp/locale-gen
-wait
+    # 本地化
+    cp -v {/usr/bin,$tmp}/locale-gen
+    sed -i -E 's#(LOCALE.{,3}=)#\1/mnt#g'                   $tmp/locale-gen
+    sed -i -E 's#(/usr/lib/locale/locale-archive)#/mnt\1#'  $tmp/locale-gen
+    sed -i -E 's#(localedef)#\1 --prefix=/mnt#'             $tmp/locale-gen
+    sed -i -E 's#(/usr/share/locale/locale.alias)#/mnt\1#'  $tmp/locale-gen
+    $tmp/locale-gen
+    wait
