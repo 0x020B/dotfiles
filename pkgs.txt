@@ -17,6 +17,7 @@ fcitx5-qt
 fcitx5-rime
 firefox-developer-edition-i18n-zh-cn
 firejail
+github-cli
 goimapnotify
 grim
 hugo
@@ -43,6 +44,7 @@ obs-studio
 oh-my-zsh-git
 pacman-contrib
 paru
+pass
 qemu-base
 qemu-system-x86
 qemu-ui-egl-headless
