@@ -1,5 +1,5 @@
 require("basic")
-require("theme")
 require("plugins")
+require("theme")
 require("lsp")
 require("completion")
