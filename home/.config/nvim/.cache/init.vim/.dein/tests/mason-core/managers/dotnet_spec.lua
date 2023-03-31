@@ -1,0 +1,1 @@
+/home/lihua/.config/nvim/repos/github.com/williamboman/mason.nvim/tests/mason-core/managers/dotnet_spec.lua

@@ -1,0 +1,1 @@
+/home/lihua/.config/nvim/repos/github.com/williamboman/mason-lspconfig.nvim/scripts/lua/mason-scripts/mason-lspconfig/generate.lua
