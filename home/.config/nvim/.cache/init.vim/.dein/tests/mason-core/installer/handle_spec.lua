@@ -1,1 +1,0 @@
-/home/lihua/.config/nvim/repos/github.com/williamboman/mason.nvim/tests/mason-core/installer/handle_spec.lua

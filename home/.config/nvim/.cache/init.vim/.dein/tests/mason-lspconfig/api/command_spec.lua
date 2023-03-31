@@ -1,1 +1,0 @@
-/home/lihua/.config/nvim/repos/github.com/williamboman/mason-lspconfig.nvim/tests/mason-lspconfig/api/command_spec.lua

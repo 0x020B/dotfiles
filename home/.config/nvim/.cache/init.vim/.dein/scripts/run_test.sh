@@ -1,1 +1,0 @@
-/home/lihua/.config/nvim/repos/github.com/neovim/nvim-lspconfig/scripts/run_test.sh
