@@ -1,1 +1,9 @@
-tar -I zstd -cvf ./$(data +%s).tar.zst /etc /home
+USER=${USER-$(whoami)}
+function backup(){
+    tar -I zstd -cvf $1.tar.zst ${@:2}
+    }
+backup chromium /home/$USER/.cache/chromium
+backup gnupg /home/$USER/.gnupg
+backup password-store /home/$USER/.password-store
+backup ssh /home/$USER/.ssh
+backup telegram /home/$USER/.var/app/org.telegram.desktop
