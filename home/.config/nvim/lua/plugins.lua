@@ -1,4 +1,4 @@
-vim.cmd("packadd packer.nvim")
+vim.cmd [[packadd packer.nvim]]
 local packer = require("packer")
 packer.init {
     display = {compact = true},
