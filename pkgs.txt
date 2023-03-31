@@ -15,6 +15,7 @@ fcitx5-gtk
 fcitx5-pinyin-moegirl-rime
 fcitx5-qt
 fcitx5-rime
+flatpak
 firefox-developer-edition-i18n-zh-cn
 firejail
 github-cli
