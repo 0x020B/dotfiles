@@ -144,12 +144,13 @@ fi
 cp -rvf  mnt/.  /mnt
 rm -rvf /mnt/etc/pacman*
 install -Dm600 root.key "/mnt/etc/cryptsetup-keys.d/root.key"
+chmod -v 0700           "/mnt/etc/cryptsetup-keys.d"
 
 # 创建分区表
 genfstab /mnt | grep -E '/(etc|usr)' \
               | sed 's#\t/#\t/sysroot/#'  >>/mnt/etc/fstab.initramfs    &
 genfstab /mnt | sed -E  '/^(#.*)?$/d'     >>/mnt/etc/fstab              &
-echo -n "root $disk"2                       >>/mnt/etc/crypttab.initramfs &
+echo -n "root $disk"2                     >>/mnt/etc/crypttab.initramfs &
 wait
 
 # 安装汐统
