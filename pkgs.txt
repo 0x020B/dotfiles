@@ -25,7 +25,6 @@ hugo
 isync
 kdeconnect
 kmscon
-libglvnd
 libnotify
 libva-mesa-driver
 linux-firmware
@@ -39,11 +38,11 @@ mingw-w64-binutils
 mkinitcpio
 mpv
 neomutt
-neovim
 noto-fonts-emoji
 nvim-packer-git
 obs-studio
 oh-my-zsh-git
+openssh-selinux
 otf-aurulent-nerd
 otf-cascadia-code-nerd
 otf-codenewroman-nerd
@@ -57,7 +56,6 @@ pacman-contrib
 paru
 pass
 qemu-base
-qemu-system-x86
 qemu-ui-dbus
 qemu-ui-egl-headless
 qemu-ui-gtk
@@ -66,7 +64,6 @@ rime-pinyin-zhwiki
 ripgrep
 rng-tools
 rsync
-selinux-openssh
 slurp
 sway
 swaylock
@@ -120,7 +117,6 @@ ttf-victor-mono-nerd
 virtio-win
 vulkan-radeon
 waybar
-waypipe
 wl-clipboard
 wol
 words
