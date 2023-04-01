@@ -105,7 +105,8 @@ parted -sa  opt "$disk"             \
     mklabel gpt                     \
     mkpart  EFI     fat32   1M 150M \
     mkpart  primary btrfs 150M 100% \
-    set     1       esp     on
+    set     1       esp     on      \
+    set     2       root    on
 mkfs.fat -vF 32 "$disk"1
 
 # 磁盘加密
