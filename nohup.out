@@ -1,0 +1,73 @@
+[900:949:0401/014759.867517:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/portal/desktop: org.freedesktop.DBus.Error.InvalidArgs: 无此接口“org.freedesktop.portal.FileChooser”
+[900:949:0401/014759.867595:ERROR:select_file_dialog_linux_portal.cc(274)] Failed to read portal version property
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/014809.031678:ERROR:alsa_util.cc(204)] PcmOpen: default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/014809.036475:ERROR:alsa_util.cc(204)] PcmOpen: plug:default,没有那个文件或目录
+[984:984:0401/014818.197161:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+[984:984:0401/014834.964090:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 2 times!
+[984:984:0401/014835.984133:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 3 times!
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/021359.820169:ERROR:alsa_util.cc(204)] PcmOpen: default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/021359.828226:ERROR:alsa_util.cc(204)] PcmOpen: plug:default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/022515.611434:ERROR:alsa_util.cc(204)] PcmOpen: default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/022515.614614:ERROR:alsa_util.cc(204)] PcmOpen: plug:default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/023647.798214:ERROR:alsa_util.cc(204)] PcmOpen: default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/023647.814153:ERROR:alsa_util.cc(204)] PcmOpen: plug:default,没有那个文件或目录
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/024443.505416:ERROR:alsa_util.cc(204)] PcmOpen: default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/024443.510779:ERROR:alsa_util.cc(204)] PcmOpen: plug:default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/024457.251435:ERROR:alsa_util.cc(204)] PcmOpen: default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/024457.267852:ERROR:alsa_util.cc(204)] PcmOpen: plug:default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/024703.547155:ERROR:alsa_util.cc(204)] PcmOpen: default,没有那个文件或目录
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+[1381:1381:0401/024703.553668:ERROR:alsa_util.cc(204)] PcmOpen: plug:default,没有那个文件或目录
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+[833:866:0401/040629.954193:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/portal/desktop: org.freedesktop.DBus.Error.InvalidArgs: 无此接口“org.freedesktop.portal.FileChooser”
+[833:866:0401/040629.961506:ERROR:select_file_dialog_linux_portal.cc(274)] Failed to read portal version property
+[902:902:0401/040648.786006:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+[902:902:0401/040651.624951:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 2 times!
+[902:902:0401/040704.612405:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 3 times!
