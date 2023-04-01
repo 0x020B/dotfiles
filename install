@@ -53,6 +53,51 @@ if ! $UEFI; then
     exit 1
 fi
 
+keys=(07C1003E46490054A20D3A8E250A4BA6630FD7F1	# selinux（我自签的selinux镜像，即使使用github镜像，也不用担心被篡改）
+      882DCFE48E2051D48E2562ABF3B607488DB35A47	# cachyos
+      A3873AB27021C5DD39E0501AFBA220DFC880C036	# chaotic-aur
+      CCED9BE21E1173C61DC1C9407931B6D628C8D3BA	# arch4edu
+      F9A6E68A711354D84A9B91637533BAFE69A25079)	# blackarch
+
+keyrings=('arch4edu-keyring'
+          'archlinuxcn-keyring'
+          'blackarch-keyring'
+          'cachyos-keyring'
+          'chaotic-keyring')
+
+mirrorlists=('archlinuxcn-mirrorlist-git'
+             'blackarch-mirrorlist'
+             'cachyos-mirrorlist'
+             'chaotic-mirrorlist'
+             'mirrorlist.arch4edu'
+             'selinux-mirrorlist')
+
+# 软件源测速排序需要 rankmirrors
+pacman -Sy --needed --noconfirm pacman-contrib
+
+# 密钥环初始化 & 准备镜像列表
+cp -vfr mnt/etc/pacman.d/* /etc/pacman.d/
+cp -vfb {mnt,}/etc/pacman.conf
+mv -vf /etc/pacman.d/{mirrorlist,archlinux}
+v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
+if [[ $v =~ 4 ]]; then
+    mirrorlists+='cachyos-v4-mirrorlist'
+    cat mnt/etc/pacman_v4.conf   >> /etc/pacman.conf
+fi
+if [[ $v =~ 3 ]]; then
+    keys+=0D4D2FDAF45468F3DDF59BEDE3D0D2CD3952E298
+    keyrings+='alhp-keyring'
+    mirrorlists+=('alhp-mirrorlist' 'cachyos-v3-mirrorlist')
+    cat mnt/etc/pacman_v3.conf   >> /etc/pacman.conf
+fi
+cat mnt/etc/pacman_baseline.conf >> /etc/pacman.conf
+tr ' ' '\n' <<< "$mirrorlists" | mnt/etc/pacman.d/hooks/rankmirrors
+pacman-key --verbose --init
+pacman-key --verbose --import .
+pacman-key --verbose --lsign-key $keys
+pacman-key --verbose --populate
+pacman -Sy --needed  --noconfirm --overwrite "*" $keyrings
+
 # 分区
 sfdisk --delete "$disk"
 shred -zvs 251M "$disk"
@@ -95,49 +140,6 @@ if [[ $size < 32 ]]; then
     fi
 fi
 
-keys=(07C1003E46490054A20D3A8E250A4BA6630FD7F1	# selinux（我自签的selinux镜像，即使使用github镜像，也不用担心被篡改）
-      882DCFE48E2051D48E2562ABF3B607488DB35A47	# cachyos
-      A3873AB27021C5DD39E0501AFBA220DFC880C036	# alhp & chaotic-aur
-      CCED9BE21E1173C61DC1C9407931B6D628C8D3BA	# arch4edu
-      F9A6E68A711354D84A9B91637533BAFE69A25079)	# blackarch
-
-keyrings=('arch4edu-keyring'
-          'archlinuxcn-keyring'
-          'blackarch-keyring'
-          'cachyos-keyring'
-          'chaotic-keyring')
-
-mirrorlists=('archlinuxcn-mirrorlist-git'
-             'blackarch-mirrorlist'
-             'cachyos-mirrorlist'
-             'chaotic-mirrorlist'
-             'mirrorlist.arch4edu'
-             'selinux-mirrorlist')
-
-# 软件源测速排序需要 rankmirrors
-pacman -Sy --needed --noconfirm pacman-contrib
-
-# 密钥环初始化 & 准备镜像列表
-cp -vfr mnt/etc/pacman.d/* /etc/pacman.d/
-cp -vfb {mnt,}/etc/pacman.conf
-mv -vf /etc/pacman.d/{mirrorlist,archlinux}
-v=$(/usr/lib/ld-linux-x86-64.so.2 --help | grep -Po '(?<=x86-64-v).(?= \(supported)')
-if [[ $v =~ 4 ]]; then
-    mirrorlists+='cachyos-v4-mirrorlist'
-    cat mnt/etc/pacman_v4.conf   >> /etc/pacman.conf
-fi
-if [[ $v =~ 3 ]]; then
-    keyrings+='alhp-keyring'
-    mirrorlists+=('alhp-mirrorlist' 'cachyos-v3-mirrorlist')
-    cat mnt/etc/pacman_v3.conf   >> /etc/pacman.conf
-fi
-cat mnt/etc/pacman_baseline.conf >> /etc/pacman.conf
-tr ' ' '\n' <<< "$mirrorlists" | mnt/etc/pacman.d/hooks/rankmirrors
-pacman-key --verbose --init
-pacman-key --verbose --import .
-pacman-key --verbose --lsign-key $keys
-pacman-key --verbose --populate
-pacman -Sy --needed  --noconfirm --overwrite "*" $keyrings
 cp -rvf  mnt/.  /mnt
 rm -rvf /mnt/etc/pacman*
 install -Dm600 fs.key "/mnt/etc/cryptsetup-keys.d/fs.key"
