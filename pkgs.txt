@@ -7,6 +7,7 @@ bat
 bluez-utils
 btrfs-progs
 chromium
+clash
 cmake
 cpio
 duperemove
@@ -43,6 +44,7 @@ nvim-packer-git
 obs-studio
 oh-my-zsh-git
 openssh-selinux
+openvpn
 otf-aurulent-nerd
 otf-cascadia-code-nerd
 otf-codenewroman-nerd
@@ -67,7 +69,6 @@ rsync
 slurp
 sway
 swaylock
-systemd-libs-selinux
 ttf-3270-nerd
 ttf-agave-nerd
 ttf-anonymouspro-nerd
