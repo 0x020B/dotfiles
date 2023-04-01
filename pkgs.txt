@@ -117,6 +117,8 @@ ttf-victor-mono-nerd
 virtio-win
 vulkan-radeon
 waybar
+wget
+whois
 wl-clipboard
 wol
 words
