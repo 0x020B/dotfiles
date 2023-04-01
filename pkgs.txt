@@ -36,6 +36,7 @@ man-db
 man-pages
 mesa-vdpau
 mingw-w64-binutils
+noto-fonts-emoji
 mkinitcpio
 mpv
 neomutt
@@ -61,7 +62,9 @@ slurp
 sway
 swaylock
 systemd-libs-selinux
+ttf-arphic-uming
 ttf-dejavu
+ttf-joypixels
 vulkan-radeon
 waybar
 waypipe
