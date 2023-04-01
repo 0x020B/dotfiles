@@ -32,6 +32,7 @@ linux-firmware
 linux-firmware-qlogic
 linux-zen
 luarocks
+iptables-nft
 man-db
 man-pages
 mesa-vdpau
