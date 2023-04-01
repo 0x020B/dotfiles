@@ -128,7 +128,7 @@ chattr +C /mnt/var
 # 自动计算交换文件所需要的大小
 size=$(($(grep 'MemTotal' /proc/meminfo | awk '{print $2}') >> 19))
 if [[ $size < 32 ]]; then
-    (( $size > 8 )) && size=8
+    [[ $size > 8 ]] && size=8
     avail=$(df -BG --output=avail /dev/mapper/fs | tail -n1)
     if [[ $((size << 3)) < ${avail%G*} ]]; then
         # 创建交换文件
