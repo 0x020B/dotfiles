@@ -10,6 +10,7 @@ chromium
 clash
 cmake
 cpio
+dbus-python
 duperemove
 edk2-shell
 fcitx5-gtk
@@ -58,6 +59,7 @@ otf-overpass-nerd
 pacman-contrib
 paru
 pass
+python-pyclip
 qemu-base
 qemu-ui-dbus
 qemu-ui-egl-headless
@@ -119,6 +121,7 @@ ttf-victor-mono-nerd
 virtio-win
 vulkan-radeon
 waybar
+waydroid-image-gapps
 wget
 whois
 wl-clipboard
