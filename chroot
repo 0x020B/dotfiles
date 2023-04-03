@@ -6,9 +6,9 @@ objcopy -j .initrd /mnt/linux-zen.efi -O binary initrd.img
 umount -v /mnt
 dd if=initrd.img of=rootfs.img bs=512 skip=100
 wait
-cpio -idv etc/cryptsetup-keys.d/fs.key <rootfs.img
-cryptsetup open "$disk"2 fs -d etc/cryptsetup-keys.d/fs.key
+cpio -idv etc/cryptsetup-keys.d/root.key <rootfs.img
+cryptsetup open "$disk"2 root -d etc/cryptsetup-keys.d/root.key
 echo -n ,etc,home,opt,usr,var \
-    | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/fs /mnt/{}
+    | xargs -i -d, mount -vo noatime,nodiratime,compress=lzo,subvol=@{} /dev/mapper/root /mnt/{}
 mount -vo noatime,nodiratime "$disk"1 /mnt/boot
 arch-chroot /mnt
