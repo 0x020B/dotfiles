@@ -1,0 +1,4 @@
+#!/bin/sh
+find /var/lib/waydroid/ -type d | xargs sudo chmod -v 755
+find /var/lib/waydroid/ -type f | xargs sudo chmod -v a+r
+find /var/lib/waydroid/ -type f -perm -700 | xargs sudo chmod -v 755

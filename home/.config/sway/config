@@ -3,8 +3,8 @@ set $left h
 set $down j
 set $up k
 set $right l
-set $term alacritty
-set $menu rofi -show
+set $term kitty
+set $menu bemenu-run
 output * bg /usr/share/backgrounds/sway/ fill
 # exec swayidle -w \
 #          timeout 300 'swaylock -f -c 000000' \
@@ -88,4 +88,5 @@ bar {
 default_border none
 exec_always --no-startup-id ~/.config/dunst/launch.sh
 for_window [class="scrcpy"] floating enable
+for_window [app_id="Waydroid"] floating enable
 include ~/.config/sway/config.d/*

@@ -1,10 +1,10 @@
-alacritty
 amd-ucode
 amule
 aria2
 base-devel-selinux
 bat
 bluez-utils
+bemenu-wayland
 btrfs-progs
 chromium
 clash
@@ -26,6 +26,7 @@ grim
 hugo
 isync
 kdeconnect
+kitty
 kmscon
 libnotify
 libva-mesa-driver
