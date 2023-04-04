@@ -60,7 +60,10 @@ otf-overpass-nerd
 pacman-contrib
 paru
 pass
+python-pip
 python-pyclip
+python-keyring
+python-xdg
 qemu-base
 qemu-ui-dbus
 qemu-ui-egl-headless
