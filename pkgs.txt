@@ -11,6 +11,7 @@ clash
 cmake
 cpio
 dbus-python
+dnscrypt-proxy
 duperemove
 edk2-shell
 fcitx5-gtk
@@ -77,6 +78,7 @@ rsync
 slurp
 sway
 swaylock
+tcpdump
 ttf-3270-nerd
 ttf-agave-nerd
 ttf-anonymouspro-nerd
