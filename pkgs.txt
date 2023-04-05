@@ -43,12 +43,12 @@ mkinitcpio
 mpv
 neomutt
 networkmanager
+networkmanager-openvpn
 noto-fonts-emoji
 nvim-packer-git
 obs-studio
 oh-my-zsh-git
 openssh-selinux
-openvpn
 otf-aurulent-nerd
 otf-cascadia-code-nerd
 otf-codenewroman-nerd
