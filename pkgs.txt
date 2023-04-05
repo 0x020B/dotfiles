@@ -42,6 +42,7 @@ mingw-w64-binutils
 mkinitcpio
 mpv
 neomutt
+networkmanager
 noto-fonts-emoji
 nvim-packer-git
 obs-studio
