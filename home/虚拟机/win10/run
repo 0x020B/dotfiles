@@ -1,0 +1,15 @@
+[ -f windows10.iso ] || aria2c -o windows10.iso "$(base64 -d <<< 'bWFnbmV0Oj94dD11cm46YnRpaDoyNjgxYzA0ZjIwNDNiZDA3YzVmNTMwN2MxODQ5ZmE5MGIwZWFjN2UyJmRuPXpoLWNuX3dpbmRvd3NfMTBfY29uc3VtZXJfZWRpdGlvbnNfdmVyc2lvbl8yMmgyX3VwZGF0ZWRfbWFyY2hfMjAyM194NjRfZHZkXzFlMjdlMTBiLmlzbw==')"
+[ -f windows10.qcow2 ] || qemu-img create -f qcow2 ./windows10.qcow2 50G
+qemu-system-x86_64 \
+  -enable-kvm \
+  -smp 2 \
+  -m 4G \
+  -machine usb=on \
+  -device usb-tablet \
+  -display default \
+  -vga virtio \
+  -device e1000,netdev=net0 \
+  -netdev user,id=net0,net=192.168.20.0/24,dhcpstart=192.168.20.20 \
+  -drive file=./windows10.qcow2,if=virtio \
+  -drive file=/var/lib/libvirt/images/virtio-win.iso,index=1,media=cdrom \
+  -drive file=./windows10.iso,index=2,media=cdrom

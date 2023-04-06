@@ -3,7 +3,7 @@
 包含archlinux一键安装脚本  
 使用（archiso环境）：
 ```zsh
-curl https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/install | zsh
+curl https://raw.githubusercontent.com/0x020B/dotfiles/main/install | zsh
 ```
 
 特性：  
@@ -19,4 +19,4 @@ curl https://raw.githubusercontent.com/n0tr00teuorg/dotfiles/main/install | zsh
 磁盘加密  
 开启 SELinux  
 自动镜像测速排序  
-内核引导  
+统一内核引导  
