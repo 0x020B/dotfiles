@@ -1,8 +1,11 @@
+alsa-plugins
+alsa-utils
 amd-ucode
 amule
 aria2
 base-devel-selinux
 bat
+bluez
 bluez-utils
 bemenu-wayland
 btrfs-progs
