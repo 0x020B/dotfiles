@@ -48,6 +48,7 @@ mpv
 neomutt
 networkmanager
 networkmanager-openvpn
+newsboat
 noto-fonts-emoji
 nvim-packer-git
 obs-studio
