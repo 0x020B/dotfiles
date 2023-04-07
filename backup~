@@ -1,6 +1,5 @@
 USER=${USER-$(whoami)}
 function backup(){ tar -I zstd -cvf $1.tar.zst ${@:2} }
-backup clash /home/$USER/.config/clash
 backup chromium /home/$USER/.config/chromium
 backup gnupg /home/$USER/.gnupg
 backup password-store /home/$USER/.password-store

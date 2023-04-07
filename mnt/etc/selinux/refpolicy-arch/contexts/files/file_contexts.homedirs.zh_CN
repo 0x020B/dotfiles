@@ -1,0 +1,10 @@
+/home/[^/]+/音乐(/.*)? user_u:object_r:xdg_music_t
+/home/[^/]+/视频(/.*)?    user_u:object_r:xdg_videos_t
+/home/[^/]+/图片(/.*)?  user_u:object_r:xdg_pictures_t
+/home/[^/]+/文档(/.*)? user_u:object_r:xdg_documents_t
+/home/[^/]+/下载(/.*)? user_u:object_r:xdg_downloads_t
+/root/音乐(/.*)? user_u:object_r:xdg_music_t
+/root/视频(/.*)?    user_u:object_r:xdg_videos_t
+/root/图片(/.*)?  user_u:object_r:xdg_pictures_t
+/root/文档(/.*)? user_u:object_r:xdg_documents_t
+/root/下载(/.*)? user_u:object_r:xdg_downloads_t
