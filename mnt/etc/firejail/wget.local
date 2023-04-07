@@ -1,2 +1,4 @@
 noblacklist ${HOME}/.cache/luarocks
+noblacklist ${HOME}/.local/share/nvim/mason/.packages
 whitelist ${HOME}/.cache/luarocks
+whitelist ${HOME}/.local/share/nvim/mason/.packages
