@@ -24,6 +24,7 @@ fcitx5-rime
 firefox-developer-edition-i18n-zh-cn
 firejail
 flatpak
+gammastep
 github-cli
 goimapnotify
 grim
