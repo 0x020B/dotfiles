@@ -67,6 +67,7 @@ pacman-contrib
 paru
 pass
 pipewire-audio
+pipewire-pulse
 python-pip
 python-pyclip
 python-keyring
