@@ -84,6 +84,7 @@ rng-tools
 rsync
 slurp
 sway
+swaybg
 swaylock
 tcpdump
 ttf-3270-nerd

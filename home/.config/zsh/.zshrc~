@@ -144,7 +144,6 @@ function command_not_found_handler {
 source $ZSH/oh-my-zsh.sh
 alias ls="ls --color"
 alias la="ls -a"
-alias icat="kitty +kitten icat"
 alias cp="rsync --archive -hh --partial --info=stats1,progress2 --modify-window=1"
 alias mv="rsync --archive -hh --partial --info=stats1,progress2 --modify-window=1 --remove-source-files"
 alias cat="bat --style=plain"
