@@ -26,6 +26,7 @@ firejail
 flatpak
 gammastep
 github-cli
+gnu-free-fonts
 goimapnotify
 grim
 hugo
@@ -68,6 +69,7 @@ pacman-contrib
 paru
 pass
 pipewire-audio
+pipewire-jack
 pipewire-pulse
 python-pip
 python-pyclip
@@ -87,6 +89,7 @@ sway
 swaybg
 swaylock
 tcpdump
+tex-gyre-fonts
 ttf-3270-nerd
 ttf-agave-nerd
 ttf-anonymouspro-nerd
