@@ -62,6 +62,7 @@ otf-cascadia-code-nerd
 otf-codenewroman-nerd
 otf-droid-nerd
 otf-firamono-nerd
+otf-font-awesome
 otf-hasklig-nerd
 otf-hermit-nerd
 otf-opendyslexic-nerd
@@ -118,6 +119,7 @@ ttf-joypixels
 ttf-lekton-nerd
 ttf-liberation-mono-nerd
 ttf-lilex-nerd
+ttf-font-awesome
 ttf-meslo-nerd
 ttf-monofur-nerd
 ttf-monoid-nerd
