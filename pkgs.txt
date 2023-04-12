@@ -68,6 +68,7 @@ otf-hermit-nerd
 otf-opendyslexic-nerd
 otf-overpass-nerd
 pacman-contrib
+pandoc-cli
 paru
 pass
 pipewire-audio

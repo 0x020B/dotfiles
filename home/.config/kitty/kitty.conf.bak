@@ -167,7 +167,7 @@
 #: font glyph is rendered and the baseline at which the glyph is
 #: placed in the cell. For example::
 
-#modify_font cell_width 65%
+modify_font cell_width 65%
 #:     modify_font cell_height -2px
 modify_font baseline 1
 
@@ -2290,6 +2290,6 @@ enable_audio_bell no
 
 
 # BEGIN_KITTY_THEME
-# VSCode_Dark
+# Apprentice
 include current-theme.conf
 # END_KITTY_THEME

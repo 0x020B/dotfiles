@@ -167,7 +167,7 @@
 #: font glyph is rendered and the baseline at which the glyph is
 #: placed in the cell. For example::
 
-#modify_font cell_width 65%
+modify_font cell_width 65%
 #:     modify_font cell_height -2px
 modify_font baseline 1
 
