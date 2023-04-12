@@ -42,8 +42,6 @@ linux-firmware
 linux-firmware-qlogic
 linux-zen
 luarocks
-man-db
-man-pages
 mesa-vdpau
 mingw-w64-binutils
 mkinitcpio
@@ -91,7 +89,6 @@ slurp
 sway
 swaybg
 swaylock
-systemd-libs-selinux
 tcpdump
 tex-gyre-fonts
 ttf-3270-nerd
