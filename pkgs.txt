@@ -5,9 +5,9 @@ amule
 aria2
 base-devel-selinux
 bat
+bemenu-wayland
 bluez
 bluez-utils
-bemenu-wayland
 btrfs-progs
 chromium
 clamav
@@ -31,6 +31,7 @@ gnu-free-fonts
 goimapnotify
 grim
 hugo
+iptables-nft
 isync
 kdeconnect
 kitty
@@ -41,7 +42,6 @@ linux-firmware
 linux-firmware-qlogic
 linux-zen
 luarocks
-iptables-nft
 man-db
 man-pages
 mesa-vdpau
@@ -74,9 +74,9 @@ pass
 pipewire-audio
 pipewire-jack
 pipewire-pulse
+python-keyring
 python-pip
 python-pyclip
-python-keyring
 python-xdg
 qemu-base
 qemu-ui-dbus
@@ -91,6 +91,7 @@ slurp
 sway
 swaybg
 swaylock
+systemd-libs-selinux
 tcpdump
 tex-gyre-fonts
 ttf-3270-nerd
@@ -106,6 +107,7 @@ ttf-dejavu
 ttf-dejavu-nerd
 ttf-fantasque-nerd
 ttf-firacode-nerd
+ttf-font-awesome
 ttf-go-nerd
 ttf-hack-nerd
 ttf-heavydata-nerd
@@ -120,7 +122,6 @@ ttf-joypixels
 ttf-lekton-nerd
 ttf-liberation-mono-nerd
 ttf-lilex-nerd
-ttf-font-awesome
 ttf-meslo-nerd
 ttf-monofur-nerd
 ttf-monoid-nerd
