@@ -131,6 +131,7 @@ ttf-noto-nerd
 ttf-profont-nerd
 ttf-proggyclean-nerd
 ttf-roboto-mono-nerd
+ttf-sarasa-gothic
 ttf-sharetech-mono-nerd
 ttf-sourcecodepro-nerd
 ttf-space-mono-nerd
@@ -138,6 +139,7 @@ ttf-terminus-nerd
 ttf-tinos-nerd
 ttf-ubuntu-mono-nerd
 ttf-ubuntu-nerd
+ttf-unifont-csur
 ttf-victor-mono-nerd
 virtio-win
 vulkan-radeon
