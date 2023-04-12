@@ -26,7 +26,6 @@ firefox-developer-edition-i18n-zh-cn
 firejail
 flatpak
 gammastep
-glib2-selinux
 github-cli
 gnu-free-fonts
 goimapnotify
