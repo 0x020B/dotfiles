@@ -2,21 +2,21 @@
 PATH='/usr/bin'
 function main()
 {
-    list=${0%%-git}
-    repo=${list/mirrorlist}
-    repo=${repo##.}
-    repo=${repo%%-}
+    list="${0%%-git}"
+    repo="${list/mirrorlist}"
+    repo="${repo##.}"
+    repo="${repo%%-}"
     if [[ $list == 'pacman-mirrorlist' ]]; then
 	list='mirrorlist'
 	repo='archlinux'
     elif [[ $repo == 'chaotic' ]]; then
 	repo='chaotic-aur'
     fi
-    [ -f /etc/pacman.d/$list.pacnew ] && mv -vf "/etc/pacman.d/$list.pacnew" "/etc/pacman.d/$list"
+    [ -f "/etc/pacman.d/$list.pacnew" ] && mv -vf "/etc/pacman.d/$list.pacnew" "/etc/pacman.d/$list"
     sed -E 's/^#\s?[Ss]erver/Server/g' "/etc/pacman.d/$list" \
         | grep '^Server\s*=\s*https' \
-        | rankmirrors -v -r $repo -n 5 - \
-        | tee /etc/pacman.d/$repo
+        | rankmirrors -v -r "$repo" -n 5 - \
+        | tee "/etc/pacman.d/$repo"
 }
 cache=()
 while read -r f; do
