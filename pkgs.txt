@@ -25,6 +25,7 @@ dnscrypt-proxy
 duperemove
 edk2-shell
 fcitx5-gtk
+fcitx5-nord
 fcitx5-pinyin-moegirl-rime
 fcitx5-qt
 fcitx5-rime
