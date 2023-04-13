@@ -2,10 +2,10 @@
 PATH='/usr/bin'
 function main()
 {
-    list="${0%%-git}"
-    repo="${list/mirrorlist}"
-    repo="${repo##.}"
-    repo="${repo%%-}"
+    list=${0%%-git}
+    repo=${list/mirrorlist}
+    repo=${repo##.}
+    repo=${repo%%-}
     if [[ $list == 'pacman-mirrorlist' ]]; then
 	list='mirrorlist'
 	repo='archlinux'
