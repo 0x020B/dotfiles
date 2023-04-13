@@ -1,9 +1,9 @@
 adobe-source-han-sans-cn-fonts
-adobe-source-han-sans-tw-fonts
 adobe-source-han-sans-hk-fonts
+adobe-source-han-sans-tw-fonts
 adobe-source-han-serif-cn-fonts
-adobe-source-han-serif-tw-fonts
 adobe-source-han-serif-hk-fonts
+adobe-source-han-serif-tw-fonts
 alsa-plugins
 alsa-utils
 amd-ucode
