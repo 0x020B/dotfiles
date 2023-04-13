@@ -12,6 +12,7 @@ function main()
     elif [[ $repo == 'chaotic' ]]; then
 	repo='chaotic-aur'
     fi
+    [ -f /etc/pacman.d/$list.pacnew ] && mv -vf "/etc/pacman.d/$list.pacnew" "/etc/pacman.d/$list"
     sed -E 's/^#\s?[Ss]erver/Server/g' "/etc/pacman.d/$list" \
         | grep '^Server\s*=\s*https' \
         | rankmirrors -v -r $repo -n 5 - \
