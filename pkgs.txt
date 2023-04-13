@@ -74,7 +74,6 @@ pacman-contrib
 pandoc-cli
 paru
 pass
-pipewire-audio
 pipewire-jack
 pipewire-pulse
 python-keyring
@@ -86,6 +85,7 @@ qemu-ui-dbus
 qemu-ui-egl-headless
 qemu-ui-gtk
 qemu-ui-sdl
+ranger
 rime-pinyin-zhwiki
 ripgrep
 rng-tools
