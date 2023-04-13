@@ -34,7 +34,6 @@ firejail
 flatpak
 gammastep
 github-cli
-gnu-free-fonts
 goimapnotify
 grim
 hugo
@@ -80,11 +79,7 @@ python-keyring
 python-pip
 python-pyclip
 python-xdg
-qemu-base
-qemu-ui-dbus
-qemu-ui-egl-headless
-qemu-ui-gtk
-qemu-ui-sdl
+qemu-desktop
 ranger
 rime-pinyin-zhwiki
 ripgrep
