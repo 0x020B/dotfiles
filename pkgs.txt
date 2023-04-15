@@ -56,6 +56,7 @@ networkmanager
 networkmanager-openvpn
 newsboat
 noto-fonts-emoji
+npm
 nvim-packer-git
 obs-studio
 oh-my-zsh-git
@@ -81,6 +82,10 @@ python-pip
 python-pyclip
 python-xdg
 qemu-desktop
+qt5-wayland
+qt5ct
+qt6-wayland
+qt6ct
 ranger
 rime-pinyin-zhwiki
 ripgrep

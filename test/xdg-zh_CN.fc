@@ -1,0 +1,5 @@
+HOME_DIR/音乐(/.*)? gen_context(system_u:object_r:xdg_music_t,s0)
+HOME_DIR/视频(/.*)? gen_context(system_u:object_r:xdg_videos_t,s0)
+HOME_DIR/图片(/.*)? gen_context(system_u:object_r:xdg_pictures_t,s0)
+HOME_DIR/文档(/.*)? gen_context(system_u:object_r:xdg_documents_t,s0)
+HOME_DIR/下载(/.*)? gen_context(system_u:object_r:xdg_downloads_t,s0)
