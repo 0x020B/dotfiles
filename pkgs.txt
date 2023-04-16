@@ -4,6 +4,7 @@ adobe-source-han-sans-tw-fonts
 adobe-source-han-serif-cn-fonts
 adobe-source-han-serif-hk-fonts
 adobe-source-han-serif-tw-fonts
+alacritty
 alsa-plugins
 alsa-utils
 amd-ucode
@@ -33,6 +34,7 @@ firefox-developer-edition-i18n-zh-cn
 firejail
 flatpak
 gammastep
+gdb
 github-cli
 goimapnotify
 grim
@@ -40,7 +42,6 @@ hugo
 iptables-nft
 isync
 kdeconnect
-kitty
 kmscon
 libnotify
 libva-mesa-driver

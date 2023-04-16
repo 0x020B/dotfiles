@@ -3,7 +3,7 @@ set $left h
 set $down j
 set $up k
 set $right l
-set $term kitty
+set $term /usr/bin/alacritty
 set $menu bemenu-run
 exec swaybg -i $(find /usr/share/backgrounds/anime -type f | shuf -n1)
 exec fcitx5
@@ -92,6 +92,6 @@ bar {
     swaybar_command waybar
 }
 default_border none
-for_window [class="scrcpy"] floating enable
-for_window [app_id="Waydroid"] floating enable
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
 include ~/.config/sway/config.d/*
