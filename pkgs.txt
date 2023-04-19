@@ -9,6 +9,7 @@ alsa-plugins
 alsa-utils
 amd-ucode
 amule
+android-tools
 aria2
 base-devel-selinux
 bat
@@ -72,6 +73,7 @@ otf-hasklig-nerd
 otf-hermit-nerd
 otf-opendyslexic-nerd
 otf-overpass-nerd
+p7zip
 pacman-contrib
 pandoc-cli
 paru
