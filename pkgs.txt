@@ -59,6 +59,7 @@ networkmanager-openvpn
 newsboat
 noto-fonts-emoji
 npm
+nss-mdns
 nvim-packer-git
 obs-studio
 oh-my-zsh-git
