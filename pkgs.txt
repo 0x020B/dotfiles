@@ -44,6 +44,7 @@ iptables-nft
 isync
 kdeconnect
 kmscon
+kubo
 libnotify
 libva-mesa-driver
 linux-firmware

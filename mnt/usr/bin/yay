@@ -1,0 +1,5 @@
+#!/bin/sh
+PATH=/usr/bin
+systemctl --user start ipfs
+paru $@
+systemctl --user stop ipfs
