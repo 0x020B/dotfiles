@@ -15,6 +15,7 @@ curl https://raw.githubusercontent.com/0x020B/dotfiles/main/install | zsh
 - cachyos
 - chaotic
 - selinux
+- xyne
 
 磁盘加密  
 开启 SELinux  

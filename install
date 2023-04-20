@@ -70,7 +70,8 @@ mirrorlists=('archlinuxcn-mirrorlist-git'
              'cachyos-mirrorlist'
              'chaotic-mirrorlist'
              'mirrorlist.arch4edu'
-             'selinux-mirrorlist')
+             'selinux-mirrorlist'
+             'xyne-mirrorlist')
 
 # 软件源测速排序需要 rankmirrors
 pacman -Sy --needed --noconfirm pacman-contrib

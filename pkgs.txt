@@ -75,6 +75,7 @@ otf-hermit-nerd
 otf-opendyslexic-nerd
 otf-overpass-nerd
 p7zip
+pacredir
 pacman-contrib
 pandoc-cli
 paru
