@@ -1,0 +1,1 @@
+/var/lib/pacman/sync/cachyos-community-v3.db.sig

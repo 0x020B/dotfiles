@@ -1,0 +1,1 @@
+/var/lib/pacman/sync/blackarch.db.sig
