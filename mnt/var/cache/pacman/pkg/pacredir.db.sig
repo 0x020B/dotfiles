@@ -1,1 +1,0 @@
-/var/lib/pacman/sync/pacredir.db.sig
