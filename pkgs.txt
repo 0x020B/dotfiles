@@ -16,7 +16,6 @@ bat
 bemenu-wayland
 bluez
 bluez-utils
-btrfs-progs
 chromium
 clamav
 clash
@@ -100,6 +99,7 @@ ripgrep
 rng-tools
 rsync
 slurp
+snap-pac
 sway
 swaybg
 swaylock
