@@ -65,7 +65,6 @@ obs-studio
 oh-my-zsh-git
 openssh-selinux
 otf-aurulent-nerd
-otf-cascadia-code-nerd
 otf-codenewroman-nerd
 otf-droid-nerd
 otf-firamono-nerd
@@ -112,6 +111,7 @@ ttf-arimo-nerd
 ttf-arphic-uming
 ttf-bigblueterminal-nerd
 ttf-bitstream-vera-mono-nerd
+ttf-cascadia-code-nerd
 ttf-cousine-nerd
 ttf-daddytime-mono-nerd
 ttf-dejavu
@@ -138,8 +138,8 @@ ttf-monofur-nerd
 ttf-monoid-nerd
 ttf-mononoki-nerd
 ttf-mplus-nerd
-ttf-nerd-fonts-symbols-2048-em
-ttf-nerd-fonts-symbols-2048-em-mono
+ttf-nerd-fonts-symbols
+ttf-nerd-fonts-symbols-mono
 ttf-noto-nerd
 ttf-profont-nerd
 ttf-proggyclean-nerd
@@ -154,6 +154,7 @@ ttf-ubuntu-mono-nerd
 ttf-ubuntu-nerd
 ttf-unifont-csur
 ttf-victor-mono-nerd
+virt-viewer
 virtio-win
 vulkan-radeon
 waybar
