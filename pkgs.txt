@@ -63,6 +63,8 @@ nss-mdns
 nvim-packer-git
 obs-studio
 oh-my-zsh-git
+opencl-clhpp
+opencl-mesa
 openssh-selinux
 otf-aurulent-nerd
 otf-codenewroman-nerd
@@ -96,6 +98,7 @@ ranger
 rime-pinyin-zhwiki
 ripgrep
 rng-tools
+rocm-opencl-runtime
 rsync
 slurp
 snap-pac
